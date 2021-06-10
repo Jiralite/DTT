@@ -7,13 +7,15 @@ class FreeBugMail {
     this.timestamp = +freeBugMail.Timestamp;
     this.messageId = freeBugMail["Message ID"];
     this.userId = freeBugMail["User ID"];
+    this.state = freeBugMail.State;
   }
 
   create() {
     return new Promise((resolve, reject) => this.#DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
       Timestamp: this.timestamp,
       ["Message ID"]: this.messageId,
-      ["User ID"]: this.userId
+      ["User ID"]: this.userId,
+      State: this.state;
     }, (E, { insertId }) => {
       if (E) return reject(E);
       this.No = insertId;

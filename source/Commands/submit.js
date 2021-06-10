@@ -29,7 +29,8 @@ class submit {
     const FreeBugMail = new this.#DTT.FreeBugMail(this.#DTT, {
       Timestamp: interaction.createdTimestamp,
       ["Message ID"]: message.id,
-      ["User ID"]: interaction.user.id
+      ["User ID"]: interaction.user.id,
+      State: "OPEN"
     });
 
     FreeBugMail.create().then(() => interaction.editReply({
