@@ -13,9 +13,9 @@ function Maria() {
   DTT.Maria.getConnection(error => {
     if (!error) {
       collectFreeBugMails();
-      DTT.Log("Maria established.");
+      DTT.log("Maria established.");
     } else {
-      DTT.Log("Maria connection error: Retrying in 1 minute.", error);
+      DTT.log("Maria connection error: Retrying in 1 minute.", error);
       setTimeout(Maria, 60000);
     }
   });
