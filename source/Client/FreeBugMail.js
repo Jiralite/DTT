@@ -18,6 +18,7 @@ class FreeBugMail {
       if (E) return reject(E);
       this.No = insertId;
       this.#DTT.freeBugMails.set(this.No, this);
+      resolve();
     }));
   }
 
