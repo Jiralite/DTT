@@ -1,12 +1,17 @@
 const { Client, Collection } = require("discord.js");
 const { readdirSync } = require("fs");
+const { createPool } = require("mysql");
 
-const { discord: { prefix } } = require("./Keys.json");
+const { discord: { prefix }, mysql } = require("./Keys.json");
+
+const FreeBugMail = require("./FreeBugMail.js");
+const Maria = createPool(mysql);
 
 class DTT extends Client {
   constructor(options = {}) {
     super(options);
     this.prefix = prefix;
+    this.Maria = Maria;
     this.commands = (() => {
       const commandsCollection = new Collection();
 
@@ -30,6 +35,8 @@ class DTT extends Client {
 
       return commandsCollection;
     })();
+    this.FreeBugMail = FreeBugMail;
+    this.freeBugMails = new Collection();
   }
 
   log(message, consoleLog = message) {
