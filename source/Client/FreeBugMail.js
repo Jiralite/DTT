@@ -4,7 +4,7 @@ class FreeBugMail {
   constructor(DTT, freeBugMail) {
     this.#DTT = DTT;
     this.No = freeBugMail.No;
-    this.timestamp = freeBugMail.Timestamp;
+    this.timestamp = +freeBugMail.Timestamp;
     this.messageId = freeBugMail["Message ID"];
     this.userId = freeBugMail["User ID"];
   }
