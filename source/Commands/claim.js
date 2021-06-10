@@ -17,7 +17,7 @@ class claim {
     const text = interaction.options.first().value;
     const FreeBugMail = this.#DTT.freeBugMails.find(({ messageId }) => messageId === text);
 
-    if (!freeBugMail) {
+    if (!FreeBugMail) {
       return interaction.reply({
         content: "Cannot find the free BugMail request.",
         ephemeral: true
