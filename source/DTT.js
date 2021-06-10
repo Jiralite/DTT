@@ -13,7 +13,7 @@ DTT.on("interaction", interaction => {
   if (interaction.guildID !== DTT.guild.id) return;
 
   if (interaction.type === "APPLICATION_COMMAND") {
-    DTT.commands.find(({ name }) => name === `${interaction.commandName}${typeof interaction.options.firstKey() === "undefined" ? "" : `_${interaction.options.firstKey()}`}`).traditional(interaction);
+    DTT.commands.find(({ name }) => name === `${interaction.commandName}${typeof interaction.options.firstKey() === "undefined" ? "" : `_${interaction.options.firstKey()}`}`)?.traditional(interaction);
   }
 });
 
