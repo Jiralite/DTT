@@ -16,7 +16,7 @@ class FreeBugMail {
       Timestamp: this.timestamp,
       ["Message ID"]: this.messageId,
       ["User ID"]: this.userId,
-      State: this.state;
+      State: this.state
     }, (E, { insertId }) => {
       if (E) return reject(E);
       this.No = insertId;
