@@ -25,15 +25,24 @@ class claim {
     }
 
     FreeBugMail.fetchMessage().then(async message => {
-      await message.react("<a:typing:852637406334156800>");
-      if (interaction.member.roles.cache.has("852589448070692947")) await interaction.member.roles.remove("852589448070692947");
+      FreeBugMail.claim().then(() => {
+        await message.react("<a:typing:852637406334156800>");
+        if (interaction.member.roles.cache.has("852589448070692947")) await interaction.member.roles.remove("852589448070692947");
 
-      interaction.reply({
-        content: `You have successfully claimed the free BugMail request of <@${FreeBugMail.userId}>!`,
-        ephemeral: true
+        interaction.reply({
+          content: `You have successfully claimed the free BugMail request of <@${FreeBugMail.userId}>!`,
+          ephemeral: true
+        });
+
+        this.#DTT.guild.channels.resolve("852592316438020136").send(`${interaction.user} has just claimed the free BugMail request of <@${FreeBugMail.userId}>.`);
+      }).catch(error => {
+        this.#DTT.log("Error during claim interaction.", error);
+
+        interaction.reply({
+          content: "An internal error occured.",
+          ephemeral: true
+        });
       });
-
-      this.#DTT.guild.channels.resolve("852592316438020136").send(`${interaction.user} has just claimed the free BugMail request of <@${FreeBugMail.userId}>.`);
     }).catch(error => {
       this.#DTT.log("Error resolving a BugMail request message.", error);
 

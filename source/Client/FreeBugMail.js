@@ -24,6 +24,16 @@ class FreeBugMail {
     }));
   }
 
+  claim() {
+    return new Promise((resolve, reject) => this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+      "PENDING",
+      this.No
+    ], E => {
+      if (E) return reject(E);
+      resolve();
+    }));
+  }
+
   fetchMessage() {
     return this.#DTT.channels.resolve("852581876030898176").messages.fetch(this.messageId);
   }
