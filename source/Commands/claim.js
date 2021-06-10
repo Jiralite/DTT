@@ -25,6 +25,13 @@ class claim {
       });
     }
 
+    if (FreeBugMail.state === "PENDING") {
+      return interaction.reply({
+        content: "This free BugMail is already claimed.",
+        ephemeral: true
+      });
+    }
+
     if (pendingBugMail) {
       return interaction.reply({
         content: `You seem to already have a pending free BugMail for <@${pendingBugMail.userId}>.`,
