@@ -7,6 +7,7 @@ class FreeBugMail {
     this.timestamp = +freeBugMail.Timestamp;
     this.messageId = freeBugMail["Message ID"];
     this.userId = freeBugMail["User ID"];
+    this.claimedById = freeBugMail["Claimed By ID"] ?? null;
     this.state = freeBugMail.State;
   }
 
@@ -24,12 +25,16 @@ class FreeBugMail {
     }));
   }
 
-  claim() {
-    return new Promise((resolve, reject) => this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
-      "PENDING",
+  claim(claimedById) {
+    return new Promise((resolve, reject) => this.#DTT.Maria.query("UPDATE `Free BugMails` SET ? WHERE `No` = ?;", [
+      {
+        ["Claimed By ID"]: claimedById,
+        State: "PENDING"
+      },
       this.No
     ], E => {
       if (E) return reject(E);
+      this.claimedById = claimedById;
       resolve();
     }));
   }
