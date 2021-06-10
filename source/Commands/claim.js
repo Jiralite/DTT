@@ -41,7 +41,7 @@ class claim {
         content: "Cannot find the free BugMail request.",
         ephemeral: true
       });
-    })
+    });
   }
 }
 
