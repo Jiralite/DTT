@@ -49,7 +49,7 @@ class claim {
           ephemeral: true
         });
 
-        this.#DTT.guild.channels.resolve("852592316438020136").send(`${interaction.user} has just claimed the free BugMail request of <@${FreeBugMail.userId}>.`);
+        this.#DTT.guild.channels.resolve("852592316438020136").send(`${interaction.user} has just claimed the free BugMail request of <@${FreeBugMail.userId}>.\n${message.url}`);
       }).catch(error => {
         this.#DTT.log("Error during claim interaction.", error);
 
