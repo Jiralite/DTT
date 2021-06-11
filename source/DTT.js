@@ -5,6 +5,7 @@ const { discord: { token } } = require("./Client/Keys.json");
 const DTT = new Client({
   intents: [
     "GUILDS",
+    "GUILD_MEMBERS",
     "GUILD_MESSAGES"
   ]
 });
@@ -30,6 +31,38 @@ function collectFreeBugMails() {
   }));
 }
 
+DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
+  if (oldGuildmember.guild.id !== DTT.guild.id) return;
+
+  if (oldGuildmember.pending === true && newGuildmember.pending === false) {
+    DTT.guild.channels.resolve("765621889682374656").send({
+      content: `Welcome to **${DTT.guild.name}**, ${newGuildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+      components: [
+        [
+          {
+            type: "BUTTON",
+            label: "Tester",
+            customID: `Tester-${newGuildmember.id}`,
+            style: "PRIMARY"
+          },
+          {
+            type: "BUTTON",
+            label: "Alt Account",
+            customID: `Alt-${newGuildmember.id}`,
+            style: "SECONDARY"
+          },
+          {
+            type: "BUTTON",
+            label: "Deny",
+            customID: `Deny-${newGuildmember.id}`,
+            style: "DANGER"
+          }
+        ]
+      ]
+    });
+  }
+});
+
 DTT.on("interaction", interaction => {
   if (interaction.guildID !== DTT.guild.id) return;
 
@@ -38,6 +71,159 @@ DTT.on("interaction", interaction => {
   }
 
   if (interaction.isButton()) {
+    const joiner = /(Tester|Alt|Deny)-(\d+)/.exec(interaction.customID);
+
+    if (joiner) {
+        if (!interaction.member.roles.cache.some(({ id }) => [
+          "765611993532334120",
+          "815329929838198824",
+          "776828300450201600",
+          "832393264975970306",
+        ].includes(id))) {
+          return interaction.reply({
+            content: `You do not have permission to perform this interaction.`,
+            ephemeral: true
+          });
+        }
+
+        const guildmember = await DTT.guild.members.fetch(joiner[2]).catch(error => null);
+
+        if (!guildmember) return interaction.reply({
+          content: `Error fetching guildmember.`,
+          ephemeral: true
+        });
+
+        if (joiner[1] === "Tester") {
+          guildmember.roles.add("765638424618074122").then(role => {
+            interaction.reply({
+              content: `You have given the <@&765638424618074122> role to ${guildmember}.`,
+              ephemeral: true
+            });
+
+            interaction.message.edit({
+              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+              components: [
+                [
+                  {
+                    type: "BUTTON",
+                    label: "Tester",
+                    customID: `Tester-${guildmember.id}`,
+                    style: "PRIMARY",
+                    disabled: true
+                  },
+                  {
+                    type: "BUTTON",
+                    label: "Alt Account",
+                    customID: `Alt-${guildmember.id}`,
+                    style: "SECONDARY",
+                    disabled: true
+                  },
+                  {
+                    type: "BUTTON",
+                    label: "Deny",
+                    customID: `Deny-${guildmember.id}`,
+                    style: "DANGER",
+                    disabled: true
+                  }
+                ]
+              ]
+            }).then(() => setTimeout(() => interaction.message.delete().catch(error => null), 5000));
+
+            DTT.guild.channels.resolve("765720809519316992").send(`Welcome to **${DTT.guild.name}**, ${guildmember}! Be sure to check out <#765706613155430411> and other channels!`);
+          }).catch(error => {
+            interaction.reply({
+              content: `Error adding role to guildmember.`,
+              ephemeral: true
+            });
+          });
+        }
+
+        if (joiner[1] === "Alt") {
+          guildmember.roles.add("799502317430767647").then(role => {
+            interaction.reply({
+              content: `You have given the ${role} role to ${guildmember}.`,
+              ephemeral: true
+            });
+
+            interaction.message.edit({
+              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+              components: [
+                [
+                  {
+                    type: "BUTTON",
+                    label: "Tester",
+                    customID: `Tester-${guildmember.id}`,
+                    style: "PRIMARY",
+                    disabled: true
+                  },
+                  {
+                    type: "BUTTON",
+                    label: "Alt Account",
+                    customID: `Alt-${guildmember.id}`,
+                    style: "SECONDARY",
+                    disabled: true
+                  },
+                  {
+                    type: "BUTTON",
+                    label: "Deny",
+                    customID: `Deny-${guildmember.id}`,
+                    style: "DANGER",
+                    disabled: true
+                  }
+                ]
+              ]
+            }).then(() => setTimeout(() => interaction.message.delete().catch(error => null), 5000));
+          }).catch(error => {
+            interaction.reply({
+              content: `Error adding role to guildmember.`,
+              ephemeral: true
+            });
+          });
+        }
+
+        if (joiner[1] === "Deny") {
+          guildmember.kick().then(() => {
+            interaction.reply({
+              content: `${interaction.user} has kicked ${guildmember}.`
+            });
+
+            interaction.message.edit({
+              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+              components: [
+                [
+                  {
+                    type: "BUTTON",
+                    label: "Tester",
+                    customID: `Tester-${guildmember.id}`,
+                    style: "PRIMARY",
+                    disabled: true
+                  },
+                  {
+                    type: "BUTTON",
+                    label: "Alt Account",
+                    customID: `Alt-${guildmember.id}`,
+                    style: "SECONDARY",
+                    disabled: true
+                  },
+                  {
+                    type: "BUTTON",
+                    label: "Deny",
+                    customID: `Deny-${guildmember.id}`,
+                    style: "DANGER",
+                    disabled: true
+                  }
+                ]
+              ]
+            }).then(() => setTimeout(() => interaction.message.delete().catch(error => null), 60000));
+          }).catch(error => {
+            interaction.reply({
+              content: `Error kicking guildmember.`,
+              ephemeral: true
+            });
+          });
+        }
+      }
+
     if (interaction.customID === "Free BugMail") {
       if (interaction.member.roles.cache.has("852589448070692947")) {
         return interaction.reply({
