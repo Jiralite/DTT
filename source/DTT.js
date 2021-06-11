@@ -67,7 +67,7 @@ DTT.on("interaction", interaction => {
       }
 
       interaction.member.roles.remove("852589448070692947").then(() => interaction.reply({
-        content: `The <@&852589448070692947> role has been remove from you!`,
+        content: `The <@&852589448070692947> role has been removed from you!`,
         ephemeral: true
       })).catch(error => {
         this.DTT.log("Error in self-role removal.", error);
