@@ -83,7 +83,7 @@ DTT.on("interaction", interaction => {
     const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction.customID);
 
     if (weekBugMail) {
-      const FreeBugMail = DTT.freeBugMails.get(weekBugMail[1]);
+      const FreeBugMail = DTT.freeBugMails.get(+weekBugMail[1]);
       if (weekBugMail[2] === "PENDING") return FreeBugMail.resumePendingTimeout(interaction);
       if (weekBugMail[2] === "RESOLVED") return FreeBugMail.resolvePendingTimeout(interaction);
     }
