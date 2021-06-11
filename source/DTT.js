@@ -191,7 +191,7 @@ DTT.on("interaction", async interaction => {
             });
 
             interaction.message.edit({
-              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to <@765683883554504735>!`,
+              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to ${DTT.user}!`,
               components: [
                 [
                   {
