@@ -87,7 +87,7 @@ class FreeBugMail {
       components: []
     });
 
-    this.resolve(interaction);
+    this.resolve(interaction, true);
   }
 
   claim(claimedById) {
@@ -106,7 +106,7 @@ class FreeBugMail {
     }));
   }
 
-  resolve(interaction) {
+  resolve(interaction, fromTimeout = false) {
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
@@ -119,7 +119,7 @@ class FreeBugMail {
       const message = await this.fetchMessage().catch(() => null);
       message?.delete();
 
-      interaction.reply({
+      if (!fromTimeout) interaction.reply({
         content: `You've completed the free BugMail request of <@${this.userId}>!`,
         ephemeral: true
       });
