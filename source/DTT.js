@@ -84,6 +84,7 @@ DTT.on("interaction", interaction => {
 
     if (weekBugMail) {
       const FreeBugMail = DTT.freeBugMails.get(+weekBugMail[1]);
+      if (interaction.user.id !== FreeBugMail.claimedById) return;
       if (weekBugMail[2] === "PENDING") return FreeBugMail.resumePendingTimeout(interaction);
       if (weekBugMail[2] === "RESOLVED") return FreeBugMail.resolvePendingTimeout(interaction);
     }
