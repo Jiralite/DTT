@@ -44,7 +44,7 @@ class FreeBugMail {
     }).then(() => this.#DTT.Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [
       true,
       this.No
-    ])), 3600000);
+    ])), 3600000 - (Date.now() - this.timestamp));
   }
 
   timeout() {
