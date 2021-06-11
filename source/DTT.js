@@ -25,7 +25,7 @@ function collectFreeBugMails() {
   DTT.Maria.query("SELECT * FROM `Free BugMails`", (E, R) => R.forEach(freeBugMail => {
     const FreeBugMail = new DTT.FreeBugMail(DTT, freeBugMail);
     DTT.freeBugMails.set(FreeBugMail.No, FreeBugMail);
-    FreeBugMail.recreate();
+    FreeBugMail.timeout();
   }));
 }
 
