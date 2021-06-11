@@ -26,6 +26,7 @@ function collectFreeBugMails() {
     const FreeBugMail = new DTT.FreeBugMail(DTT, freeBugMail);
     DTT.freeBugMails.set(FreeBugMail.No, FreeBugMail);
     FreeBugMail.timeout();
+    FreeBugMail.mentionedTimeout();
   }));
 }
 

@@ -8,7 +8,9 @@ class FreeBugMail {
     this.messageId = freeBugMail["Message ID"];
     this.userId = freeBugMail["User ID"];
     this.claimedById = freeBugMail["Claimed By ID"] ?? null;
+    this.mentioned = !!freeBugMail.Mentioned;
     this.state = freeBugMail.State;
+    this.hourTimeout = null;
     this.reminderTimeout = null;
   }
 
@@ -17,13 +19,32 @@ class FreeBugMail {
       Timestamp: this.timestamp,
       ["Message ID"]: this.messageId,
       ["User ID"]: this.userId,
+      Mentioned: this.mentioned,
       State: this.state
     }, (E, { insertId }) => {
       if (E) return reject(E);
       this.No = insertId;
+      this.mentionedTimeout();
       this.#DTT.freeBugMails.set(this.No, this);
       resolve();
     }));
+  }
+
+  mentionedTimeout() {
+    if (this.state !== "OPEN" || this.mentioned) return;
+    clearTimeout(this.hourTimeout);
+
+    this.hourTimeout = setTimeout(() => this.#DTT.guild.channels.resolve("852592316438020136").send({
+      content: `Hey, is anyone with a <@&852589448070692947> able to help with the request belonging to <@${this.userId}>?`,
+      allowedMentions: {
+        parse: [
+          "roles"
+        ]
+      }
+    }).then(() => this.#DTT.Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [
+      true,
+      this.No
+    ])), 3600000);
   }
 
   timeout() {
@@ -104,7 +125,7 @@ class FreeBugMail {
       });
 
       if (!interaction.member.roles.cache.has("852589448070692947")) interaction.member.roles.add("852589448070692947");
-      
+
       this.#DTT.channels.resolve("852592316438020136").send(`${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe <@&852589448070692947> role has now been added to you!`, {
         allowedMentions: {
           parse: [

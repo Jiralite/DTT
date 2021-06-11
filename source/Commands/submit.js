@@ -30,6 +30,7 @@ class submit {
       Timestamp: interaction.createdTimestamp,
       ["Message ID"]: message.id,
       ["User ID"]: interaction.user.id,
+      Mentioned: false,
       State: "OPEN"
     });
 
