@@ -34,19 +34,7 @@ class submit {
       State: "OPEN"
     });
 
-    FreeBugMail.create().then(() => interaction.editReply({
-      content: text,
-      allowedMentions: {
-        parse: []
-      }
-    })).catch(async error => {
-      this.#DTT.log("Error during submit interaction.", error);
-
-      interaction.editReply({
-        content: "An internal error occured.",
-        ephemeral: true
-      }).then(() => setTimeout(() => interaction.deleteReply(), 5000));
-    });
+    FreeBugMail.create(interaction, text);
   }
 }
 

@@ -14,8 +14,8 @@ class FreeBugMail {
     this.reminderTimeout = null;
   }
 
-  create() {
-    return new Promise((resolve, reject) => this.#DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
+  create(interaction, text) {
+    this.#DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
       Timestamp: this.timestamp,
       ["Message ID"]: this.messageId,
       ["User ID"]: this.userId,
@@ -26,8 +26,21 @@ class FreeBugMail {
       this.No = insertId;
       this.mentionedTimeout();
       this.#DTT.freeBugMails.set(this.No, this);
-      resolve();
-    }));
+
+      interaction.editReply({
+        content: text,
+        allowedMentions: {
+          parse: []
+        }
+      }).catch(async error => {
+        this.#DTT.log("Error during submit interaction.", error);
+
+        interaction.editReply({
+          content: "An internal error occured.",
+          ephemeral: true
+        }).then(() => setTimeout(() => interaction.deleteReply(), 5000));
+      });
+    });
   }
 
   mentionedTimeout() {
