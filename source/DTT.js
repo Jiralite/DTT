@@ -25,6 +25,7 @@ function collectFreeBugMails() {
   DTT.Maria.query("SELECT * FROM `Free BugMails`", (E, R) => R.forEach(freeBugMail => {
     const FreeBugMail = new DTT.FreeBugMail(DTT, freeBugMail);
     DTT.freeBugMails.set(FreeBugMail.No, FreeBugMail);
+    FreeBugMail.recreate();
   }));
 }
 
@@ -55,6 +56,14 @@ DTT.on("interaction", interaction => {
           ephemeral: true
         });
       });
+    }
+
+    const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction);
+
+    if (weekBugMail) {
+      const FreeBugMail = DTT.freeBugMails.get(weekBugMail[1]);
+      if (weekBugMail[2] === "PENDING") return FreeBugMail.resumePendingTimeout(interaction);
+      if (weekBugMail[2] === "RESOLVED") return FreeBugMail.resolvePendingTimeout(interaction);
     }
   }
 });
@@ -116,6 +125,18 @@ DTT.on("ready", () => {
           type: "STRING",
           name: "message_id",
           description: "Claims a Free BugMail request.",
+          required: true
+        }
+      ]
+    },
+    {
+      name: "complete",
+      description: "Used for completing free BugMail requests.",
+      options: [
+        {
+          type: "STRING",
+          name: "message_id",
+          description: "Completes a Free BugMail request.",
           required: true
         }
       ]
