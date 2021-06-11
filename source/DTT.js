@@ -234,23 +234,30 @@ DTT.on("interaction", async interaction => {
       const role = DTT.guild.roles.resolve(interaction.customID);
 
       if (interaction.member.roles.cache.has(role.id)) {
-        return interaction.reply({
-          content: `You already have the ${role} role.`,
+        interaction.member.roles.remove(role).then(() => interaction.reply({
+          content: `The ${role} role has been removed from you!`,
           ephemeral: true
+        })).catch(error => {
+          DTT.log("Error in self-role removal.", error);
+
+          interaction.reply({
+            content: "There was an error during self-role removal.",
+            ephemeral: true
+          });
+        });
+      } else {
+        interaction.member.roles.add(role).then(() => interaction.reply({
+          content: `The ${role} role has been added to you!`,
+          ephemeral: true
+        })).catch(error => {
+          DTT.log("Error in self-role addition.", error);
+
+          interaction.reply({
+            content: "There was an error during self-role addition.",
+            ephemeral: true
+          });
         });
       }
-
-      interaction.member.roles.add(role).then(() => interaction.reply({
-        content: `The ${role} role has been added to you!`,
-        ephemeral: true
-      })).catch(error => {
-        DTT.log("Error in self-role addition.", error);
-
-        interaction.reply({
-          content: "There was an error during self-role addition.",
-          ephemeral: true
-        });
-      });
     }
 
     if (interaction.customID === "Free BugMail") {
