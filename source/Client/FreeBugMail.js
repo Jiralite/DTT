@@ -66,7 +66,7 @@ class FreeBugMail {
       components: []
     });
 
-    this.resolve();
+    this.resolve(interaction);
   }
 
   claim(claimedById) {
@@ -85,7 +85,7 @@ class FreeBugMail {
     }));
   }
 
-  resolve(interaction = null) {
+  resolve(interaction) {
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
@@ -98,12 +98,14 @@ class FreeBugMail {
       const message = await this.fetchMessage().catch(() => null);
       message?.delete();
 
-      interaction?.reply({
+      interaction.reply({
         content: `You've completed the free BugMail request of <@${this.userId}>!`,
         ephemeral: true
       });
 
-      this.#DTT.channels.resolve("852592316438020136").send(`${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nFeel free to opt in again for the <@&852589448070692947> role!`, {
+      if (!interaction.member.roles.cache.has("852589448070692947")) interaction.member.roles.add("852589448070692947");
+      
+      this.#DTT.channels.resolve("852592316438020136").send(`${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe <@&852589448070692947> role has now been added to you!`, {
         allowedMentions: {
           parse: [
             "users"
