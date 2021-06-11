@@ -140,6 +140,10 @@ class DTT extends Client {
     ])));
   }
 
+  kanal(channel) {
+    return this.guild.channels.resolve(this.kanaly[channel]);
+  }
+
   role(role) {
     return this.guild.roles.resolve(this.roles[role]);
   }
@@ -150,6 +154,25 @@ class DTT extends Client {
 
   get logChannel() {
     return this.guild.channels.resolve("765616393969729597");
+  }
+
+  get kanaly() {
+    return {
+      Information: "765620075737776218",
+      "read-me": "765620328511963176",
+      verification: "765621889682374656",
+      roles: "765706613155430411",
+      announcements: "765620353191903303",
+      General: "765620128356106271",
+      general: "765720809519316992",
+      "bot-commands": "765623545631735858",
+      starboard: "801239097058263061",
+      voice: "847280182997286932",
+      "invalid-reports": "778797051713814528",
+      "locked-reports": "785830225665458227",
+      "bugmail-queue": "852581876030898176",
+      "bugmail-discussion": "852592316438020136"
+    };
   }
 
   get roles() {

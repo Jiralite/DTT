@@ -34,7 +34,7 @@ class FreeBugMail {
     if (this.state !== "OPEN" || this.mentioned) return;
     clearTimeout(this.hourTimeout);
 
-    this.hourTimeout = setTimeout(() => this.#DTT.guild.channels.resolve("852592316438020136").send({
+    this.hourTimeout = setTimeout(() => this.bugmailDiscussion.send({
       content: `Hey, is anyone with a ${this.freeBugMail} able to help with the request belonging to <@${this.userId}>?`,
       allowedMentions: {
         parse: [
@@ -51,7 +51,7 @@ class FreeBugMail {
     if (this.state !== "PENDING") return;
     clearTimeout(this.reminderTimeout);
 
-    this.reminderTimeout = setTimeout(() => this.#DTT.guild.channels.resolve("852592316438020136").send({
+    this.reminderTimeout = setTimeout(() => this.bugmailDiscussion.send({
       content: `Hey, <@${this.claimedById}>. It's been a week. Is the BugMail still ongoing?`,
       components: [
         [
@@ -128,7 +128,7 @@ class FreeBugMail {
 
       if (!interaction.member.roles.cache.has(this.freeBugMail.id)) interaction.member.roles.add(this.freeBugMail);
 
-      this.#DTT.channels.resolve("852592316438020136").send({
+      this.bugmailDiscussion.send({
         content: `${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe ${this.freeBugMail} role has now been added to you!`,
         allowedMentions: {
           parse: [
@@ -140,7 +140,15 @@ class FreeBugMail {
   }
 
   fetchMessage() {
-    return this.#DTT.channels.resolve("852581876030898176").messages.fetch(this.messageId);
+    return this.bugmailQueue.messages.fetch(this.messageId);
+  }
+
+  get bugmailQueue() {
+    return this.#DTT.kanal("bugmail-queue");
+  }
+
+  get bugmailDiscussion() {
+    return this.#DTT.kanal("bugmail-discussion");
   }
 
   get freeBugMail() {

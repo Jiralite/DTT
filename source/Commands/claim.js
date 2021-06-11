@@ -7,9 +7,9 @@ class claim {
   }
 
   async traditional(interaction) {
-    if (interaction.channelID !== "852581876030898176") {
+    if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
       return interaction.reply({
-        content: "Please use this command in <#852581876030898176>.",
+        content: `Please use this command in ${this.#DTT.kanal("bugmail-queue")}.`,
         ephemeral: true
       });
     }
@@ -49,7 +49,7 @@ class claim {
           ephemeral: true
         });
 
-        this.#DTT.guild.channels.resolve("852592316438020136").send(`${interaction.user} has just claimed the free BugMail request of <@${FreeBugMail.userId}>.\n${message.url}`);
+        this.#DTT.kanal("bugmail-discussion").send(`${interaction.user} has just claimed the free BugMail request of <@${FreeBugMail.userId}>.\n${message.url}`);
       }).catch(error => {
         this.#DTT.log("Error during claim interaction.", error);
 

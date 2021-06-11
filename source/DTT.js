@@ -35,8 +35,8 @@ DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
   if (oldGuildmember.guild.id !== DTT.guild.id) return;
 
   if (oldGuildmember.pending === true && newGuildmember.pending === false) {
-    DTT.guild.channels.resolve("765621889682374656").send({
-      content: `Welcome to **${DTT.guild.name}**, ${newGuildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+    DTT.kanal("verification").send({
+      content: `Welcome to **${DTT.guild.name}**, ${newGuildmember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
       components: [
         [
           {
@@ -101,7 +101,7 @@ DTT.on("interaction", async interaction => {
             });
 
             interaction.message.edit({
-              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the ${DTT.kanal("verification")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
               components: [
                 [
                   {
@@ -129,7 +129,7 @@ DTT.on("interaction", async interaction => {
               ]
             }).then(() => setTimeout(() => interaction.message.delete().catch(error => null), 5000));
 
-            DTT.guild.channels.resolve("765720809519316992").send(`Welcome to **${DTT.guild.name}**, ${guildmember}! Be sure to check out <#765706613155430411> and other channels!`);
+            DTT.kanal("general").send(`Welcome to **${DTT.guild.name}**, ${guildmember}! Be sure to check out ${DTT.kanal("roles")} and other channels!`);
           }).catch(error => {
             interaction.reply({
               content: `Error adding role to guildmember.`,
@@ -146,7 +146,7 @@ DTT.on("interaction", async interaction => {
             });
 
             interaction.message.edit({
-              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
               components: [
                 [
                   {
@@ -188,7 +188,7 @@ DTT.on("interaction", async interaction => {
             });
 
             interaction.message.edit({
-              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the <#765620328511963176> channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
+              content: `Welcome to **${DTT.guild.name}**, ${guildmember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to a staff member!`,
               components: [
                 [
                   {
@@ -289,7 +289,7 @@ DTT.on("interaction", async interaction => {
 
 DTT.on("message", message => {
   if (message.author.bot) return;
-  if (message.channel.id === "852581876030898176" && message.author.id !== DTT.user.id) message.delete();
+  if (message.channel.id === DTT.kanal("bugmail-queue").id && message.author.id !== DTT.user.id) message.delete();
 });
 
 DTT.on("ready", () => {

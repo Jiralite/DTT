@@ -7,9 +7,9 @@ class complete {
   }
 
   async traditional(interaction) {
-    if (interaction.channelID !== "852581876030898176") {
+    if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
       return interaction.reply({
-        content: "Please use this command in <#852581876030898176>.",
+        content: `Please use this command in ${this.#DTT.kanal("bugmail-queue")}.`,
         ephemeral: true
       });
     }
