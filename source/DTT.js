@@ -230,6 +230,29 @@ DTT.on("interaction", async interaction => {
         }
       }
 
+    if (interaction.channelID === DTT.kanal("roles").id) {
+      const role = DTT.guild.roles.resolve(interaction.customID);
+
+      if (interaction.member.roles.cache.has(role.id)) {
+        return interaction.reply({
+          content: `You already have the ${role} role.`,
+          ephemeral: true
+        });
+      }
+
+      interaction.member.roles.add(role).then(() => interaction.reply({
+        content: `The ${role} role has been added to you!`,
+        ephemeral: true
+      })).catch(error => {
+        DTT.log("Error in self-role addition.", error);
+
+        interaction.reply({
+          content: "There was an error during self-role addition.",
+          ephemeral: true
+        });
+      });
+    }
+
     if (interaction.customID === "Free BugMail") {
       if (interaction.member.roles.cache.has(DTT.role("Free BugMail").id)) {
         return interaction.reply({
@@ -242,7 +265,7 @@ DTT.on("interaction", async interaction => {
         content: `The ${DTT.role("Free BugMail")} role has been added to you!`,
         ephemeral: true
       })).catch(error => {
-        this.DTT.log("Error in self-role addition.", error);
+        DTT.log("Error in self-role addition.", error);
 
         interaction.reply({
           content: "There was an error during self-role addition.",
@@ -263,7 +286,7 @@ DTT.on("interaction", async interaction => {
         content: `The ${DTT.role("Free BugMail")} role has been removed from you!`,
         ephemeral: true
       })).catch(error => {
-        this.DTT.log("Error in self-role removal.", error);
+        DTT.log("Error in self-role removal.", error);
 
         interaction.reply({
           content: "There was an error during self-role removal.",
