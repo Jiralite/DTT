@@ -142,7 +142,7 @@ class FreeBugMail {
   remove() {
     clearTimeout(this.hourTimeout);
     clearTimeout(this.reminderTimeout);
-    thos.hourTimeout = null;
+    this.hourTimeout = null;
     this.reminderTimeout = null;
 
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
