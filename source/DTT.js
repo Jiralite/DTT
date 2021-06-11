@@ -58,6 +58,27 @@ DTT.on("interaction", interaction => {
       });
     }
 
+    if (interaction.customID === "No Free BugMail") {
+      if (!interaction.member.roles.cache.has("852589448070692947")) {
+        return interaction.reply({
+          content: "You do not already have the <@&852589448070692947> role.",
+          ephemeral: true
+        });
+      }
+
+      interaction.member.roles.remove("852589448070692947").then(() => interaction.reply({
+        content: `The <@&852589448070692947> role has been remove from you!`,
+        ephemeral: true
+      })).catch(error => {
+        this.DTT.log("Error in self-role removal.", error);
+
+        interaction.reply({
+          content: "There was an error during self-role removal.",
+          ephemeral: true
+        });
+      });
+    }
+
     const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction);
 
     if (weekBugMail) {
