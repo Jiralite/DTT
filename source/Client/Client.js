@@ -59,38 +59,6 @@ class DTT extends Client {
   applyCommands() {
     this.guild.commands.set([
       {
-        name: "role",
-        description: "Used for role commands.",
-        options: [
-          {
-            type: "SUB_COMMAND",
-            name: "add",
-            description: "Adds a role.",
-            options: [
-              {
-                type: "ROLE",
-                name: "role",
-                description: "Select a role!",
-                required: true
-              }
-            ]
-          },
-          {
-            type: "SUB_COMMAND",
-            name: "remove",
-            description: "Removes a role.",
-            options: [
-              {
-                type: "ROLE",
-                name: "role",
-                description: "Select a role!",
-                required: true
-              }
-            ]
-          }
-        ]
-      },
-      {
         name: "submit",
         description: "Used for submitting free BugMail requests.",
         options: [
@@ -128,7 +96,7 @@ class DTT extends Client {
       }
     ]).then(commands => commands.forEach(command => command.setPermissions([
       {
-        id: DTT.guild.roles.everyone.id,
+        id: this.guild.roles.everyone.id,
         type: "ROLE",
         permission: false
       },
