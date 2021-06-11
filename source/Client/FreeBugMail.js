@@ -126,7 +126,8 @@ class FreeBugMail {
 
       if (!interaction.member.roles.cache.has("852589448070692947")) interaction.member.roles.add("852589448070692947");
 
-      this.#DTT.channels.resolve("852592316438020136").send(`${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe <@&852589448070692947> role has now been added to you!`, {
+      this.#DTT.channels.resolve("852592316438020136").send({
+        content: `${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe <@&852589448070692947> role has now been added to you!`,
         allowedMentions: {
           parse: [
             "users"
