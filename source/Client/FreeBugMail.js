@@ -139,6 +139,20 @@ class FreeBugMail {
     });
   }
 
+  remove() {
+    clearTimeout(this.hourTimeout);
+    clearTimeout(this.reminderTimeout);
+    thos.hourTimeout = null;
+    this.reminderTimeout = null;
+
+    this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+      "RESOLVED",
+      this.No
+    ], E => {
+      if (E) this.#DTT.log("Error removing free BugMail request.", E);
+    });
+  }
+
   fetchMessage() {
     return this.bugmailQueue.messages.fetch(this.messageId);
   }

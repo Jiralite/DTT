@@ -3,6 +3,9 @@ const Client = require("./Client/Client.js");
 const { discord: { token } } = require("./Client/Keys.json");
 
 const DTT = new Client({
+  partials: [
+    "MESSAGE"
+  ],
   intents: [
     "GUILDS",
     "GUILD_MEMBERS",
@@ -290,6 +293,13 @@ DTT.on("interaction", async interaction => {
 DTT.on("message", message => {
   if (message.author.bot) return;
   if (message.channel.id === DTT.kanal("bugmail-queue").id && message.author.id !== DTT.user.id) message.delete();
+});
+
+DTT.on("messageDelete", message => {
+  if (message.guild.id !== DTT.guild.id) return;
+  const FreeBugMail = DTT.freeBugMails.find(({ messageId }) => messageId === message.id);
+  if (!FreeBugMail) return;
+  FreeBugMail.remove();
 });
 
 DTT.on("ready", () => {
