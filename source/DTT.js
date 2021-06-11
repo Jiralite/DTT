@@ -214,7 +214,10 @@ DTT.on("interaction", async interaction => {
                   }
                 ]
               ]
-            }).then(() => setTimeout(() => interaction.message.delete().catch(error => null), 60000));
+            }).then(() => setTimeout(() => {
+              interaction.deleteReply().catch(error => null);
+              interaction.message.delete().catch(error => null);
+            }), 60000));
           }).catch(error => {
             interaction.reply({
               content: `Error kicking guildmember.`,
