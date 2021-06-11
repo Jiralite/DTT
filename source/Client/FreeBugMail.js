@@ -103,9 +103,11 @@ class FreeBugMail {
         ephemeral: true
       });
 
-      this.#DTT.channels.resolve("852581876030898176").send(`${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nFeel free to opt in again for the <@&852589448070692947> role!`, {
+      this.#DTT.channels.resolve("852592316438020136").send(`${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nFeel free to opt in again for the <@&852589448070692947> role!`, {
         allowedMentions: {
-          parse: []
+          parse: [
+            "users"
+          ]
         }
       });
     });
