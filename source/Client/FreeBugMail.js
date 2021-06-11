@@ -101,6 +101,8 @@ class FreeBugMail {
       if (E) return reject(E);
       this.claimedById = claimedById;
       this.state = "PENDING";
+      clearTimeout(this.hourTimeout);
+      this.hourTimeout = null;
       this.timeout();
       resolve();
     }));
