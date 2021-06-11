@@ -63,7 +63,7 @@ DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
   }
 });
 
-DTT.on("interaction", interaction => {
+DTT.on("interaction", async interaction => {
   if (interaction.guildID !== DTT.guild.id) return;
 
   if (interaction.type === "APPLICATION_COMMAND") {
