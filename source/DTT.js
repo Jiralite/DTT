@@ -98,6 +98,11 @@ DTT.on("interaction", interaction => {
   }
 });
 
+DTT.on("message", message => {
+  if (message.author.bot) return;
+  if (message.channel.id === "852581876030898176" && message.author.id !== DTT.user.id) message.delete();
+});
+
 DTT.on("ready", () => {
   DTT.log("Selflessly slaving away.");
   Maria();
