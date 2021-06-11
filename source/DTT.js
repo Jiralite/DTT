@@ -75,10 +75,10 @@ DTT.on("interaction", async interaction => {
 
     if (joiner) {
         if (!interaction.member.roles.cache.some(({ id }) => [
-          "765611993532334120",
-          "815329929838198824",
-          "776828300450201600",
-          "832393264975970306",
+          DTT.role("Admin").id,
+          DTT.role("Moderator").id,
+          DTT.role("DT Staff").id,
+          DTT.role("DT Mod or BA").id
         ].includes(id))) {
           return interaction.reply({
             content: `You do not have permission to perform this interaction.`,
@@ -94,9 +94,9 @@ DTT.on("interaction", async interaction => {
         });
 
         if (joiner[1] === "Tester") {
-          guildmember.roles.add("765638424618074122").then(role => {
+          guildmember.roles.add(DTT.role("Tester")).then(() => {
             interaction.reply({
-              content: `You have given the <@&765638424618074122> role to ${guildmember}.`,
+              content: `You have given the ${DTT.role("Tester")} role to ${guildmember}.`,
               ephemeral: true
             });
 
@@ -139,9 +139,9 @@ DTT.on("interaction", async interaction => {
         }
 
         if (joiner[1] === "Alt") {
-          guildmember.roles.add("799502317430767647").then(role => {
+          guildmember.roles.add(DTT.role("Alt Account")).then(() => {
             interaction.reply({
-              content: `You have given the ${role} role to ${guildmember}.`,
+              content: `You have given the ${DTT.role("Alt Account")} role to ${guildmember}.`,
               ephemeral: true
             });
 
@@ -228,15 +228,15 @@ DTT.on("interaction", async interaction => {
       }
 
     if (interaction.customID === "Free BugMail") {
-      if (interaction.member.roles.cache.has("852589448070692947")) {
+      if (interaction.member.roles.cache.has(DTT.role("Free BugMail").id)) {
         return interaction.reply({
-          content: "You already have the <@&852589448070692947> role.",
+          content: `You already have the ${DTT.role("Free BugMail")} role.`,
           ephemeral: true
         });
       }
 
-      interaction.member.roles.add("852589448070692947").then(() => interaction.reply({
-        content: `The <@&852589448070692947> role has been added to you!`,
+      interaction.member.roles.add(DTT.role("Free BugMail")).then(() => interaction.reply({
+        content: `The ${DTT.role("Free BugMail")} role has been added to you!`,
         ephemeral: true
       })).catch(error => {
         this.DTT.log("Error in self-role addition.", error);
@@ -249,15 +249,15 @@ DTT.on("interaction", async interaction => {
     }
 
     if (interaction.customID === "No Free BugMail") {
-      if (!interaction.member.roles.cache.has("852589448070692947")) {
+      if (!interaction.member.roles.cache.has(DTT.role("Free BugMail").id)) {
         return interaction.reply({
-          content: "You do not already have the <@&852589448070692947> role.",
+          content: `You do not already have the ${DTT.role("Free BugMail")} role.`,
           ephemeral: true
         });
       }
 
-      interaction.member.roles.remove("852589448070692947").then(() => interaction.reply({
-        content: `The <@&852589448070692947> role has been removed from you!`,
+      interaction.member.roles.remove(DTT.role("Free BugMail")).then(() => interaction.reply({
+        content: `The ${DTT.role("Free BugMail")} role has been removed from you!`,
         ephemeral: true
       })).catch(error => {
         this.DTT.log("Error in self-role removal.", error);

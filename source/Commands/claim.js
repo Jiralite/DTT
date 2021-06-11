@@ -42,7 +42,7 @@ class claim {
     FreeBugMail.fetchMessage().then(async message => {
       FreeBugMail.claim(interaction.user.id).then(async () => {
         await message.react("<a:typing:852637406334156800>");
-        if (interaction.member.roles.cache.has("852589448070692947")) await interaction.member.roles.remove("852589448070692947");
+        if (interaction.member.roles.cache.has(this.#DTT.role("Free BugMail").id)) await interaction.member.roles.remove(this.#DTT.role("Free BugMail"));
 
         interaction.reply({
           content: `You have successfully claimed the free BugMail request of <@${FreeBugMail.userId}>!`,

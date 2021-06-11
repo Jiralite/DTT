@@ -35,7 +35,7 @@ class FreeBugMail {
     clearTimeout(this.hourTimeout);
 
     this.hourTimeout = setTimeout(() => this.#DTT.guild.channels.resolve("852592316438020136").send({
-      content: `Hey, is anyone with a <@&852589448070692947> able to help with the request belonging to <@${this.userId}>?`,
+      content: `Hey, is anyone with a ${this.freeBugMail} able to help with the request belonging to <@${this.userId}>?`,
       allowedMentions: {
         parse: [
           "roles"
@@ -126,10 +126,10 @@ class FreeBugMail {
         ephemeral: true
       });
 
-      if (!interaction.member.roles.cache.has("852589448070692947")) interaction.member.roles.add("852589448070692947");
+      if (!interaction.member.roles.cache.has(this.freeBugMail.id)) interaction.member.roles.add(this.freeBugMail);
 
       this.#DTT.channels.resolve("852592316438020136").send({
-        content: `${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe <@&852589448070692947> role has now been added to you!`,
+        content: `${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe ${this.freeBugMail} role has now been added to you!`,
         allowedMentions: {
           parse: [
             "users"
@@ -141,6 +141,10 @@ class FreeBugMail {
 
   fetchMessage() {
     return this.#DTT.channels.resolve("852581876030898176").messages.fetch(this.messageId);
+  }
+
+  get freeBugMail() {
+    return this.#DTT.role("Free BugMail");
   }
 }
 
