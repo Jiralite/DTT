@@ -56,6 +56,90 @@ class DTT extends Client {
     console.log(consoleLog);
   }
 
+  applyCommands() {
+    this.guild.commands.set([
+      {
+        name: "role",
+        description: "Used for role commands.",
+        options: [
+          {
+            type: "SUB_COMMAND",
+            name: "add",
+            description: "Adds a role.",
+            options: [
+              {
+                type: "ROLE",
+                name: "role",
+                description: "Select a role!",
+                required: true
+              }
+            ]
+          },
+          {
+            type: "SUB_COMMAND",
+            name: "remove",
+            description: "Removes a role.",
+            options: [
+              {
+                type: "ROLE",
+                name: "role",
+                description: "Select a role!",
+                required: true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "submit",
+        description: "Used for submitting free BugMail requests.",
+        options: [
+          {
+            type: "STRING",
+            name: "text",
+            description: "Submits a Free BugMail request.",
+            required: true
+          }
+        ]
+      },
+      {
+        name: "claim",
+        description: "Used for claiming free BugMail requests.",
+        options: [
+          {
+            type: "STRING",
+            name: "message_id",
+            description: "Claims a Free BugMail request.",
+            required: true
+          }
+        ]
+      },
+      {
+        name: "complete",
+        description: "Used for completing free BugMail requests.",
+        options: [
+          {
+            type: "STRING",
+            name: "message_id",
+            description: "Completes a Free BugMail request.",
+            required: true
+          }
+        ]
+      }
+    ]).then(commands => commands.forEach(command => command.setPermissions([
+      {
+        id: DTT.guild.roles.everyone.id,
+        type: "ROLE",
+        permission: false
+      },
+      {
+        id: "765638424618074122",
+        type: "ROLE",
+        permission: true
+      }
+    ])));
+  }
+
   get guild() {
     return this.guilds.resolve("765611756441436160");
   }
