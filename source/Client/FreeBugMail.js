@@ -114,6 +114,15 @@ class FreeBugMail {
   }
 
   preClaim(interaction) {
+    const pendingBugMail = this.#DTT.freeBugMails.find(({ claimedById, state }) => claimedById === interaction.user.id && state === "PENDING");
+
+    if (pendingBugMail) {
+      return interaction.reply({
+        content: `You seem to already have a pending free BugMail for <@${pendingBugMail.userId}>.`,
+        ephemeral: true
+      });
+    }
+
     interaction.message.edit({
       components: [
         [
@@ -165,12 +174,13 @@ class FreeBugMail {
         State: "PENDING"
       },
       this.No
-    ], E => {
+    ], async E => {
       if (E) return reject(E);
+      const message = await this.fetchMessage();
 
-      this.fetchMessage().then(message => message.edit({
+      message.edit({
         components: []
-      }));
+      });
 
       message.react("<a:typing:852637406334156800>");
       if (interaction.member.roles.cache.has(this.#DTT.role("Free BugMail").id)) interaction.member.roles.remove(this.#DTT.role("Free BugMail"));
