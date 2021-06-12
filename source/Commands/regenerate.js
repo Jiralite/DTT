@@ -11,7 +11,7 @@ class complete {
 
     interaction.defer({
       ephemeral: true
-    })
+    });
 
     switch (text) {
       case "roles":
@@ -24,7 +24,10 @@ class complete {
         });
     }
 
-    interaction.deleteReply();
+    interaction.followUp({
+      content: "Channel regenerated.",
+      ephemeral: true
+    });
   }
 
   async roles(channel) {
