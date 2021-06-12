@@ -121,7 +121,7 @@ class DTT extends Client {
   }
 
   get logChannel() {
-    return this.guild.channels.resolve("765616393969729597");
+    return this.kanal("log");
   }
 
   get kanaly() {
@@ -139,7 +139,9 @@ class DTT extends Client {
       "invalid-reports": "778797051713814528",
       "locked-reports": "785830225665458227",
       "bugmail-queue": "852581876030898176",
-      "bugmail-discussion": "852592316438020136"
+      "bugmail-discussion": "852592316438020136",
+      DTT: "853235436063162388",
+      log: "853235554375434270"
     };
   }
 
