@@ -6,8 +6,13 @@ class complete {
     this.#DTT = DTT;
   }
 
-  async traditional(interaction) {
+  async traditional(interaction, logText) {
+    logText += `\`${this.name}\` Slash Command. `;
+
     if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
+      logText += `Wrong channel: ${DTT.guild.channels.resolve(interaction.channelID)}`;
+      this.#DTT.freeBugMailLog(logText);
+
       return interaction.reply({
         content: `Please use this command in ${this.#DTT.kanal("bugmail-queue")}.`,
         ephemeral: true
@@ -18,6 +23,9 @@ class complete {
     const FreeBugMail = this.#DTT.freeBugMails.find(({ messageId }) => messageId === text);
 
     if (!FreeBugMail) {
+      logText += `Could not find free BugMail request with message id ${text}.`;
+      this.#DTT.freeBugMailLog(logText);
+
       return interaction.reply({
         content: "Cannot find the free BugMail request.",
         ephemeral: true
@@ -25,13 +33,16 @@ class complete {
     }
 
     if ((FreeBugMail.userId !== interaction.user.id && FreeBugMail.claimedById !== interaction.user.id) || FreeBugMail.state !== "PENDING") {
+      logText += `Attempted to complete #${FreeBugMail.No} which the account is not the author of or the claimer of.`;
+      this.#DTT.freeBugMailLog(logText);
+
       return interaction.reply({
         content: "This free BugMail request cannot be completed.",
         ephemeral: true
       });
     }
 
-    FreeBugMail.resolve(interaction);
+    FreeBugMail.resolve(interaction, false, logText);
   }
 }
 
