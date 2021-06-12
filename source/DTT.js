@@ -68,6 +68,7 @@ DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
 
 DTT.on("interaction", async interaction => {
   if (interaction.guildID !== DTT.guild.id) return;
+  let logText = `${interaction.user} interacted with the `;
 
   if (interaction.type === "APPLICATION_COMMAND") {
     DTT.commands.find(({ name }) => name === `${interaction.commandName}${interaction.options.first()?.type === "SUB_COMMAND" ? `_${interaction.options.firstKey()}` : ""}`)?.traditional(interaction);
@@ -260,8 +261,8 @@ DTT.on("interaction", async interaction => {
       }
     }
 
-    if (interaction.customID === "Free BugMail") return DTT.FreeBugMail.addRole(interaction);
-    if (interaction.customID === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
+    if (interaction.customID === "Free BugMail") return DTT.FreeBugMail.addRole(interaction, `${logText}"Opt in" button. `);
+    if (interaction.customID === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction, `${logText}"Opt out" button. `);
     const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED)/.exec(interaction.customID);
 
     if (claimRequest && interaction.channelID === DTT.kanal("bugmail-queue").id) {

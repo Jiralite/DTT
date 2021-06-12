@@ -286,9 +286,7 @@ class FreeBugMail {
     return this.#DTT.role("Free BugMail");
   }
 
-  static addRole(interaction) {
-    let logText = `${interaction.user} interacted with the "Opt in" button. `;
-
+  static addRole(interaction, logText) {
     if (interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
       logText += `${interaction.client.role("Free BugMail")} already exists on account.`;
       interaction.client.freeBugMailLog(logText);
@@ -318,9 +316,7 @@ class FreeBugMail {
     });
   }
 
-  static removeRole(interaction) {
-    let logText = `${interaction.user} interacted with the "Opt out" button. `;
-
+  static removeRole(interaction, logText) {
     if (!interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
       logText += `${interaction.client.role("Free BugMail")} does not already exist on account.`;
       interaction.client.freeBugMailLog(logText);
