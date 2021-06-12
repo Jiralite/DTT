@@ -116,7 +116,7 @@ DTT.on("message", message => {
 });
 
 DTT.on("messageDelete", message => {
-  if (message.guild.id !== DTT.guild.id || message.author.id === DTT.user.id) return;
+  if (message.guild.id !== DTT.guild.id || message.author?.id === DTT.user.id) return;
   DTT.freeBugMails.find(({ messageId }) => messageId === message.id)?.remove();
 });
 
