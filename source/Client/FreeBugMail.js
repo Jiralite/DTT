@@ -37,7 +37,7 @@ class FreeBugMail {
             {
               type: "BUTTON",
               label: "Claim",
-              customID: `${this.no}-PRECLAIM`,
+              customID: `${this.No}-PRECLAIM`,
               style: "PRIMARY"
             }
           ]
@@ -130,13 +130,13 @@ class FreeBugMail {
           {
             type: "BUTTON",
             label: "Yes! Claim!",
-            customID: `${this.no}-CLAIM`,
+            customID: `${this.No}-CLAIM`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Oops! It's BugMailed!",
-            customID: `${this.no}-BUGMAILED`,
+            customID: `${this.No}-BUGMAILED`,
             style: "DANGER"
           }
         ]
