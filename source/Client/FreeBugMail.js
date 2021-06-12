@@ -188,7 +188,8 @@ class FreeBugMail {
 
       interaction.update({
         content: `You have successfully claimed the free BugMail request of <@${this.userId}>!`,
-        ephemeral: true
+        ephemeral: true,
+        components: []
       });
 
       this.claimedById = interaction.user.id;
