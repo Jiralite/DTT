@@ -184,9 +184,9 @@ class FreeBugMail {
 
       message.react("<a:typing:852637406334156800>");
       if (interaction.member.roles.cache.has(this.#DTT.role("Free BugMail").id)) interaction.member.roles.remove(this.#DTT.role("Free BugMail"));
-      this.#DTT.kanal("bugmail-discussion").send(`${interaction.user} has just claimed the free BugMail request of <@${FreeBugMail.userId}>.\n${message.url}`);
+      this.#DTT.kanal("bugmail-discussion").send(`${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\n${message.url}`);
 
-      interaction.reply({
+      interaction.update({
         content: `You have successfully claimed the free BugMail request of <@${this.userId}>!`,
         ephemeral: true
       });
