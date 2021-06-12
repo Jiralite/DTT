@@ -7,7 +7,7 @@ class submit {
   }
 
   async traditional(interaction, logText) {
-    logText += "`submit` Slash Command. ";
+    logText += `\`${this.name}\` Slash Command. `;
 
     if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
       logText += `Wrong channel: ${DTT.guild.channels.resolve(interaction.channelID)}`;
