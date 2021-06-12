@@ -169,11 +169,7 @@ class FreeBugMail {
       if (E) return reject(E);
 
       this.fetchMessage().then(message => message.edit({
-        components: [
-          [
-            interaction.message.components[0].components[0].setDisabled(false)
-          ]
-        ]
+        components: []
       }));
 
       this.claimedById = interaction.user.id;
