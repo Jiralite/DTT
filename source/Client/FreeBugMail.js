@@ -176,7 +176,7 @@ class FreeBugMail {
         ]
       }));
 
-      this.claimedById = claimedById;
+      this.claimedById = interaction.user.id;
       this.state = "PENDING";
       clearTimeout(this.hourTimeout);
       this.hourTimeout = null;
