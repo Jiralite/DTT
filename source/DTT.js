@@ -260,48 +260,8 @@ DTT.on("interaction", async interaction => {
       }
     }
 
-    if (interaction.customID === "Free BugMail") {
-      if (interaction.member.roles.cache.has(DTT.role("Free BugMail").id)) {
-        return interaction.reply({
-          content: `You already have the ${DTT.role("Free BugMail")} role.`,
-          ephemeral: true
-        });
-      }
-
-      interaction.member.roles.add(DTT.role("Free BugMail")).then(() => interaction.reply({
-        content: `The ${DTT.role("Free BugMail")} role has been added to you!`,
-        ephemeral: true
-      })).catch(error => {
-        DTT.log("Error in self-role addition.", error);
-
-        interaction.reply({
-          content: "There was an error during self-role addition.",
-          ephemeral: true
-        });
-      });
-    }
-
-    if (interaction.customID === "No Free BugMail") {
-      if (!interaction.member.roles.cache.has(DTT.role("Free BugMail").id)) {
-        return interaction.reply({
-          content: `You do not already have the ${DTT.role("Free BugMail")} role.`,
-          ephemeral: true
-        });
-      }
-
-      interaction.member.roles.remove(DTT.role("Free BugMail")).then(() => interaction.reply({
-        content: `The ${DTT.role("Free BugMail")} role has been removed from you!`,
-        ephemeral: true
-      })).catch(error => {
-        DTT.log("Error in self-role removal.", error);
-
-        interaction.reply({
-          content: "There was an error during self-role removal.",
-          ephemeral: true
-        });
-      });
-    }
-
+    if (interaction.customID === "Free BugMail") return DTT.FreeBugMail.addRole(interaction);
+    if (interaction.customID === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
     const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED)/.exec(interaction.customID);
 
     if (claimRequest && interaction.channelID === DTT.kanal("bugmail-queue").id) {

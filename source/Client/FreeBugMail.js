@@ -285,6 +285,48 @@ class FreeBugMail {
   get freeBugMail() {
     return this.#DTT.role("Free BugMail");
   }
+
+  static addRole(interaction) {
+    if (interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
+      return interaction.reply({
+        content: `You already have the ${interaction.client.role("Free BugMail")} role.`,
+        ephemeral: true
+      });
+    }
+
+    interaction.member.roles.add(interaction.client.role("Free BugMail")).then(() => interaction.reply({
+      content: `The ${interaction.client.role("Free BugMail")} role has been added to you!`,
+      ephemeral: true
+    })).catch(error => {
+      interaction.client.log("Error in self-role addition.", error);
+
+      interaction.reply({
+        content: "There was an error during self-role addition.",
+        ephemeral: true
+      });
+    });
+  }
+
+  static removeRole(interaction) {
+    if (!interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
+      return interaction.reply({
+        content: `You do not already have the ${interaction.client.role("Free BugMail")} role.`,
+        ephemeral: true
+      });
+    }
+
+    interaction.member.roles.remove(interaction.client.role("Free BugMail")).then(() => interaction.reply({
+      content: `The ${interaction.client.role("Free BugMail")} role has been removed from you!`,
+      ephemeral: true
+    })).catch(error => {
+      interaction.client.log("Error in self-role removal.", error);
+
+      interaction.reply({
+        content: "There was an error during self-role removal.",
+        ephemeral: true
+      });
+    });
+  }
 }
 
 module.exports = FreeBugMail;
