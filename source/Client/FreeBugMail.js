@@ -284,14 +284,14 @@ class FreeBugMail {
       "RESOLVED",
       this.No
     ], E => {
-      if (E) this.#DTT.log("Error removing free BugMail request.", E);
+      if (E) this.#DTT.freeBugMailLog("Error removing free BugMail request.", E);
       this.state = "RESOLVED";
     });
   }
 
   alreadyBugMailed(interaction, logText) {
     logText += `of BugMail request #${this.No}. Account marked request as already BugMailed.`;
-    this.#DTT.log.freeBugMailLog(logText);
+    this.#DTT.freeBugMailLog(logText);
 
     this.fetchMessage().then(message => {
       message.edit({
