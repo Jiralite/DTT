@@ -15,7 +15,7 @@ class FreeBugMail {
     this.pendingDeletion = false;
   }
 
-  create(interaction, text) {
+  create(interaction, text, logText) {
     this.#DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
       Timestamp: this.timestamp,
       ["Message ID"]: this.messageId,
@@ -23,7 +23,12 @@ class FreeBugMail {
       Mentioned: this.mentioned,
       State: this.state
     }, (E, { insertId }) => {
-      if (E) return reject(E);
+      if (E) {
+        logText += "Error during Maria insertion.";
+        this.#DTT.freeBugMailLog(logText, E);
+        return;
+      }
+
       this.No = insertId;
       this.mentionedTimeout();
       this.#DTT.freeBugMails.set(this.No, this);
@@ -43,8 +48,9 @@ class FreeBugMail {
             }
           ]
         ]
-      }).catch(async error => {
-        this.#DTT.log("Error during submit interaction.", error);
+      }).catch(error => {
+        logText += "Error during editing initial interaction.";
+        this.#DTT.freeBugMailLog(logText, error);
 
         interaction.editReply({
           content: "An internal error occured.",

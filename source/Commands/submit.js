@@ -6,8 +6,13 @@ class submit {
     this.#DTT = DTT;
   }
 
-  async traditional(interaction) {
+  async traditional(interaction, logText) {
+    logText += "`submit` Slash Command. ";
+
     if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
+      logText += `Wrong channel: ${DTT.guild.channels.resolve(interaction.channelID)}`;
+      this.#DTT.freeBugMailLog(logText);
+
       return interaction.reply({
         content: `Please use this command in ${this.#DTT.kanal("bugmail-queue")}.`,
         ephemeral: true
@@ -17,6 +22,9 @@ class submit {
     const text = interaction.options.first().value;
 
     if (text.length >= 1500) {
+      logText += `Max character count reached (1500):\n\n${text}`;
+      this.#DTT.freeBugMailLog(logText);
+
       return interaction.reply({
         content: "That's way too long. Shorten it down and keep it concise!",
         ephemeral: true
@@ -34,7 +42,7 @@ class submit {
       State: "OPEN"
     });
 
-    FreeBugMail.create(interaction, text);
+    FreeBugMail.create(interaction, text, logText);
   }
 }
 

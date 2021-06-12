@@ -71,7 +71,7 @@ DTT.on("interaction", async interaction => {
   let logText = `${interaction.user} interacted with the `;
 
   if (interaction.type === "APPLICATION_COMMAND") {
-    DTT.commands.find(({ name }) => name === `${interaction.commandName}${interaction.options.first()?.type === "SUB_COMMAND" ? `_${interaction.options.firstKey()}` : ""}`)?.traditional(interaction);
+    DTT.commands.find(({ name }) => name === `${interaction.commandName}${interaction.options.first()?.type === "SUB_COMMAND" ? `_${interaction.options.firstKey()}` : ""}`)?.traditional(interaction, logText);
   }
 
   if (interaction.isButton()) {
