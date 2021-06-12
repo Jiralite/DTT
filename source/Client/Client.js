@@ -125,6 +125,10 @@ class DTT extends Client {
     return this.kanal("log");
   }
 
+  get freeBugMailLogChannel() {
+    return this.kanal("free-bugmail-log");
+  }
+
   get kanaly() {
     return {
       Information: "765620075737776218",
