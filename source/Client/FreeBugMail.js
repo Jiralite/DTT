@@ -260,7 +260,8 @@ class FreeBugMail {
 
       interaction.reply({
         content: "You have marked this free BugMail request as already BugMailed.",
-        ephemeral: true
+        ephemeral: true,
+        components: []
       });
     });
   }
