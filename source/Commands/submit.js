@@ -36,6 +36,7 @@ class submit {
 
     const FreeBugMail = new this.#DTT.FreeBugMail(this.#DTT, {
       Timestamp: interaction.createdTimestamp,
+      ["Weekly Timestamp"]: interaction.createdTimestamp,
       ["Message ID"]: message.id,
       ["User ID"]: interaction.user.id,
       Mentioned: false,

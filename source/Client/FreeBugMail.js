@@ -5,6 +5,7 @@ class FreeBugMail {
     this.#DTT = DTT;
     this.No = freeBugMail.No;
     this.timestamp = +freeBugMail.Timestamp;
+    this.weeklyTimestamp = +freeBugMail["Weekly Timestamp"];
     this.messageId = freeBugMail["Message ID"];
     this.userId = freeBugMail["User ID"];
     this.claimedById = freeBugMail["Claimed By ID"] ?? null;
@@ -18,6 +19,7 @@ class FreeBugMail {
   create(interaction, text, logText) {
     this.#DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
       Timestamp: this.timestamp,
+      ["Weekly Timestamp"]: this.courtesyTimestamp,
       ["Message ID"]: this.messageId,
       ["User ID"]: this.userId,
       Mentioned: this.mentioned,
@@ -102,18 +104,29 @@ class FreeBugMail {
           }
         ]
       ]
-    }), 604800000 - (Date.now() - this.timestamp));
+    }), 604800000 - (Date.now() - this.courtesyTimestamp));
   }
 
   resumePendingTimeout(interaction) {
     this.#DTT.freeBugMailLog(`${interaction.user} stated request #${this.No} is still ongoing after a week.`);
 
-    interaction.update({
-      content: `You've stated that the BugMail is still ongoing, <@${this.claimedById}>. Ongoing it remains!`,
-      components: []
-    });
+    this.#DTT.Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
+      Date.now(),
+      this.No
+    ], E => {
+      if (E) {
+        logText += "Error during Maria update.";
+        this.#DTT.freeBugMailLog(logText, E);
+        return;
+      }
 
-    this.timeout();
+      interaction.update({
+        content: `You've stated that the BugMail is still ongoing, <@${this.claimedById}>. Ongoing it remains!`,
+        components: []
+      });
+
+      this.timeout();
+    });
   }
 
   resolvePendingTimeout(interaction) {
