@@ -268,7 +268,7 @@ DTT.on("interaction", async interaction => {
     if (claimRequest && interaction.channelID === DTT.kanal("bugmail-queue").id) {
       if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1]).preClaim(interaction, `${logText}"Claim" button `);
       if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1]).claim(interaction, `${logText}"Yes! Claim!" button `);
-      if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1]).alreadyBugMailed(interaction, `${logText}"Oops! It's BugMailed!" button `;
+      if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1]).alreadyBugMailed(interaction, `${logText}"Oops! It's BugMailed!" button `);
     }
 
     const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction.customID);
