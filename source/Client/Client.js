@@ -142,7 +142,8 @@ class DTT extends Client {
       "bugmail-queue": "852581876030898176",
       "bugmail-discussion": "852592316438020136",
       DTT: "853235436063162388",
-      log: "853235554375434270"
+      log: "853235554375434270",
+      "free-bugmail-log": "853243608828346409"
     };
   }
 
