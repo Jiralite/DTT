@@ -40,25 +40,25 @@ class complete {
           {
             type: "BUTTON",
             label: "macOS El Capitan",
-            customID: this.#DTT.role("macOS El Capitan").id,
+            customID: `ROLE-${this.#DTT.role("macOS El Capitan").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "macOS Sierra",
-            customID: this.#DTT.role("macOS Sierra").id,
+            customID: `ROLE-${this.#DTT.role("macOS Sierra").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "macOS High Sierra",
-            customID: this.#DTT.role("macOS High Sierra").id,
+            customID: `ROLE-${this.#DTT.role("macOS High Sierra").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "macOS Mojave",
-            customID: this.#DTT.role("macOS Mojave").id,
+            customID: `ROLE-${this.#DTT.role("macOS Mojave").id}`,
             style: "PRIMARY"
           }
         ],
@@ -66,19 +66,19 @@ class complete {
           {
             type: "BUTTON",
             label: "macOS Catalina",
-            customID: this.#DTT.role("macOS Catalina").id,
+            customID: `ROLE-${this.#DTT.role("macOS Catalina").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "macOS Big Sur",
-            customID: this.#DTT.role("macOS Big Sur").id,
+            customID: `ROLE-${this.#DTT.role("macOS Big Sur").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "macOS Monterey",
-            customID: this.#DTT.role("macOS Monterey").id,
+            customID: `ROLE-${this.#DTT.role("macOS Monterey").id}`,
             style: "PRIMARY"
           }
         ]
@@ -92,7 +92,7 @@ class complete {
           {
             type: "BUTTON",
             label: "Linux",
-            customID: this.#DTT.role("Linux").id,
+            customID: `ROLE-${this.#DTT.role("Linux").id}`,
             style: "PRIMARY"
           }
         ]
@@ -106,19 +106,19 @@ class complete {
           {
             type: "BUTTON",
             label: "Windows 7",
-            customID: this.#DTT.role("Windows 7").id,
+            customID: `ROLE-${this.#DTT.role("Windows 7").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Windows 8",
-            customID: this.#DTT.role("Windows 8").id,
+            customID: `ROLE-${this.#DTT.role("Windows 8").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Windows 10",
-            customID: this.#DTT.role("Windows 10").id,
+            customID: `ROLE-${this.#DTT.role("Windows 10").id}`,
             style: "PRIMARY"
           },
         ]
@@ -132,19 +132,19 @@ class complete {
           {
             type: "BUTTON",
             label: "iPhone",
-            customID: this.#DTT.role("iPhone").id,
+            customID: `ROLE-${this.#DTT.role("iPhone").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "iPod",
-            customID: this.#DTT.role("iPod").id,
+            customID: `ROLE-${this.#DTT.role("iPod").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "iPad",
-            customID: this.#DTT.role("iPad").id,
+            customID: `ROLE-${this.#DTT.role("iPad").id}`,
             style: "PRIMARY"
           }
         ],
@@ -152,19 +152,19 @@ class complete {
           {
             type: "BUTTON",
             label: "iOS 10",
-            customID: this.#DTT.role("iOS 10").id,
+            customID: `ROLE-${this.#DTT.role("iOS 10").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "iOS 11",
-            customID: this.#DTT.role("iOS 11").id,
+            customID: `ROLE-${this.#DTT.role("iOS 11").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "iOS 12",
-            customID: this.#DTT.role("iOS 12").id,
+            customID: `ROLE-${this.#DTT.role("iOS 12").id}`,
             style: "PRIMARY"
           }
         ],
@@ -172,19 +172,19 @@ class complete {
           {
             type: "BUTTON",
             label: "iOS 13",
-            customID: this.#DTT.role("iOS 13").id,
+            customID: `ROLE-${this.#DTT.role("iOS 13").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "iOS 14",
-            customID: this.#DTT.role("iOS 14").id,
+            customID: `ROLE-${this.#DTT.role("iOS 14").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "iOS 15",
-            customID: this.#DTT.role("iOS 15").id,
+            customID: `ROLE-${this.#DTT.role("iOS 15").id}`,
             style: "PRIMARY"
           }
         ]
@@ -198,25 +198,25 @@ class complete {
           {
             type: "BUTTON",
             label: "Android 5",
-            customID: this.#DTT.role("Android 5").id,
+            customID: `ROLE-${this.#DTT.role("Android 5").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Android 6",
-            customID: this.#DTT.role("Android 6").id,
+            customID: `ROLE-${this.#DTT.role("Android 6").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Android 7",
-            customID: this.#DTT.role("Android 7").id,
+            customID: `ROLE-${this.#DTT.role("Android 7").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Android 8",
-            customID: this.#DTT.role("Android 8").id,
+            customID: `ROLE-${this.#DTT.role("Android 8").id}`,
             style: "PRIMARY"
           }
         ],
@@ -224,25 +224,25 @@ class complete {
           {
             type: "BUTTON",
             label: "Android 9",
-            customID: this.#DTT.role("Android 9").id,
+            customID: `ROLE-${this.#DTT.role("Android 9").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Android 10",
-            customID: this.#DTT.role("Android 10").id,
+            customID: `ROLE-${this.#DTT.role("Android 10").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Android 11",
-            customID: this.#DTT.role("Android 11").id,
+            customID: `ROLE-${this.#DTT.role("Android 11").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Android 12",
-            customID: this.#DTT.role("Android 12").id,
+            customID: `ROLE-${this.#DTT.role("Android 12").id}`,
             style: "PRIMARY"
           }
         ]
@@ -256,7 +256,7 @@ class complete {
           {
             type: "BUTTON",
             label: "Chromebook",
-            customID: this.#DTT.role("Chromebook").id,
+            customID: `ROLE-${this.#DTT.role("Chromebook").id}`,
             style: "PRIMARY"
           }
         ]
@@ -270,19 +270,19 @@ class complete {
           {
             type: "BUTTON",
             label: "Mobile Hardware Keyboard",
-            customID: this.#DTT.role("Mobile Hardware Keyboard").id,
+            customID: `ROLE-${this.#DTT.role("Mobile Hardware Keyboard").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Apple Pencil",
-            customID: this.#DTT.role("Apple Pencil").id,
+            customID: `ROLE-${this.#DTT.role("Apple Pencil").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Apple Watch",
-            customID: this.#DTT.role("Apple Watch").id,
+            customID: `ROLE-${this.#DTT.role("Apple Watch").id}`,
             style: "PRIMARY"
           }
         ]
@@ -296,13 +296,13 @@ class complete {
           {
             type: "BUTTON",
             label: "Touchscreen PC",
-            customID: this.#DTT.role("Touchscreen PC").id,
+            customID: `ROLE-${this.#DTT.role("Touchscreen PC").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "GDPR",
-            customID: this.#DTT.role("GDPR").id,
+            customID: `ROLE-${this.#DTT.role("GDPR").id}`,
             style: "PRIMARY"
           }
         ]
@@ -316,7 +316,7 @@ class complete {
           {
             type: "BUTTON",
             label: "Stickers",
-            customID: this.#DTT.role("Stickers").id,
+            customID: `ROLE-${this.#DTT.role("Stickers").id}`,
             style: "PRIMARY"
           }
         ]
@@ -332,25 +332,25 @@ class complete {
           {
             type: "BUTTON",
             label: "Status Updates",
-            customID: this.#DTT.role("Status Updates").id,
+            customID: `ROLE-${this.#DTT.role("Status Updates").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Canary Updates",
-            customID: this.#DTT.role("Canary Updates").id,
+            customID: `ROLE-${this.#DTT.role("Canary Updates").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "PTB Updates",
-            customID: this.#DTT.role("PTB Updates").id,
+            customID: `ROLE-${this.#DTT.role("PTB Updates").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Stable Updates",
-            customID: this.#DTT.role("Stable Updates").id,
+            customID: `ROLE-${this.#DTT.role("Stable Updates").id}`,
             style: "PRIMARY"
           }
         ]
@@ -364,31 +364,31 @@ class complete {
           {
             type: "BUTTON",
             label: "Desktop",
-            customID: this.#DTT.role("Desktop").id,
+            customID: `ROLE-${this.#DTT.role("Desktop").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Android",
-            customID: this.#DTT.role("Android").id,
+            customID: `ROLE-${this.#DTT.role("Android").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "iOS",
-            customID: this.#DTT.role("iOS").id,
+            customID: `ROLE-${this.#DTT.role("iOS").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "DBug",
-            customID: this.#DTT.role("DBug").id,
+            customID: `ROLE-${this.#DTT.role("DBug").id}`,
             style: "PRIMARY"
           },
           {
             type: "BUTTON",
             label: "Boardless",
-            customID: this.#DTT.role("Boardless").id,
+            customID: `ROLE-${this.#DTT.role("Boardless").id}`,
             style: "PRIMARY"
           }
         ]

@@ -76,6 +76,7 @@ DTT.on("interaction", async interaction => {
 
   if (interaction.isButton()) {
     const joiner = /(Tester|Alt|Deny)-(\d+)/.exec(interaction.customID);
+    const roleAssignment = /ROLE-(\d+)/.exec(interaction.customID);
 
     if (joiner) {
         if (!interaction.member.roles.cache.some(({ id }) => [
@@ -231,8 +232,8 @@ DTT.on("interaction", async interaction => {
         }
       }
 
-    if (interaction.channelID === DTT.kanal("roles").id) {
-      const role = DTT.guild.roles.resolve(interaction.customID);
+    if (roleAssignment) {
+      const role = DTT.guild.roles.resolve(roleAssignment[1]);
 
       if (interaction.member.roles.cache.has(role.id)) {
         interaction.member.roles.remove(role).then(() => interaction.reply({
