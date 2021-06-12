@@ -76,7 +76,7 @@ class DTT extends Client {
 
     for (const command of this.commands.values()) {
       const [applicationCommandData, permissions] = command.commandData;
-      this.guild.create(applicationCommandData).then(createdCommand => createdCommand.setPermissions(permissions));
+      this.guild.commands.create(applicationCommandData).then(createdCommand => createdCommand.setPermissions(permissions));
     }
   }
 
