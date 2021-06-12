@@ -302,6 +302,14 @@ class FreeBugMail {
         ]
       });
 
+      this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+        "DISABLED",
+        this.No
+      ], E => {
+        if (E) this.#DTT.freeBugMailLog("Error disabling free BugMail request.", E);
+        this.state = "DISABLED";
+      });
+
       this.pendingDeletion = true;
       this.bugmailDiscussion.send(`Apparently, this has already been BugMailed. Someone delete it!\n${message.url}`);
 

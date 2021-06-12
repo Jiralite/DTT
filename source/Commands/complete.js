@@ -32,6 +32,16 @@ class complete {
       });
     }
 
+    if (FreeBugMail.state === "DISABLED") {
+      logText += `Attempted to complete #${FreeBugMail.No} which has been disabled.`;
+      this.#DTT.freeBugMailLog(logText);
+
+      return interaction.reply({
+        content: "This free BugMail request is disabled.",
+        ephemeral: true
+      });
+    }
+
     if ((FreeBugMail.userId !== interaction.user.id && FreeBugMail.claimedById !== interaction.user.id) || FreeBugMail.state !== "PENDING") {
       logText += `Attempted to complete #${FreeBugMail.No} which the account is not the author of or the claimer of.`;
       this.#DTT.freeBugMailLog(logText);
