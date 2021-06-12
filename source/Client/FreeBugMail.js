@@ -19,7 +19,7 @@ class FreeBugMail {
   create(interaction, text, logText) {
     this.#DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
       Timestamp: this.timestamp,
-      ["Weekly Timestamp"]: this.courtesyTimestamp,
+      ["Weekly Timestamp"]: this.weeklyTimestamp,
       ["Message ID"]: this.messageId,
       ["User ID"]: this.userId,
       Mentioned: this.mentioned,
@@ -104,7 +104,7 @@ class FreeBugMail {
           }
         ]
       ]
-    }), 604800000 - (Date.now() - this.courtesyTimestamp));
+    }), 604800000 - (Date.now() - this.weeklyTimestamp));
   }
 
   resumePendingTimeout(interaction) {
