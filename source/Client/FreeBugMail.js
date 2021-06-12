@@ -31,7 +31,17 @@ class FreeBugMail {
         content: text,
         allowedMentions: {
           parse: []
-        }
+        },
+        components: [
+          [
+            {
+              type: "BUTTON",
+              label: "Claim",
+              customID: `${this.no}-PRECLAIM`,
+              style: "PRIMARY"
+            }
+          ]
+        ]
       }).catch(async error => {
         this.#DTT.log("Error during submit interaction.", error);
 
@@ -103,22 +113,75 @@ class FreeBugMail {
     this.resolve(interaction, true);
   }
 
-  claim(claimedById) {
-    return new Promise((resolve, reject) => this.#DTT.Maria.query("UPDATE `Free BugMails` SET ? WHERE `No` = ?;", [
+  preClaim(interaction) {
+    interaction.message.edit({
+      components: [
+        [
+          interaction.message.components[0].components[0].setDisabled()
+        ]
+      ]
+    });
+
+    interaction.reply({
+      content: "⚠️ Have you searched in Discord Testers (specifically <#733499719267123200>) to ensure that this isn't already BugMailed?",
+      ephemeral: true,
+      components: [
+        [
+          {
+            type: "BUTTON",
+            label: "Yes! Claim!",
+            customID: `${this.no}-CLAIM`,
+            style: "PRIMARY"
+          },
+          {
+            type: "BUTTON",
+            label: "Oops! It's BugMailed!",
+            customID: `${this.no}-BUGMAILED`,
+            style: "DANGER"
+          }
+        ]
+      ]
+    }).then(() => setTimeout(() => {
+      interaction.message.edit({
+        components: [
+          [
+            interaction.message.components[0].components[0].setDisabled(false)
+          ]
+        ]
+      });
+
+      interaction.editReply({
+        content: "Interaction took too long - the claim button is now free again!",
+        ephemeral: true,
+        components: []
+      });
+    }, 60000));
+  }
+
+  claim(interaction) {
+    this.#DTT.Maria.query("UPDATE `Free BugMails` SET ? WHERE `No` = ?;", [
       {
-        ["Claimed By ID"]: claimedById,
+        ["Claimed By ID"]: interaction.user.id,
         State: "PENDING"
       },
       this.No
     ], E => {
       if (E) return reject(E);
+
+      this.fetchMessage().then(message => message.edit({
+        components: [
+          [
+            interaction.message.components[0].components[0].setDisabled(false)
+          ]
+        ]
+      }));
+
       this.claimedById = claimedById;
       this.state = "PENDING";
       clearTimeout(this.hourTimeout);
       this.hourTimeout = null;
       this.timeout();
-      resolve();
-    }));
+    });
   }
 
   resolve(interaction, fromTimeout = false) {
@@ -163,6 +226,25 @@ class FreeBugMail {
       this.No
     ], E => {
       if (E) this.#DTT.log("Error removing free BugMail request.", E);
+    });
+  }
+
+  alreadyBugMailed(interaction) {
+    this.fetchMessage().then(message => {
+      interaction.message.edit({
+        components: [
+          [
+            interaction.message.components[0].components[0].setDisabled()
+          ]
+        ]
+      });
+
+      this.bugmailDiscussion.send(`Apparently, this has already been BugMailed. Someone delete it!\n${message.url}`);
+
+      interaction.reply({
+        content: "You have marked this free BugMail request as already BugMailed.",
+        ephemeral: true
+      });
     });
   }
 
