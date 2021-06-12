@@ -12,6 +12,7 @@ class FreeBugMail {
     this.state = freeBugMail.State;
     this.hourTimeout = null;
     this.reminderTimeout = null;
+    this.pendingDeletion = false;
   }
 
   create(interaction, text) {
@@ -151,7 +152,7 @@ class FreeBugMail {
         ]
       ]
     }).then(() => setTimeout(() => {
-      if (this.state !== "OPEN") return;
+      if (this.state !== "OPEN" || this.pendingDeletion) return;
 
       interaction.message.edit({
         components: [
@@ -258,6 +259,7 @@ class FreeBugMail {
         ]
       });
 
+      this.pendingDeletion = true;
       this.bugmailDiscussion.send(`Apparently, this has already been BugMailed. Someone delete it!\n${message.url}`);
 
       interaction.update({
