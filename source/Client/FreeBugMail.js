@@ -49,7 +49,7 @@ class FreeBugMail {
           ]
         ]
       }).then(() => {
-        logText += `Success!\n\n${text}`;
+        logText += `Success! [#${this.No}]\n\n${text}`;
         this.#DTT.freeBugMailLog(logText);
       }).catch(error => {
         logText += "Error during editing initial interaction.";
