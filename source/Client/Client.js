@@ -44,7 +44,8 @@ class DTT extends Client {
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
 
-    this.logChannel.send(`${stamp} ${message}`, {
+    this.logChannel.send({
+      content: `${stamp} ${message}`,
       allowedMentions: {
         parse: []
       }
