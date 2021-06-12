@@ -218,7 +218,7 @@ class FreeBugMail {
       if (interaction.member.roles.cache.has(this.#DTT.role("Free BugMail").id)) interaction.member.roles.remove(this.#DTT.role("Free BugMail"));
       logText += "Request claimed!";
       this.#DTT.freeBugMailLog(logText);
-      this.#DTT.kanal("bugmail-discussion").send(`${interaction.user} has just claimed the free BugMail request of <@${this.userId}>. Be sure to post in <#733499719267123200> and ${this.#DTT.kanal("locked-reports")} for clarity!\n${message.url}`);
+      this.#DTT.kanal("bugmail-discussion").send(`${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("locked-reports")} for clarity!\n${message.url}`);
 
       interaction.update({
         content: `You have successfully claimed the free BugMail request of <@${this.userId}>!`,
