@@ -9,15 +9,22 @@ class complete {
   async traditional(interaction) {
     const text = interaction.options.first().value;
 
+    interaction.defer({
+      ephemeral: true
+    })
+
     switch (text) {
       case "roles":
-        return this.roles(interaction.channel);
+        await this.roles(interaction.channel);
+        break;
       default:
         return interaction.reply({
           content: "Cannot interpret the provided channel name.",
           ephemeral: true
         });
     }
+
+    interaction.deleteReply();
   }
 
   async roles(channel) {
