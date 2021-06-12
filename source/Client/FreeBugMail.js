@@ -248,10 +248,10 @@ class FreeBugMail {
 
   alreadyBugMailed(interaction) {
     this.fetchMessage().then(message => {
-      interaction.message.edit({
+      message.edit({
         components: [
           [
-            interaction.message.components[0].components[0].setDisabled()
+            message.components[0].components[0].setDisabled(true)
           ]
         ]
       });
