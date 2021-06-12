@@ -56,6 +56,7 @@ class DTT extends Client {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
+    if (message.length >= 2000) message = `${message.slice(0, 1997)}...`;
 
     this.freeBugMailLogChannel.send({
       content: `${stamp} ${message}`,
