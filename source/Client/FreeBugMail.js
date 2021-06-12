@@ -151,6 +151,8 @@ class FreeBugMail {
         ]
       ]
     }).then(() => setTimeout(() => {
+      if (this.state !== "OPEN") return;
+
       interaction.message.edit({
         components: [
           [
