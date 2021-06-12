@@ -45,7 +45,7 @@ class submit {
     FreeBugMail.create(interaction, text, logText);
   }
 
-  get constructCommand() {
+  get commandData() {
     return [
       {
         name: "submit",
