@@ -18,7 +18,7 @@ class complete {
         await this.roles(interaction.channel);
         break;
       default:
-        return interaction.reply({
+        return interaction.followUp({
           content: "Cannot interpret the provided channel name.",
           ephemeral: true
         });
