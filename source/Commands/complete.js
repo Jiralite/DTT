@@ -44,6 +44,35 @@ class complete {
 
     FreeBugMail.resolve(interaction, false, logText);
   }
+
+  get commandData() {
+    return [
+      {
+        name: "complete",
+        description: "Used for completing free BugMail requests.",
+        options: [
+          {
+            type: "STRING",
+            name: "message_id",
+            description: "Completes a Free BugMail request.",
+            required: true
+          }
+        ]
+      },
+      [
+        {
+          id: this.#DTT.guild.roles.everyone.id,
+          type: "ROLE",
+          permission: false
+        },
+        {
+          id: this.#DTT.role("Tester").id,
+          type: "ROLE",
+          permission: true
+        }
+      ]
+    ];
+  }
 }
 
 module.exports = complete;

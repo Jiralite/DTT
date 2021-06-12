@@ -44,6 +44,35 @@ class submit {
 
     FreeBugMail.create(interaction, text, logText);
   }
+
+  get constructCommand() {
+    return [
+      {
+        name: "submit",
+        description: "Used for submitting free BugMail requests.",
+        options: [
+          {
+            type: "STRING",
+            name: "text",
+            description: "Submits a Free BugMail request.",
+            required: true
+          }
+        ]
+      },
+      [
+        {
+          id: this.#DTT.guild.roles.everyone.id,
+          type: "ROLE",
+          permission: false
+        },
+        {
+          id: this.#DTT.role("Tester").id,
+          type: "ROLE",
+          permission: true
+        }
+      ]
+    ];
+  }
 }
 
 module.exports = submit;

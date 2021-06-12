@@ -71,56 +71,13 @@ class DTT extends Client {
     console.log(consoleLog);
   }
 
-  applyCommands() {
-    this.guild.commands.set([
-      {
-        name: "submit",
-        description: "Used for submitting free BugMail requests.",
-        options: [
-          {
-            type: "STRING",
-            name: "text",
-            description: "Submits a Free BugMail request.",
-            required: true
-          }
-        ]
-      },
-      {
-        name: "claim",
-        description: "Used for claiming free BugMail requests.",
-        options: [
-          {
-            type: "STRING",
-            name: "message_id",
-            description: "Claims a Free BugMail request.",
-            required: true
-          }
-        ]
-      },
-      {
-        name: "complete",
-        description: "Used for completing free BugMail requests.",
-        options: [
-          {
-            type: "STRING",
-            name: "message_id",
-            description: "Completes a Free BugMail request.",
-            required: true
-          }
-        ]
-      }
-    ]).then(commands => commands.forEach(command => command.setPermissions([
-      {
-        id: this.guild.roles.everyone.id,
-        type: "ROLE",
-        permission: false
-      },
-      {
-        id: "765638424618074122",
-        type: "ROLE",
-        permission: true
-      }
-    ])));
+  async applyCommands() {
+    await this.guild.commands.set([]);
+
+    for (command of this.commands) {
+      const [applicationCommandData, permissions] = command.commandData;
+      this.guild.create(applicationCommandData).then(createdCommand => createdCommand.setPermissions(permissions));
+    }
   }
 
   kanal(channel) {
