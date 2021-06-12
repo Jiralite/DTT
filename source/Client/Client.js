@@ -52,6 +52,19 @@ class DTT extends Client {
     }).catch(error => this.logChannel.send(`${stamp} Couldn't send a response.`));
   }
 
+  freeBugMailLog(message, consoleLog = message) {
+    let stamp = new Date().toISOString();
+    this.consoleLog(consoleLog, stamp);
+    stamp = `\`[${stamp}]\``;
+
+    this.freeBugMailLogChannel.send({
+      content: `${stamp} ${message}`,
+      allowedMentions: {
+        parse: []
+      }
+    }).catch(error => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
+  }
+
   consoleLog(consoleLog, stamp = new Date().toISOString()) {
     console.log(`- - - - - ${stamp} - - - - -`);
     console.log(consoleLog);

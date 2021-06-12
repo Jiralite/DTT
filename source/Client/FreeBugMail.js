@@ -287,18 +287,29 @@ class FreeBugMail {
   }
 
   static addRole(interaction) {
+    let logText = `${interaction.user} interacted with the "Opt in" button. `;
+
     if (interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
+      logText += `${interaction.client.role("Free BugMail")} already exists on account.`;
+      interaction.client.freeBugMailLog(logText);
+
       return interaction.reply({
         content: `You already have the ${interaction.client.role("Free BugMail")} role.`,
         ephemeral: true
       });
     }
 
-    interaction.member.roles.add(interaction.client.role("Free BugMail")).then(() => interaction.reply({
-      content: `The ${interaction.client.role("Free BugMail")} role has been added to you!`,
-      ephemeral: true
-    })).catch(error => {
-      interaction.client.log("Error in self-role addition.", error);
+    interaction.member.roles.add(interaction.client.role("Free BugMail")).then(() => {
+      logText += `${interaction.client.role("Free BugMail")} added to account.`;
+      interaction.client.freeBugMailLog(logText);
+
+      interaction.reply({
+        content: `The ${interaction.client.role("Free BugMail")} role has been added to you!`,
+        ephemeral: true
+      });
+    }).catch(error => {
+      logText += `Error in ${interaction.client.role("Free BugMail")} addition.`;
+      interaction.client.freeBugMailLog(logText, error);
 
       interaction.reply({
         content: "There was an error during self-role addition.",
@@ -308,18 +319,29 @@ class FreeBugMail {
   }
 
   static removeRole(interaction) {
+    let logText = `${interaction.user} interacted with the "Opt out" button. `;
+
     if (!interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
+      logText += `${interaction.client.role("Free BugMail")} does not already exist on account.`;
+      interaction.client.freeBugMailLog(logText);
+
       return interaction.reply({
         content: `You do not already have the ${interaction.client.role("Free BugMail")} role.`,
         ephemeral: true
       });
     }
 
-    interaction.member.roles.remove(interaction.client.role("Free BugMail")).then(() => interaction.reply({
-      content: `The ${interaction.client.role("Free BugMail")} role has been removed from you!`,
-      ephemeral: true
-    })).catch(error => {
-      interaction.client.log("Error in self-role removal.", error);
+    interaction.member.roles.remove(interaction.client.role("Free BugMail")).then(() => {
+      logText += `${interaction.client.role("Free BugMail")} removed from account.`;
+      interaction.client.freeBugMailLog(logText);
+
+      interaction.reply({
+        content: `The ${interaction.client.role("Free BugMail")} role has been removed from you!`,
+        ephemeral: true
+      });
+    }).catch(error => {
+      logText += `Error in ${interaction.client.role("Free BugMail")} removal.`;
+      interaction.client.freeBugMailLog(logText, error);
 
       interaction.reply({
         content: "There was an error during self-role removal.",
