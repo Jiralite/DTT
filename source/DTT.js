@@ -335,7 +335,7 @@ DTT.on("message", message => {
 
 DTT.on("messageDelete", message => {
   if (message.guild.id !== DTT.guild.id) return;
-  const FreeBugMail = DTT.freeBugMails.find(({ messageId }) => messageId === message.id)?.remove();
+  DTT.freeBugMails.find(({ messageId }) => messageId === message.id)?.remove();
 });
 
 DTT.on("ready", () => {
