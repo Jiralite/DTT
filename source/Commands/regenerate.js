@@ -7,6 +7,16 @@ class complete {
   }
 
   async traditional(interaction) {
+    const channel = interaction.channel;
+
+    if (!channel.permissionsFor(this.#DTT.user).has([
+      "VIEW_CHANNEL",
+      "SEND_MESSAGES"
+    ])) return interaction.reply({
+      content: "`VIEW_CHANNEL` & `SEND_MESSAGES` are required to execute this command here.",
+      ephemeral: true
+    });
+
     const text = interaction.options.first().value;
 
     interaction.defer({
@@ -15,7 +25,7 @@ class complete {
 
     switch (text) {
       case "roles":
-        await this.roles(interaction.channel);
+        await this.roles(channel);
         break;
       default:
         return interaction.followUp({
