@@ -137,7 +137,7 @@ class FreeBugMail {
       components: []
     });
 
-    this.resolve(interaction, true);
+    this.resolve(interaction, true, );
   }
 
   preClaim(interaction, logText) {
@@ -247,7 +247,7 @@ class FreeBugMail {
     });
   }
 
-  resolve(interaction, fromTimeout, logText) {
+  resolve(interaction, fromTimeout, logText = "") {
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
