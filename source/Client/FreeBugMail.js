@@ -258,7 +258,7 @@ class FreeBugMail {
 
       this.bugmailDiscussion.send(`Apparently, this has already been BugMailed. Someone delete it!\n${message.url}`);
 
-      interaction.reply({
+      interaction.update({
         content: "You have marked this free BugMail request as already BugMailed.",
         ephemeral: true,
         components: []
