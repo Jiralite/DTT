@@ -11,7 +11,7 @@ class complete {
 
     switch (text) {
       case "roles":
-        return this.roles(message.channel);
+        return this.roles(interaction.channel);
       default:
         return interaction.reply({
           content: "Cannot interpret the provided channel name.",
