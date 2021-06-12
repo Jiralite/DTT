@@ -304,7 +304,7 @@ DTT.on("interaction", async interaction => {
 
     const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED)/.exec(interaction.customID);
 
-    if (claimRequest && interaction.channelID === DTT.kanal("bugmail-queue")) {
+    if (claimRequest && interaction.channelID === DTT.kanal("bugmail-queue").id) {
       if (claimRequest[1] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1]).preClaim(interaction);
       if (claimRequest[1] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1]).claim(interaction);
       if (claimRequest[1] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1]).alreadyBugMailed(interaction);
