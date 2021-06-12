@@ -117,7 +117,7 @@ class FreeBugMail {
     interaction.message.edit({
       components: [
         [
-          interaction.message.components[0].components[0].setDisabled()
+          interaction.message.components[0].components[0].setDisabled(true)
         ]
       ]
     });
