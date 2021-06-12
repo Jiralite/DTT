@@ -49,15 +49,15 @@ class Verification {
 
     switch (authentication) {
       case "Tester":
-        return interaction.client.Verification.authoriseTester(guildmember);
+        return interaction.client.Verification.authoriseTester(interaction, guildmember);
       case "Alt":
-        return interaction.client.Verification.authoriseAlt(guildmember);
+        return interaction.client.Verification.authoriseAlt(interaction, guildmember);
       case "Deny":
-        return interaction.client.Verification.authoriseKick(guildmember);
+        return interaction.client.Verification.authoriseKick(interaction, guildmember);
     }
   }
 
-  static authoriseTester(guildmember) {
+  static authoriseTester(interaction, guildmember) {
     guildmember.roles.add(guildmember.client.role("Tester")).then(() => {
       interaction.reply({
         content: `You have given the ${guildmember.client.role("Tester")} role to ${guildmember}.`,
@@ -74,7 +74,7 @@ class Verification {
     });
   }
 
-  static authoriseAlt(guildmember) {
+  static authoriseAlt(interaction, guildmember) {
     guildmember.roles.add(guildmember.client.role("Alt Account")).then(() => {
       interaction.reply({
         content: `You have given the ${guildmember.client.role("Alt Account")} role to ${guildmember}.`,
@@ -90,7 +90,7 @@ class Verification {
     });
   }
 
-  static authoriseKick(guildmember) {
+  static authoriseKick(interaction, guildmember) {
     guildmember.kick().then(() => {
       interaction.reply({
         content: `${interaction.user} has kicked ${guildmember}.`
