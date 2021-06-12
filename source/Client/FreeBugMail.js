@@ -241,6 +241,7 @@ class FreeBugMail {
       this.No
     ], E => {
       if (E) this.#DTT.log("Error removing free BugMail request.", E);
+      this.state = "RESOLVED";
     });
   }
 
