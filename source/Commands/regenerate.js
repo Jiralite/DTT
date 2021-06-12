@@ -394,7 +394,7 @@ class complete {
         options: [
           {
             type: "STRING",
-            name: "channel name",
+            name: "channel_name",
             description: "Name of the channel to regenerate.",
             required: true
           }
