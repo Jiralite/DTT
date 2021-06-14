@@ -173,7 +173,7 @@ class FreeBugMail {
             type: "BUTTON",
             label: "Yes! Claim!",
             customID: `${this.No}-CLAIM`,
-            style: "PRIMARY"
+            style: "SUCCESS"
           },
           {
             type: "BUTTON",
