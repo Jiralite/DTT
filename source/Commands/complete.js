@@ -10,7 +10,7 @@ class complete {
     logText += `\`${this.name}\` Slash Command. `;
 
     if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
-      logText += `Wrong channel: ${DTT.guild.channels.resolve(interaction.channelID)}`;
+      logText += `Wrong channel: ${this.#DTT.guild.channels.resolve(interaction.channelID)}`;
       this.#DTT.freeBugMailLog(logText);
 
       return interaction.reply({
