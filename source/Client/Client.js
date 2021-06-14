@@ -29,7 +29,6 @@ class DTT extends Client {
       folders.forEach(folder => {
         for (const F of readdirSync(`./Commands/${folder}`).filter(file => file.endsWith(".js"))) {
           const command = new (require(`../Commands/${folder}/${F}`))(this);
-          command.type = folder;
           commandsCollection.set(command.name, command);
         }
       });
