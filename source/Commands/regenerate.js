@@ -27,11 +27,6 @@ class complete {
       case "roles":
         await this.roles(channel);
         break;
-      default:
-        return interaction.followUp({
-          content: "Cannot interpret the provided channel name.",
-          ephemeral: true
-        });
     }
 
     interaction.followUp({
@@ -416,7 +411,13 @@ class complete {
             type: "STRING",
             name: "channel_name",
             description: "Name of the channel to regenerate.",
-            required: true
+            required: true,
+            choices: [
+              {
+                name: "Roles",
+                value: "roles"
+              }
+            ]
           }
         ]
       },
