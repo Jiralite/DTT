@@ -36,10 +36,23 @@ class FreeBugMail {
       this.#DTT.freeBugMails.set(this.No, this);
 
       interaction.editReply({
-        content: text,
-        allowedMentions: {
-          parse: []
-        },
+        embeds: [
+          {
+            description: text,
+            timestamp: Date.now(),
+            color: interaction.guild.me.displayColor,
+            footer: {
+              text: `#${this.No}`
+            },
+            author: {
+              name: interaction.user.tag,
+              icon_url: interaction.user.displayAvatarURL({
+                format: "png",
+                dynamic: true
+              })
+            }
+          }
+        ],
         components: [
           [
             {
@@ -145,7 +158,7 @@ class FreeBugMail {
     const pendingBugMail = this.#DTT.freeBugMails.find(({ claimedById, state }) => claimedById === interaction.user.id && state === "PENDING");
 
     if (pendingBugMail) {
-      logText += `Account already has a pending BugMail [#${pendingBugMail.No}].`;
+      logText += `Account already has a pending BugMail (#${pendingBugMail.No}).`;
       this.#DTT.freeBugMailLog(logText);
 
       return interaction.reply({
@@ -231,7 +244,11 @@ class FreeBugMail {
       if (interaction.member.roles.cache.has(this.#DTT.role("Free BugMail").id)) interaction.member.roles.remove(this.#DTT.role("Free BugMail"));
       logText += "Request claimed!";
       this.#DTT.freeBugMailLog(logText);
-      this.#DTT.kanal("bugmail-discussion").send(`${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("locked-reports")} for clarity!\n${message.url}`);
+
+      this.#DTT.kanal("bugmail-discussion").send({
+        content: `${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("locked-reports")} for clarity!`,
+        embeds: message.embeds
+      });
 
       interaction.update({
         content: `You have successfully claimed the free BugMail request of <@${this.userId}>!`,
@@ -261,9 +278,7 @@ class FreeBugMail {
       clearTimeout(this.reminderTimeout);
       this.state = "RESOLVED";
       this.reminderTimeout = null;
-
       const message = await this.fetchMessage().catch(() => null);
-      message?.delete();
 
       if (!fromTimeout) interaction.reply({
         content: `You've completed the free BugMail request of <@${this.userId}>!`,
@@ -274,6 +289,7 @@ class FreeBugMail {
 
       this.bugmailDiscussion.send({
         content: `${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe ${this.freeBugMail} role has now been added to you!`,
+        embeds: message?.embeds,
         allowedMentions: {
           parse: [
             "users"
@@ -281,6 +297,7 @@ class FreeBugMail {
         }
       });
 
+      message?.delete();
       logText += `Request ${this.No} complete!`;
       this.#DTT.freeBugMailLog(logText);
     });
@@ -324,10 +341,14 @@ class FreeBugMail {
       });
 
       this.pendingDeletion = true;
-      this.bugmailDiscussion.send(`Apparently, this has already been BugMailed. Someone delete it!\n${message.url}`);
+
+      this.bugmailDiscussion.send({
+        content: "Apparently, this has already been BugMailed. It should be deleted.",
+        embeds: message.embeds
+      });
 
       interaction.update({
-        content: "You have marked this free BugMail request as already BugMailed.",
+        content: `You have marked Free BugMail request #${this.No} as already BugMailed.`,
         ephemeral: true,
         components: []
       });
