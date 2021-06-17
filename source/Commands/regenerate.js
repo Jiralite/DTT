@@ -202,6 +202,12 @@ class complete {
         [
           {
             type: "BUTTON",
+            label: "Android Alpha",
+            customID: `ROLE-${this.#DTT.role("Android Alpha").id}`,
+            style: "PRIMARY"
+          },
+          {
+            type: "BUTTON",
             label: "Android 5",
             customID: `ROLE-${this.#DTT.role("Android 5").id}`,
             style: "PRIMARY"
@@ -211,7 +217,9 @@ class complete {
             label: "Android 6",
             customID: `ROLE-${this.#DTT.role("Android 6").id}`,
             style: "PRIMARY"
-          },
+          }
+        ],
+        [
           {
             type: "BUTTON",
             label: "Android 7",
@@ -223,15 +231,15 @@ class complete {
             label: "Android 8",
             customID: `ROLE-${this.#DTT.role("Android 8").id}`,
             style: "PRIMARY"
-          }
-        ],
-        [
+          },
           {
             type: "BUTTON",
             label: "Android 9",
             customID: `ROLE-${this.#DTT.role("Android 9").id}`,
             style: "PRIMARY"
-          },
+          }
+        ],
+        [
           {
             type: "BUTTON",
             label: "Android 10",
