@@ -34,6 +34,8 @@ class Verification {
       interaction.client.role("DT Staff").id,
       interaction.client.role("DT Mod or BA").id
     ].includes(id))) {
+      interaction.client.log(`${interaction.user} interacted with a verification button but failed authorisation checks.`);
+
       return interaction.reply({
         content: "You do not have permission to perform this interaction.",
         ephemeral: true
@@ -42,10 +44,14 @@ class Verification {
 
     const guildmember = await interaction.client.guild.members.fetch(guildmemberId).catch(error => null);
 
-    if (!guildmember) return interaction.reply({
-      content: "Error fetching guildmember.",
-      ephemeral: true
-    });
+    if (!guildmember) {
+      interaction.client.log("Error fetching guildmember.");
+
+      return interaction.reply({
+        content: "Error fetching guildmember.",
+        ephemeral: true
+      });
+    }
 
     switch (authentication) {
       case "Tester":
@@ -59,6 +65,8 @@ class Verification {
 
   static authoriseTester(interaction, guildmember) {
     guildmember.roles.add(guildmember.client.role("Tester")).then(() => {
+      interaction.client.log(`${interaction.user} has verified ${guildmember} as a ${guildmember.client.role("Tester")}.`);
+
       interaction.reply({
         content: `You have given the ${guildmember.client.role("Tester")} role to ${guildmember}.`,
         ephemeral: true
@@ -67,6 +75,8 @@ class Verification {
       interaction.message.delete().catch(error => null);
       guildmember.client.kanal("general").send(`Welcome to **${guildmember.client.guild.name}**, ${guildmember}! Be sure to check out ${guildmember.client.kanal("roles")} and other channels!`);
     }).catch(error => {
+      interaction.client.log(`Error adding role to ${guildmember}.`, error);
+
       interaction.reply({
         content: "Error adding role to guildmember.",
         ephemeral: true
@@ -76,6 +86,8 @@ class Verification {
 
   static authoriseAlt(interaction, guildmember) {
     guildmember.roles.add(guildmember.client.role("Alt Account")).then(() => {
+      interaction.client.log(`${interaction.user} has verified ${guildmember} as an ${guildmember.client.role("Alt Account")}.`);
+
       interaction.reply({
         content: `You have given the ${guildmember.client.role("Alt Account")} role to ${guildmember}.`,
         ephemeral: true
@@ -83,6 +95,8 @@ class Verification {
 
       interaction.message.delete().catch(error => null);
     }).catch(error => {
+      interaction.client.log(`Error adding role to ${guildmember}.`, error);
+
       interaction.reply({
         content: "Error adding role to guildmember.",
         ephemeral: true
@@ -92,13 +106,13 @@ class Verification {
 
   static authoriseKick(interaction, guildmember) {
     guildmember.kick().then(() => {
-      interaction.reply({
-        content: `${interaction.user} has kicked ${guildmember}.`
-      });
-
+      interaction.client.log(`${interaction.user} has removed ${guildmember} from this guild - failed verification.`);
+      interaction.reply(`${interaction.user} has kicked ${guildmember}.`);
       interaction.message.delete().catch(error => null);
       setTimeout(() => interaction.deleteReply().catch(error => null), 60000);
     }).catch(error => {
+      interaction.client.log(`Error removing ${guildmember} from this guild.`, error);
+
       interaction.reply({
         content: "Error kicking guildmember.",
         ephemeral: true
