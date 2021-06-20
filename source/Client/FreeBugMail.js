@@ -133,6 +133,8 @@ class FreeBugMail {
         return;
       }
 
+      this.weeklyTimestamp = Date.now();
+
       interaction.update({
         content: `You've stated that the BugMail is still ongoing, <@${this.claimedById}>. Ongoing it remains!`,
         components: []
