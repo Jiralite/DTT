@@ -126,6 +126,12 @@ class complete {
             customID: `ROLE-${this.#DTT.role("Windows 10").id}`,
             style: "PRIMARY"
           },
+          {
+            type: "BUTTON",
+            label: "Windows 11",
+            customID: `ROLE-${this.#DTT.role("Windows 11").id}`,
+            style: "PRIMARY"
+          }
         ]
       ]
     });
