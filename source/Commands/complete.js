@@ -19,11 +19,11 @@ class complete {
       });
     }
 
-    const text = interaction.options.first().value;
-    const FreeBugMail = this.#DTT.freeBugMails.find(({ messageId }) => messageId === text);
+    const number = interaction.options.first().value;
+    const FreeBugMail = this.#DTT.freeBugMails.get(number);
 
     if (!FreeBugMail) {
-      logText += `Could not find free BugMail request with message id ${text}.`;
+      logText += `Could not find free BugMail request with id ${number}.`;
       this.#DTT.freeBugMailLog(logText);
 
       return interaction.reply({
@@ -62,9 +62,9 @@ class complete {
         description: "Used for completing free BugMail requests.",
         options: [
           {
-            type: "STRING",
-            name: "message_id",
-            description: "Completes a Free BugMail request.",
+            type: "INTEGER",
+            name: "number",
+            description: "The Free BugMail request # to complete.",
             required: true
           }
         ]
