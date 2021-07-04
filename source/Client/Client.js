@@ -188,7 +188,6 @@ class DTT extends Client {
       "Apple Pencil": "766337433712197642",
       "Apple Watch": "766338782273732649",
       "Touchscreen PC": "766339616944816179",
-      Stickers: "789854158995324958",
       GDPR: "818960617972957195",
       Shame: "789692216880660561",
     }

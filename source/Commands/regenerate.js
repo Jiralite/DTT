@@ -328,19 +328,7 @@ class complete {
       ]
     });
 
-    await channel.send({
-      content: "**__Experiments__**",
-      components: [
-        [
-          {
-            type: "BUTTON",
-            label: "Stickers",
-            customID: `ROLE-${this.#DTT.role("Stickers").id}`,
-            style: "PRIMARY"
-          }
-        ]
-      ]
-    });
+    await channel.send("**__Experiments__**\n\nThere are currently no experiment roles.");
 
     await channel.send("There are also other roles we use for notifying purposes. Check them out!");
 
