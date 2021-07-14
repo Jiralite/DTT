@@ -42,24 +42,37 @@ class Verification {
       });
     }
 
-    const guildmember = await interaction.client.guild.members.fetch(guildmemberId).catch(error => null);
+    try {
+      const guildmember = await interaction.client.guild.members.fetch(guildmemberId);
 
-    if (!guildmember) {
-      interaction.client.log("Error fetching guildmember.");
+      switch (authentication) {
+        case "Tester":
+          return interaction.client.Verification.authoriseTester(interaction, guildmember);
+        case "Alt":
+          return interaction.client.Verification.authoriseAlt(interaction, guildmember);
+        case "Deny":
+          return interaction.client.Verification.authoriseKick(interaction, guildmember);
+      }
+    } catch (error) {
+      const errorString = "Error fetching guildmember";
+
+      if (error.code === 10007 && error.httpStatus === 404) {
+        errorString += ": guildmember no longer in server.";
+        interaction.client.log(errorString);
+
+        return interaction.update({
+          content: `<@${guildmemberId}> no longer appears to be in the server.`,
+          components: []
+        }).then(() => setTimeout(() => interaction.message.delete().catch(() => null), 5000));
+      }
+
+      errorString += ".";
+      interaction.client.log(errorString);
 
       return interaction.reply({
         content: "Error fetching guildmember.",
         ephemeral: true
       });
-    }
-
-    switch (authentication) {
-      case "Tester":
-        return interaction.client.Verification.authoriseTester(interaction, guildmember);
-      case "Alt":
-        return interaction.client.Verification.authoriseAlt(interaction, guildmember);
-      case "Deny":
-        return interaction.client.Verification.authoriseKick(interaction, guildmember);
     }
   }
 
