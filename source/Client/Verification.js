@@ -54,12 +54,9 @@ class Verification {
           return interaction.client.Verification.authoriseKick(interaction, guildmember);
       }
     } catch (error) {
-      let errorString = "Error fetching guildmember";
-
       if (error.code === 10007 && error.httpStatus === 404) {
         const guildmemberManualMention = `<@${guildmemberId}>`;
-        errorString += `: ${guildmemberManualMention} no longer in server.`;
-        interaction.client.log(errorString);
+        interaction.client.log(`Error during verification: ${guildmemberManualMention} no longer in server.`);
 
         return interaction.update({
           content: `${guildmemberManualMention} no longer appears to be in the server.`,
@@ -67,8 +64,7 @@ class Verification {
         }).then(() => setTimeout(() => interaction.message.delete().catch(() => null), 10000));
       }
 
-      errorString += ".";
-      interaction.client.log(errorString);
+      interaction.client.log("Error fetching guildmember.");
 
       return interaction.reply({
         content: "Error fetching guildmember.",
