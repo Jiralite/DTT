@@ -57,13 +57,14 @@ class Verification {
       let errorString = "Error fetching guildmember";
 
       if (error.code === 10007 && error.httpStatus === 404) {
-        errorString += ": guildmember no longer in server.";
+        const guildmemberManualMention = `<@${guildmemberId}>`;
+        errorString += `: ${guildmemberManualMention} no longer in server.`;
         interaction.client.log(errorString);
 
         return interaction.update({
-          content: `<@${guildmemberId}> no longer appears to be in the server.`,
+          content: `${guildmemberManualMention} no longer appears to be in the server.`,
           components: []
-        }).then(() => setTimeout(() => interaction.message.delete().catch(() => null), 5000));
+        }).then(() => setTimeout(() => interaction.message.delete().catch(() => null), 10000));
       }
 
       errorString += ".";
