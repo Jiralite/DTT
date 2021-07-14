@@ -54,7 +54,7 @@ class Verification {
           return interaction.client.Verification.authoriseKick(interaction, guildmember);
       }
     } catch (error) {
-      const errorString = "Error fetching guildmember";
+      let errorString = "Error fetching guildmember";
 
       if (error.code === 10007 && error.httpStatus === 404) {
         errorString += ": guildmember no longer in server.";
