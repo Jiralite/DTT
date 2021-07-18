@@ -7,7 +7,7 @@ class invite {
   }
 
   async traditional(interaction) {
-    if (this.#DTT.kanal("verification").permissionsFor(this.#DTT.user).has("CREATE_INSTANT_INVITE")) {
+    if (!this.#DTT.kanal("verification").permissionsFor(this.#DTT.user).has("CREATE_INSTANT_INVITE")) {
       interaction.reply({
         content: "Apparently, I do not have invite permissions.",
         ephemeral: true
