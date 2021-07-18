@@ -67,7 +67,8 @@ class complete {
             description: "The Free BugMail request # to complete.",
             required: true
           }
-        ]
+        ],
+        defaultPermission: false
       },
       [
         {

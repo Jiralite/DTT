@@ -58,7 +58,8 @@ class submit {
             description: "Submits a Free BugMail request.",
             required: true
           }
-        ]
+        ],
+        defaultPermission: false
       },
       [
         {

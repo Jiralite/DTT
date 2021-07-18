@@ -421,7 +421,8 @@ class complete {
               }
             ]
           }
-        ]
+        ],
+        defaultPermission: false
       },
       [
         {
