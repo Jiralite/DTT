@@ -120,9 +120,7 @@ DTT.on("interaction", async interaction => {
   }
 });
 
-DTT.on("inviteDelete", invite => {
-  DTT.invites.find(({ code }) => code === invite.code)?.remove();
-});
+DTT.on("inviteDelete", invite => DTT.invites.find(({ code }) => code === invite.code)?.remove());
 
 DTT.on("message", message => {
   if (message.author.bot) return;

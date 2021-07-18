@@ -70,6 +70,7 @@ class Invite {
     ], E => {
       if (E) return this.#DTT.log("Error during Invite#remove().", E);
       this.expired = true;
+      this.DTT.log(`Invite code ${this.code} was just used.`);
     });
   }
 }
