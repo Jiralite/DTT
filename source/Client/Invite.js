@@ -37,7 +37,7 @@ class Invite {
 
         this.No = insertId;
         this.createdTimestamp = invite.createdTimestamp;
-        this.expiredTimestamp = invite.expiredTimestamp;
+        this.expiredTimestamp = invite.expiresTimestamp;
         this.code = invite.code;
         this.#DTT.invites.set(this.No, this);
         this.expireTimeout();
