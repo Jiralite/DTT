@@ -21,6 +21,7 @@ class Invite {
         ID: interaction.user.id,
         "Created Timestamp": invite.createdTimestamp,
         "Expired Timestamp": invite.expiresTimestamp,
+        Expired: false,
         Code: invite.code
       }, (E, { insertId }) => {
         if (E) {
