@@ -100,11 +100,11 @@ class DTT extends Client {
   }
 
   get logChannel() {
-    return this.kanal("log");
+    return this.kanal("dtt-bot-log");
   }
 
   get freeBugMailLogChannel() {
-    return this.kanal("free-bugmail-log");
+    return this.kanal("dtt-bugmail-logs");
   }
 
   get kanaly() {
@@ -123,9 +123,9 @@ class DTT extends Client {
       "locked-reports": "785830225665458227",
       "bugmail-queue": "852581876030898176",
       "bugmail-discussion": "852592316438020136",
-      DTT: "853235436063162388",
-      log: "853235554375434270",
-      "free-bugmail-log": "853243608828346409"
+      "dtt-bot-log": "853235554375434270",
+      "dtt-bugmail-logs": "853243608828346409",
+      "invite-logs": "765676229478711366"
     };
   }
 
