@@ -70,8 +70,18 @@ class Invite {
     ], E => {
       if (E) return this.#DTT.log("Error during Invite#remove().", E);
       this.expired = true;
-      this.#DTT.log(`Invite code \`${this.code}\` was just used. <@${this.id}> generated this invite code.`);
+
+      this.inviteLogs.send({
+        content: `Invite code \`${this.code}\` has just expired. <@${this.id}> generated this invite code.`,
+        allowedMentions: {
+          parse: []
+        }
+      });
     });
+  }
+
+  get inviteLogs() {
+    return this.#DTT.kanal("invite-logs");
   }
 }
 
