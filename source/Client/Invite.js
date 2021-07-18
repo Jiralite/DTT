@@ -47,7 +47,12 @@ class Invite {
           ephemeral: true
         });
 
-        this.#DTT.log(`${interaction.user} generated a one-time invite.`);
+        this.inviteLogs.send({
+          content: `${interaction.user} generated a one-time invite code: ${this.code}`,
+          allowedMentions: {
+            parse: []
+          }
+        });
       });
     }).catch(error => {
       this.#DTT.log("Error creating invite.", error);
