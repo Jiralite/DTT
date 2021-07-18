@@ -9,7 +9,8 @@ const DTT = new Client({
   intents: [
     "GUILDS",
     "GUILD_MEMBERS",
-    "GUILD_MESSAGES"
+    "GUILD_MESSAGES",
+    "GUILD_INVITES"
   ]
 });
 
@@ -17,6 +18,7 @@ function Maria() {
   DTT.Maria.getConnection(error => {
     if (!error) {
       collectFreeBugMails();
+      collectInvites();
       DTT.log("Maria established.");
     } else {
       DTT.log("Maria connection error: Retrying in 1 minute.", error);
@@ -31,6 +33,14 @@ function collectFreeBugMails() {
     DTT.freeBugMails.set(FreeBugMail.No, FreeBugMail);
     FreeBugMail.timeout();
     FreeBugMail.mentionedTimeout();
+  }));
+}
+
+function collectInvites() {
+  DTT.Maria.query("SELECT * FROM `Invites`", (E, R) => R.forEach(invite => {
+    const Invite = new DTT.FreeBugMail(DTT, invite);
+    DTT.invites.set(Invite.No, Invite);
+    Invite.expireTimeout();
   }));
 }
 
@@ -108,6 +118,10 @@ DTT.on("interaction", async interaction => {
       if (weekBugMail[2] === "RESOLVED") return FreeBugMail.resolvePendingTimeout(interaction);
     }
   }
+});
+
+DTT.on("inviteDelete", invite => {
+  DTT.invites.find(({ code }) => code === invite.code)?.remove();
 });
 
 DTT.on("message", message => {

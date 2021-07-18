@@ -5,6 +5,7 @@ const { createPool } = require("mysql");
 const { discord: { prefix }, mysql } = require("./Keys.json");
 
 const FreeBugMail = require("./FreeBugMail.js");
+const Invite = require("./Invite.js");
 const Verification = require("./Verification.js");
 const Maria = createPool(mysql);
 
@@ -36,8 +37,10 @@ class DTT extends Client {
       return commandsCollection;
     })();
     this.FreeBugMail = FreeBugMail;
+    this.Invite = Invite;
     this.Verification = Verification;
     this.freeBugMails = new Collection();
+    this.invites = new Collection();
   }
 
   log(message, consoleLog = message) {
