@@ -48,7 +48,7 @@ class Invite {
         });
 
         this.inviteLogs.send({
-          content: `${interaction.user} generated a one-time invite code: ${this.code}`,
+          content: `${interaction.user} generated a one-time invite code: \`${this.code}\``,
           allowedMentions: {
             parse: []
           }
