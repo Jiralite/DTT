@@ -38,7 +38,7 @@ function collectFreeBugMails() {
 
 function collectInvites() {
   DTT.Maria.query("SELECT * FROM `Invites`", (E, R) => R.forEach(invite => {
-    const Invite = new DTT.FreeBugMail(DTT, invite);
+    const Invite = new DTT.Invite(DTT, invite);
     DTT.invites.set(Invite.No, Invite);
     Invite.expireTimeout();
   }));
