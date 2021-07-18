@@ -21,7 +21,7 @@ class invite {
 
     if (Invites.size > 0) {
       return interaction.reply({
-        content: `You possess non-expired invites already:\n${Invites.map(Invite => `• ${Invite.code}`).join("\n")}`,
+        content: `You possess non-expired invites already:\n${Invites.map(Invite => `• \`${Invite.code}\``).join("\n")}`,
         ephemeral: true
       });
     }
