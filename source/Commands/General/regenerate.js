@@ -29,10 +29,7 @@ class complete {
         break;
     }
 
-    interaction.followUp({
-      content: "Channel regenerated.",
-      ephemeral: true
-    });
+    interaction.followUp("Channel regenerated.");
   }
 
   async roles(channel) {
@@ -41,52 +38,58 @@ class complete {
     await channel.send({
       content: "**__macOS__**",
       components: [
-        [
-          {
-            type: "BUTTON",
-            label: "macOS El Capitan",
-            customId: `ROLE-${this.#DTT.role("macOS El Capitan").id}`,
-            style: "PRIMARY"
-          },
-          {
-            type: "BUTTON",
-            label: "macOS Sierra",
-            customId: `ROLE-${this.#DTT.role("macOS Sierra").id}`,
-            style: "PRIMARY"
-          },
-          {
-            type: "BUTTON",
-            label: "macOS High Sierra",
-            customId: `ROLE-${this.#DTT.role("macOS High Sierra").id}`,
-            style: "PRIMARY"
-          },
-          {
-            type: "BUTTON",
-            label: "macOS Mojave",
-            customId: `ROLE-${this.#DTT.role("macOS Mojave").id}`,
-            style: "PRIMARY"
-          }
-        ],
-        [
-          {
-            type: "BUTTON",
-            label: "macOS Catalina",
-            customId: `ROLE-${this.#DTT.role("macOS Catalina").id}`,
-            style: "PRIMARY"
-          },
-          {
-            type: "BUTTON",
-            label: "macOS Big Sur",
-            customId: `ROLE-${this.#DTT.role("macOS Big Sur").id}`,
-            style: "PRIMARY"
-          },
-          {
-            type: "BUTTON",
-            label: "macOS Monterey",
-            customId: `ROLE-${this.#DTT.role("macOS Monterey").id}`,
-            style: "PRIMARY"
-          }
-        ]
+        {
+          type: "ACTION_ROW",
+          components: [
+            {
+              type: "BUTTON",
+              label: "macOS El Capitan",
+              customId: `ROLE-${this.#DTT.role("macOS El Capitan").id}`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "macOS Sierra",
+              customId: `ROLE-${this.#DTT.role("macOS Sierra").id}`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "macOS High Sierra",
+              customId: `ROLE-${this.#DTT.role("macOS High Sierra").id}`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "macOS Mojave",
+              customId: `ROLE-${this.#DTT.role("macOS Mojave").id}`,
+              style: "PRIMARY"
+            }
+          ]
+        },
+        {
+          type: "ACTION_ROW",
+          components: [
+            {
+              type: "BUTTON",
+              label: "macOS Catalina",
+              customId: `ROLE-${this.#DTT.role("macOS Catalina").id}`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "macOS Big Sur",
+              customId: `ROLE-${this.#DTT.role("macOS Big Sur").id}`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "macOS Monterey",
+              customId: `ROLE-${this.#DTT.role("macOS Monterey").id}`,
+              style: "PRIMARY"
+            }
+          ]
+        }
       ]
     });
 
