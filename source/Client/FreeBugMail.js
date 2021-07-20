@@ -299,7 +299,7 @@ class FreeBugMail {
       this.#DTT.freeBugMailLog(logText);
 
       interaction.reply({
-        content: `Successfully edited Free BugMail request ${this.No}`,
+        content: `Successfully edited Free BugMail request ${this.No}!`,
         ephemeral: true
       });
     }));
