@@ -1,3 +1,5 @@
+const { Formatters } = require("discord.js");
+
 class FreeBugMail {
   #DTT;
 
@@ -237,8 +239,13 @@ class FreeBugMail {
       }
 
       const message = await this.fetchMessage();
+      message.embeds[0].fields[0].name = "Notes";
+      message.embeds[0].fields[0].value = `Claimed by ${interaction.user} ${Formatters.time(~~(Date.now() / 1000), "R")}`;
 
       message.edit({
+        embeds: [
+          message.embeds[0]
+        ],
         components: []
       });
 
