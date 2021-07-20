@@ -85,7 +85,7 @@ class FreeBugMail {
     clearTimeout(this.hourTimeout);
 
     this.hourTimeout = setTimeout(() => this.bugmailDiscussion.send({
-      content: `Hey, is anyone with a ${this.freeBugMail} able to help with the request belonging to <@${this.userId}>?`,
+      content: `Hey, is anyone with a ${this.freeBugMail} able to help with request #${this.No} belonging to <@${this.userId}>?`,
       allowedMentions: {
         parse: [
           "roles"
