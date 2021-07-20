@@ -24,12 +24,26 @@ class complete {
     });
 
     switch (text) {
+      case "read-me":
+        await this.readMe(channel);
+        break;
       case "roles":
         await this.roles(channel);
         break;
     }
 
-    interaction.followUp("Channel regenerated.");
+    interaction.editReply("Channel regenerated.");
+  }
+
+  async readMe(channel) {
+    const message1 = await channel.send({
+      content: `Welcome to **${this.#DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${this.#DTT.role("Moderator")}s' instructions.\n\nRead below for an explanation of categories!\n\n**__${this.#DTT.kanal("Information").name}__**\nYou are here! This category contains an introduction to the server. This channel also includes ${this.#DTT.kanal("announcements")} and ${this.#DTT.kanal("roles")} which you can view once admitted to the server.\n\n**__${this.#DTT.kanal("General").name}__**\nHome to ${this.#DTT.kanal("general")} (off-topic chat) and ${this.#DTT.kanal("bot-commands")} and other channels which may show up from time to time.\n\n**__${this.#DTT.kanal("DT General").name}__**\nChannels in this category relate specifically to Discord Testers, such as:\n• ${this.#DTT.kanal("a11y")}\n• ${this.#DTT.kanal("resources")}\n• ${this.#DTT.kanal("bugmail-queue")}\n• ${this.#DTT.kanal("bugmail-discussion")}\n\n**__Testing Categories__**\nThe purpose of these categories are to test bugs specific to the respective platform. These categories also include information related to the platform from Phabricator. Each category also includes a discussion channel, as well as a channel for known issues. Phabricator channels that aren't specific to a testing category fit into ${this.#DTT.kanal("DT General").name}.\n\n**__${this.#DTT.kanal("Discord Updates").name}__**\nUpdates are sent when there is a new Stable, PTB or Canary build (or host) available and also for when there is a new status issue recorded on https://dis.gd/status.\n\n**__Invite__**\nThe \`/invite\` Slash Command can be used to generate a one-time invite to this server. Wait a day before inviting a new T2 please.`,
+      allowedMentions: {
+        parse: []
+      }
+    });
+
+    message1.suppressEmbeds();
   }
 
   async roles(channel) {
@@ -460,6 +474,10 @@ class complete {
               {
                 name: "Roles",
                 value: "roles"
+              },
+              {
+                name: "Read Me",
+                value: "read-me"
               }
             ]
           }
