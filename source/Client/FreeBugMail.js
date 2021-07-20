@@ -56,14 +56,17 @@ class FreeBugMail {
           }
         ],
         components: [
-          [
-            {
-              type: "BUTTON",
-              label: "Claim",
-              customID: `${this.No}-PRECLAIM`,
-              style: "PRIMARY"
-            }
-          ]
+          {
+            type: "ACTION_ROW",
+            components: [
+              {
+                type: "BUTTON",
+                label: "Claim",
+                customId: `${this.No}-PRECLAIM`,
+                style: "PRIMARY"
+              }
+            ]
+          }
         ]
       }).then(() => {
         logText += `Success! [#${this.No}]\n\n${text}`;
@@ -104,20 +107,23 @@ class FreeBugMail {
     this.reminderTimeout = setTimeout(() => this.bugmailDiscussion.send({
       content: `Hey, <@${this.claimedById}>. It's been a week. Is the BugMail still ongoing?`,
       components: [
-        [
-          {
-            type: "BUTTON",
-            label: "Yes",
-            customID: `${this.No}-PENDING`,
-            style: "PRIMARY"
-          },
-          {
-            type: "BUTTON",
-            label: "No",
-            customID: `${this.No}-RESOLVED`,
-            style: "SECONDARY"
-          }
-        ]
+        {
+          type: "ACTION_ROW",
+          components: [
+            {
+              type: "BUTTON",
+              label: "Yes",
+              customId: `${this.No}-PENDING`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "No",
+              customId: `${this.No}-RESOLVED`,
+              style: "SECONDARY"
+            }
+          ]
+        }
       ]
     }), 604800000 - (Date.now() - this.weeklyTimestamp));
   }
@@ -173,9 +179,12 @@ class FreeBugMail {
 
     interaction.message.edit({
       components: [
-        [
-          interaction.message.components[0].components[0].setDisabled(true)
-        ]
+        {
+          type: "ACTION_ROW",
+          components: [
+            interaction.message.components[0].components[0].setDisabled(true)
+          ]
+        }
       ]
     });
 
@@ -185,29 +194,35 @@ class FreeBugMail {
       content: "⚠️ Have you searched in Discord Testers (specifically <#733499719267123200>) to ensure that this isn't already BugMailed?",
       ephemeral: true,
       components: [
-        [
-          {
-            type: "BUTTON",
-            label: "Yes! Claim!",
-            customID: `${this.No}-CLAIM`,
-            style: "SUCCESS"
-          },
-          {
-            type: "BUTTON",
-            label: "Oops! It's BugMailed!",
-            customID: `${this.No}-BUGMAILED`,
-            style: "DANGER"
-          }
-        ]
+        {
+          type: "ACTION_ROW",
+          components: [
+            {
+              type: "BUTTON",
+              label: "Yes! Claim!",
+              customId: `${this.No}-CLAIM`,
+              style: "SUCCESS"
+            },
+            {
+              type: "BUTTON",
+              label: "Oops! It's BugMailed!",
+              customId: `${this.No}-BUGMAILED`,
+              style: "DANGER"
+            }
+          ]
+        }
       ]
     }).then(() => setTimeout(() => {
       if (this.state !== "OPEN" || this.pendingDeletion) return;
 
       interaction.message.edit({
         components: [
-          [
-            interaction.message.components[0].components[0].setDisabled(false)
-          ]
+          {
+            type: "ACTION_ROW",
+            components: [
+              interaction.message.components[0].components[0].setDisabled(false)
+            ]
+          }
         ]
       });
 
@@ -336,9 +351,12 @@ class FreeBugMail {
     this.fetchMessage().then(message => {
       message.edit({
         components: [
-          [
-            message.components[0].components[0].setDisabled(true)
-          ]
+          {
+            type: "ACTION_ROW",
+            components: [
+              message.components[0].components[0].setDisabled(true)
+            ]
+          }
         ]
       });
 

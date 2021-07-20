@@ -34,20 +34,20 @@ class invite {
   }
 
   get commandData() {
-    return [
-      {
+    return {
+      applicationCommandData: {
         name: "invite",
         description: "Generates a one-time invite.",
         defaultPermission: false
       },
-      [
+      permissions: [
         {
           id: this.#DTT.role("Tester").id,
           type: "ROLE",
           permission: true
         }
       ]
-    ];
+    };
   }
 }
 

@@ -3,26 +3,29 @@ class Verification {
     guildmember.client.kanal("verification").send({
       content: `Welcome to **${guildmember.guild.name}**, ${guildmember}! Please review the ${guildmember.client.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to ${guildmember.client.user}!`,
       components: [
-        [
-          {
-            type: "BUTTON",
-            label: "Tester",
-            customID: `Tester-${guildmember.id}`,
-            style: "PRIMARY"
-          },
-          {
-            type: "BUTTON",
-            label: "Alt Account",
-            customID: `Alt-${guildmember.id}`,
-            style: "SECONDARY"
-          },
-          {
-            type: "BUTTON",
-            label: "Deny",
-            customID: `Deny-${guildmember.id}`,
-            style: "DANGER"
-          }
-        ]
+        {
+          type: "ACTION_ROW",
+          components: [
+            {
+              type: "BUTTON",
+              label: "Tester",
+              customId: `Tester-${guildmember.id}`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "Alt Account",
+              customId: `Alt-${guildmember.id}`,
+              style: "SECONDARY"
+            },
+            {
+              type: "BUTTON",
+              label: "Deny",
+              customId: `Deny-${guildmember.id}`,
+              style: "DANGER"
+            }
+          ]
+        }
       ]
     });
   }

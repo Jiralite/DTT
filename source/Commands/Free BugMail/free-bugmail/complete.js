@@ -9,8 +9,8 @@ class complete {
   async traditional(interaction, logText) {
     logText += `\`${this.name}\` Slash Command. `;
 
-    if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
-      logText += `Wrong channel: ${this.#DTT.guild.channels.resolve(interaction.channelID)}`;
+    if (interaction.channelId !== this.#DTT.kanal("bugmail-queue").id) {
+      logText += `Wrong channel: ${this.#DTT.guild.channels.resolve(interaction.channelId)}`;
       this.#DTT.freeBugMailLog(logText);
 
       return interaction.reply({
@@ -19,7 +19,7 @@ class complete {
       });
     }
 
-    const number = interaction.options.first().value;
+    const number = interaction.options.getInteger("number");
     const FreeBugMail = this.#DTT.freeBugMails.get(number);
 
     if (!FreeBugMail) {
@@ -55,34 +55,20 @@ class complete {
     FreeBugMail.resolve(interaction, false, logText);
   }
 
-  get commandData() {
-    return [
-      {
-        name: "complete",
-        description: "Used for completing free BugMail requests.",
-        options: [
-          {
-            type: "INTEGER",
-            name: "number",
-            description: "The Free BugMail request # to complete.",
-            required: true
-          }
-        ],
-        defaultPermission: false
-      },
-      [
+  static get commandData() {
+    return {
+      type: "SUB_COMMAND",
+      name: "complete",
+      description: "Completes a Free BugMail request.",
+      options: [
         {
-          id: this.#DTT.guild.roles.everyone.id,
-          type: "ROLE",
-          permission: false
-        },
-        {
-          id: this.#DTT.role("Tester").id,
-          type: "ROLE",
-          permission: true
+          type: "INTEGER",
+          name: "number",
+          description: "The Free BugMail request # to complete.",
+          required: true
         }
       ]
-    ];
+    };
   }
 }
 

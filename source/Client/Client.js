@@ -17,22 +17,45 @@ class DTT extends Client {
     this.commands = (() => {
       const commandsCollection = new Collection();
 
-      for (const file of readdirSync("./Commands").filter(file => file.endsWith(".js"))) {
-        const command = new (require(`../Commands/${file}`))(this);
-        command.type = null;
-        commandsCollection.set(command.name, command);
-      }
-
       const folders = readdirSync("./Commands", {
         withFileTypes: true
       }).filter(file => file.isDirectory()).map(({ name }) => name);
 
-      folders.forEach(folder => {
-        for (const F of readdirSync(`./Commands/${folder}`).filter(file => file.endsWith(".js"))) {
-          const command = new (require(`../Commands/${folder}/${F}`))(this);
+      for (const folder of folders) {
+        for (const file of readdirSync(`./Commands/${folder}`, {
+          withFileTypes: true
+        })) {
+          if (file.isDirectory()) {
+            commandsCollection.set(file.name, new Collection());
+
+            for (const subfile of readdirSync(`./Commands/${folder}/${file.name}`, {
+              withFileTypes: true
+            })) {
+              if (subfile.name === "index.js") continue;
+
+              if (subfile.isDirectory()) {
+                commandsCollection.get(file.name).set(subfile.name, new Collection());
+
+                for (const subsubfile of readdirSync(`./Commands/${folder}/${file.name}/${subfile.name}`)) {
+                  if (subsubfile === "index.js") continue;
+                  const subsubcommand = new (require(`../Commands/${folder}/${file.name}/${subfile.name}/${subsubfile}`))(this);
+                  commandsCollection.get(file.name).get(subfile.name).set(subsubcommand.name, subsubcommand);
+                }
+
+                continue;
+              }
+
+              const subcommand = new (require(`../Commands/${folder}/${file.name}/${subfile.name}`))(this);
+              commandsCollection.get(file.name).set(subcommand.name, subcommand);
+            }
+
+            continue;
+          }
+
+          const command = new (require(`../Commands/${folder}/${file.name}`))(this);
           commandsCollection.set(command.name, command);
         }
-      });
+      }
 
       return commandsCollection;
     })();
@@ -75,16 +98,42 @@ class DTT extends Client {
     console.log(consoleLog);
   }
 
-  async applyCommands() {
-    await this.guild.commands.set([]);
+  applyCommands() {
+    const commands = [];
+
+    const folders = readdirSync(`${__dirname}/../Commands`, {
+      withFileTypes: true
+    }).filter(file => file.isDirectory()).map(({ name }) => name);
+
+    for (const folder of folders) {
+      for (const file of readdirSync(`${__dirname}/../Commands/${folder}`, {
+        withFileTypes: true
+      })) {
+        if (file.isDirectory()) {
+          for (const subfile of readdirSync(`${__dirname}/../Commands/${folder}/${file.name}`)) {
+            if (subfile !== "index.js") continue;
+            commands.push(require(`${__dirname}/../Commands/${folder}/${file.name}/${subfile}`)(this));
+          }
+        } else commands.push(require(`${__dirname}/../Commands/${folder}/${file.name}`)(this));
+      }
+    }
 
     for (const command of this.commands.values()) {
-      const [applicationCommandData, permissions] = command.commandData;
-
-      this.guild.commands.create(applicationCommandData).then(createdCommand => createdCommand.permissions.set({
-        permissions
-      }));
+      if (!(command instanceof Collection)) commands.push(command.commandData);
     }
+
+    this.guild.commands.set(commands.map(command => command.applicationCommandData)).then(applicationCommands => {
+      this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
+      const permissionPromises = [];
+
+      for (const applicationCommand of applicationCommands.values()) {
+        permissionPromises.push(applicationCommand.permissions.set({
+          permissions: commands.find(({ applicationCommandData: { name } }) => name === applicationCommand.name).permissions
+        }).then(() => this.consoleLog(`Updated the permissions of ${applicationCommand.name}.`)));
+      }
+
+      Promise.all(permissionPromises).then(() => this.consoleLog("Finished applying commands!"));
+    });
   }
 
   kanal(channel) {

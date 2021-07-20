@@ -9,8 +9,8 @@ class submit {
   async traditional(interaction, logText) {
     logText += `\`${this.name}\` Slash Command. `;
 
-    if (interaction.channelID !== this.#DTT.kanal("bugmail-queue").id) {
-      logText += `Wrong channel: ${this.#DTT.guild.channels.resolve(interaction.channelID)}`;
+    if (interaction.channelId !== this.#DTT.kanal("bugmail-queue").id) {
+      logText += `Wrong channel: ${this.#DTT.guild.channels.resolve(interaction.channelId)}`;
       this.#DTT.freeBugMailLog(logText);
 
       return interaction.reply({
@@ -19,7 +19,7 @@ class submit {
       });
     }
 
-    const text = interaction.options.first().value;
+    const text = interaction.options.getString("text");
 
     if (text.length >= 1500) {
       logText += `Max character count reached (1500):\n\n${text}`;
@@ -46,34 +46,20 @@ class submit {
     FreeBugMail.create(interaction, text, logText);
   }
 
-  get commandData() {
-    return [
-      {
-        name: "submit",
-        description: "Used for submitting free BugMail requests.",
-        options: [
-          {
-            type: "STRING",
-            name: "text",
-            description: "Submits a Free BugMail request.",
-            required: true
-          }
-        ],
-        defaultPermission: false
-      },
-      [
+  static get commandData() {
+    return {
+      type: "SUB_COMMAND",
+      name: "submit",
+      description: "Submits a Free BugMail request.",
+      options: [
         {
-          id: this.#DTT.guild.roles.everyone.id,
-          type: "ROLE",
-          permission: false
-        },
-        {
-          id: this.#DTT.role("Tester").id,
-          type: "ROLE",
-          permission: true
+          type: "STRING",
+          name: "text",
+          description: "The text to submit.",
+          required: true
         }
       ]
-    ];
+    };
   }
 }
 
