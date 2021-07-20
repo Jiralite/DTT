@@ -19,8 +19,10 @@ class edit {
       });
     }
 
-    const FreeBugMail = this.#DTT.freeBugMails.get(interaction.options.getInteger("number"));
+
+    const number = interaction.options.getInteger("number");
     const text = interaction.options.getString("text");
+    const FreeBugMail = this.#DTT.freeBugMails.get(number);
 
     if (!FreeBugMail) {
       logText += `Could not find free BugMail request with id ${number}.`;
