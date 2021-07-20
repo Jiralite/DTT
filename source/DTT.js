@@ -145,7 +145,7 @@ DTT.on("messageCreate", message => {
 
 DTT.on("messageDelete", message => {
   if (message.guild.id !== DTT.guild.id) return;
-  DTT.freeBugMails.find(({ messageId, state }) => messageId === message.id && state !== "RESOLVED")?.remove();
+  if (!message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES")) DTT.freeBugMails.find(({ messageId, state }) => messageId === message.id && state !== "RESOLVED")?.remove();
 });
 
 DTT.on("ready", () => {
