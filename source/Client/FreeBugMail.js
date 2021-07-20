@@ -289,6 +289,22 @@ class FreeBugMail {
     });
   }
 
+  edit(interaction, text, logText) {
+    this.fetchMessage().then(message => message.edit({
+      embeds: [
+        message.embeds[0].setDescription(text)
+      ]
+    }).then(() => {
+      logText += `Edited Free BugMail request ${this.No}.\n\n${text}`;
+      this.#DTT.freeBugMailLog(logText);
+
+      interaction.reply({
+        content: `Successfully edited Free BugMail request ${this.No}`,
+        ephemeral: true
+      });
+    }));
+  }
+
   resolve(interaction, fromTimeout, logText = "") {
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
