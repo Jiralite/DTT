@@ -114,12 +114,8 @@ class DTT extends Client {
             if (subfile !== "index.js") continue;
             commands.push(require(`${__dirname}/../Commands/${folder}/${file.name}/${subfile}`)(this));
           }
-        } else commands.push(require(`${__dirname}/../Commands/${folder}/${file.name}`)(this));
+        } else commands.push(new (require(`${__dirname}/../Commands/${folder}/${file.name}`))(this).commandData);
       }
-    }
-
-    for (const command of this.commands.values()) {
-      if (!(command instanceof Collection)) commands.push(command.commandData);
     }
 
     this.guild.commands.set(commands.map(command => command.applicationCommandData)).then(applicationCommands => {
