@@ -19,7 +19,7 @@ class complete {
 
     const text = interaction.options.getString("channel_name");
 
-    interaction.defer({
+    await interaction.defer({
       ephemeral: true
     });
 
