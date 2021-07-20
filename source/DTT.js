@@ -51,7 +51,6 @@ DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
 
 DTT.on("interactionCreate", async interaction => {
   if (interaction.guildId !== DTT.guild.id) return;
-  let logText = `${interaction.user} interacted with the `;
 
   if (interaction.isCommand()) {
     let command = DTT.commands.get(interaction.commandName);
@@ -69,7 +68,7 @@ DTT.on("interactionCreate", async interaction => {
 
     if (subCommand && subCommandGroup) command = command.get(subCommandGroup).get(subCommand);
     if (subCommand && !subCommandGroup) command = command.get(subCommand);
-    command.traditional(interaction, logText);
+    command.traditional(interaction);
     return;
   }
 
@@ -108,14 +107,14 @@ DTT.on("interactionCreate", async interaction => {
       }
     }
 
-    if (interaction.customId === "Free BugMail") return DTT.FreeBugMail.addRole(interaction, `${logText}"Opt in" button. `);
-    if (interaction.customId === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction, `${logText}"Opt out" button. `);
+    if (interaction.customId === "Free BugMail") return DTT.FreeBugMail.addRole(interaction);
+    if (interaction.customId === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
     const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED)/.exec(interaction.customId);
 
     if (claimRequest && interaction.channelId === DTT.kanal("bugmail-queue").id) {
-      if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1]).preClaim(interaction, `${logText}"Claim" button `);
-      if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1]).claim(interaction, `${logText}"Yes! Claim!" button `);
-      if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1]).alreadyBugMailed(interaction, `${logText}"Oops! It's BugMailed!" button `);
+      if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1]).preClaim(interaction);
+      if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1]).claim(interaction);
+      if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1]).alreadyBugMailed(interaction);
     }
 
     const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction.customId);

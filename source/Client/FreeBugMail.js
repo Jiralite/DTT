@@ -18,7 +18,7 @@ class FreeBugMail {
     this.pendingDeletion = false;
   }
 
-  create(interaction, text, logText) {
+  create(interaction, text) {
     this.#DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
       Timestamp: this.timestamp,
       ["Weekly Timestamp"]: this.weeklyTimestamp,
@@ -28,8 +28,8 @@ class FreeBugMail {
       State: this.state
     }, (E, { insertId }) => {
       if (E) {
-        logText += "Error during Maria insertion.";
-        this.#DTT.freeBugMailLog(logText, E);
+        this.#DTT.log("Error during FreeBugMail#create().", E);
+        interaction.editReply("There was an error during Free BugMail creation.");
         return;
       }
 
@@ -68,17 +68,9 @@ class FreeBugMail {
             ]
           }
         ]
-      }).then(() => {
-        logText += `Success! [#${this.No}]\n\n${text}`;
-        this.#DTT.freeBugMailLog(logText);
-      }).catch(error => {
-        logText += "Error during editing initial interaction.";
-        this.#DTT.freeBugMailLog(logText, error);
-
-        interaction.editReply({
-          content: "An internal error occured.",
-          ephemeral: true
-        }).then(() => setTimeout(() => interaction.deleteReply(), 5000));
+      }).then(() => this.#DTT.freeBugMailLog(`${interaction.user} created Free BugMail request #${this.No}.\n\n${text}`)).catch(error => {
+        this.#DTT.log("Error during FreeBugMail#create().", error);
+        interaction.editReply("here was an error during Free BugMail creation.");
       });
     });
   }
@@ -105,7 +97,7 @@ class FreeBugMail {
     clearTimeout(this.reminderTimeout);
 
     this.reminderTimeout = setTimeout(() => this.bugmailDiscussion.send({
-      content: `Hey, <@${this.claimedById}>. It's been a week. Is the BugMail still ongoing?`,
+      content: `Hey, <@${this.claimedById}>. It's been a week. Is Free BugMail request #${this.No} still ongoing?`,
       components: [
         {
           type: "ACTION_ROW",
@@ -129,15 +121,20 @@ class FreeBugMail {
   }
 
   resumePendingTimeout(interaction) {
-    this.#DTT.freeBugMailLog(`${interaction.user} stated request #${this.No} is still ongoing after a week.`);
+    this.#DTT.freeBugMailLog(`${interaction.user} has stated Free BugMail request #${this.No} is still ongoing after a week.`);
 
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
       Date.now(),
       this.No
     ], E => {
       if (E) {
-        logText += "Error during Maria update.";
-        this.#DTT.freeBugMailLog(logText, E);
+        this.#DTT.log("Error during FreeBugMail#resumePendingTimeout().", E);
+
+        interaction.reply({
+          content: "There was an error during Free BugMail resume.",
+          ephemeral: true
+        });
+
         return;
       }
 
@@ -153,31 +150,29 @@ class FreeBugMail {
   }
 
   resolvePendingTimeout(interaction) {
-    this.#DTT.freeBugMailLog(`${interaction.user} stated request #${this.No} has been completed after a weekly reminder.`);
+    this.#DTT.freeBugMailLog(`${interaction.user} stated has stated Free BugMail request #${this.No} has been completed after a weekly reminder.`);
 
     interaction.update({
-      content: `You've stated that the BugMail has been completed, <@${this.claimedById}>. Completed it be!`,
+      content: `You've stated that Free BugMail request #${this.No} has been completed, <@${this.claimedById}>. Completed it be!`,
       components: []
     });
 
-    this.resolve(interaction, true, );
+    this.resolve(interaction, true);
   }
 
-  preClaim(interaction, logText) {
-    logText += `of BugMail request #${this.No}. `;
+  preClaim(interaction) {
     const pendingBugMail = this.#DTT.freeBugMails.find(({ claimedById, state }) => claimedById === interaction.user.id && state === "PENDING");
 
     if (pendingBugMail) {
-      logText += `Account already has a pending BugMail (#${pendingBugMail.No}).`;
-      this.#DTT.freeBugMailLog(logText);
+      this.#DTT.freeBugMailLog(`${interaction.user} attempted to claim Free BugMail request #${this.No} but already has a pending BugMail (#${pendingBugMail.No}).`);
 
       return interaction.reply({
-        content: `You seem to already have a pending free BugMail for <@${pendingBugMail.userId}>.`,
+        content: `You seem to already have claimed a pending Free BugMail request for <@${pendingBugMail.userId}>: [#${pendingBugMail.No}](${pendingBugMail.messageLink})`,
         ephemeral: true
       });
     }
 
-    interaction.message.edit({
+    interaction.update({
       components: [
         {
           type: "ACTION_ROW",
@@ -188,7 +183,7 @@ class FreeBugMail {
       ]
     });
 
-    this.#DTT.freeBugMailLog(`${logText}Account being asked to double check before fully claiming.`);
+    this.#DTT.freeBugMailLog(`${interaction.user} is attempting to claim Free BugMail request #${this.No} and is being asked to double check before fully claiming.`);
 
     interaction.reply({
       content: "⚠️ Have you searched in Discord Testers (specifically <#733499719267123200>) to ensure that this isn't already BugMailed?",
@@ -214,8 +209,9 @@ class FreeBugMail {
       ]
     }).then(() => setTimeout(() => {
       if (this.state !== "OPEN" || this.pendingDeletion) return;
+      this.#DTT.freeBugMailLog(`${interaction.user} did not fully claim Free BugMail request #${this.No}.`);
 
-      interaction.message.edit({
+      interaction.update({
         components: [
           {
             type: "ACTION_ROW",
@@ -228,18 +224,12 @@ class FreeBugMail {
 
       interaction.editReply({
         content: "Interaction took too long - the claim button is now free again!",
-        ephemeral: true,
         components: []
       });
-
-      logText += `Account did not fully claim ${this.No}'s free BugMail request.`;
-      this.#DTT.freeBugMailLog(logText);
     }, 60000));
   }
 
-  claim(interaction, logText) {
-    logText += `of BugMail request #${this.No}. `;
-
+  claim(interaction) {
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET ? WHERE `No` = ?;", [
       {
         ["Claimed By ID"]: interaction.user.id,
@@ -248,8 +238,13 @@ class FreeBugMail {
       this.No
     ], async E => {
       if (E) {
-        logText += "Error during Maria update.";
-        this.#DTT.freeBugMailLog(logText, E);
+        this.#DTT.log("Error during FreeBugMail#claim().", E);
+
+        interaction.reply({
+          content: "There was an error during claiming this Free BugMail request.",
+          ephemeral: true
+        });
+
         return;
       }
 
@@ -267,8 +262,7 @@ class FreeBugMail {
 
       message.react("<a:typing:852637406334156800>");
       if (interaction.member.roles.cache.has(this.#DTT.role("Free BugMail").id)) interaction.member.roles.remove(this.#DTT.role("Free BugMail"));
-      logText += "Request claimed!";
-      this.#DTT.freeBugMailLog(logText);
+      this.#DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
 
       this.#DTT.kanal("bugmail-discussion").send({
         content: `${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("locked-reports")} for clarity!`,
@@ -276,8 +270,7 @@ class FreeBugMail {
       });
 
       interaction.update({
-        content: `You have successfully claimed the free BugMail request of <@${this.userId}>!`,
-        ephemeral: true,
+        content: `You have successfully claimed free BugMail request [#${this.No}](${this.messageLink}) belonging to <@${this.userId}>!`,
         components: []
       });
 
@@ -289,30 +282,34 @@ class FreeBugMail {
     });
   }
 
-  edit(interaction, text, logText) {
+  edit(interaction, text) {
     this.fetchMessage().then(message => message.edit({
       embeds: [
         message.embeds[0].setDescription(text)
       ]
     }).then(() => {
-      logText += `Edited Free BugMail request ${this.No}.\n\n${text}`;
-      this.#DTT.freeBugMailLog(logText);
+      this.#DTT.freeBugMailLog(`${interaction.user} edited Free BugMail request #${this.No}.\n\n${text}`);
 
       interaction.reply({
-        content: `Successfully edited Free BugMail request ${this.No}!`,
+        content: `Successfully edited Free BugMail request #${this.No}!`,
         ephemeral: true
       });
     }));
   }
 
-  resolve(interaction, fromTimeout, logText = "") {
+  resolve(interaction, fromTimeout) {
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
     ], async E => {
       if (E) {
-        logText += "Error during Maria update.";
-        this.#DTT.freeBugMailLog(logText, E);
+        this.#DTT.log("Error during FreeBugMail#resolve().", E);
+
+        interaction.reply({
+          content: "There was an error completing this Free BugMail request.",
+          ephemeral: true
+        });
+
         return;
       }
 
@@ -321,10 +318,12 @@ class FreeBugMail {
       this.reminderTimeout = null;
       const message = await this.fetchMessage().catch(() => null);
 
-      if (!fromTimeout) interaction.reply({
-        content: `You've completed the free BugMail request of <@${this.userId}>!`,
-        ephemeral: true
-      });
+      if (!fromTimeout) {
+        interaction.reply({
+          content: `You have completed Free BugMail request #${this.No} belonging to <@${this.userId}>!`,
+          ephemeral: true
+        });
+      }
 
       if (!interaction.member.roles.cache.has(this.freeBugMail.id)) interaction.member.roles.add(this.freeBugMail);
 
@@ -339,8 +338,7 @@ class FreeBugMail {
       });
 
       message?.delete();
-      logText += `Request ${this.No} complete!`;
-      this.#DTT.freeBugMailLog(logText);
+      this.#DTT.freeBugMailLog(`${interaction.user} has completed Free BugMail request #${this.No}!`);
     });
   }
 
@@ -360,10 +358,7 @@ class FreeBugMail {
     });
   }
 
-  alreadyBugMailed(interaction, logText) {
-    logText += `of BugMail request #${this.No}. Account marked request as already BugMailed.`;
-    this.#DTT.freeBugMailLog(logText);
-
+  alreadyBugMailed(interaction) {
     this.fetchMessage().then(message => {
       message.edit({
         components: [
@@ -380,21 +375,31 @@ class FreeBugMail {
         "DISABLED",
         this.No
       ], E => {
-        if (E) this.#DTT.freeBugMailLog("Error disabling free BugMail request.", E);
+        if (E) {
+          this.#DTT.log("Error during FreeBugMail#alreadyBugMailed().", E);
+
+          interaction.reply({
+            content: "There was an error during disabling this Free BugMail request.",
+            ephemeral: true
+          });
+
+          return;
+        }
+
         this.state = "DISABLED";
-      });
+        this.pendingDeletion = true;
+        this.#DTT.freeBugMailLog(`${interaction.user} has specified Free BugMail request #${this.No} as already claimed.`);
 
-      this.pendingDeletion = true;
+        this.bugmailDiscussion.send({
+          content: `Free BugMail request #${this.No} has been specified as already BugMailed. It is now pending deletion.`,
+          embeds: message.embeds
+        });
 
-      this.bugmailDiscussion.send({
-        content: "Apparently, this has already been BugMailed. It should be deleted.",
-        embeds: message.embeds
-      });
-
-      interaction.update({
-        content: `You have marked Free BugMail request #${this.No} as already BugMailed.`,
-        ephemeral: true,
-        components: []
+        interaction.update({
+          content: `You have marked Free BugMail request[#${this.No}](${this.messageLink}) as already BugMailed.`,
+          ephemeral: true,
+          components: []
+        });
       });
     });
   }
@@ -419,10 +424,11 @@ class FreeBugMail {
     return `https://discord.com/channels/${this.#DTT.guild.id}/${this.bugmailQueue}/${this.messageId}`;
   }
 
-  static addRole(interaction, logText) {
+  static addRole(interaction) {
+    const logText = `${interaction.user} interacted with the "Opt in" button.`;
+
     if (interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
-      logText += `${interaction.client.role("Free BugMail")} already exists on account.`;
-      interaction.client.freeBugMailLog(logText);
+      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} already exists on account.`);
 
       return interaction.reply({
         content: `You already have the ${interaction.client.role("Free BugMail")} role.`,
@@ -431,16 +437,14 @@ class FreeBugMail {
     }
 
     interaction.member.roles.add(interaction.client.role("Free BugMail")).then(() => {
-      logText += `${interaction.client.role("Free BugMail")} added to account.`;
-      interaction.client.freeBugMailLog(logText);
+      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} added to account.`);
 
       interaction.reply({
         content: `The ${interaction.client.role("Free BugMail")} role has been added to you!`,
         ephemeral: true
       });
     }).catch(error => {
-      logText += `Error in ${interaction.client.role("Free BugMail")} addition.`;
-      interaction.client.freeBugMailLog(logText, error);
+      interaction.client.freeBugMailLog(`${logText} Error in ${interaction.client.role("Free BugMail")} addition.`, error);
 
       interaction.reply({
         content: "There was an error during self-role addition.",
@@ -449,10 +453,11 @@ class FreeBugMail {
     });
   }
 
-  static removeRole(interaction, logText) {
+  static removeRole(interaction) {
+    const logText = `${interaction.user} interacted with the "Opt out" button.`;
+
     if (!interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
-      logText += `${interaction.client.role("Free BugMail")} does not already exist on account.`;
-      interaction.client.freeBugMailLog(logText);
+      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} does not already exist on account.`);
 
       return interaction.reply({
         content: `You do not already have the ${interaction.client.role("Free BugMail")} role.`,
@@ -461,16 +466,14 @@ class FreeBugMail {
     }
 
     interaction.member.roles.remove(interaction.client.role("Free BugMail")).then(() => {
-      logText += `${interaction.client.role("Free BugMail")} removed from account.`;
-      interaction.client.freeBugMailLog(logText);
+      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} removed from account.`);
 
       interaction.reply({
         content: `The ${interaction.client.role("Free BugMail")} role has been removed from you!`,
         ephemeral: true
       });
     }).catch(error => {
-      logText += `Error in ${interaction.client.role("Free BugMail")} removal.`;
-      interaction.client.freeBugMailLog(logText, error);
+      interaction.client.freeBugMailLog(`${logText} Error in ${interaction.client.role("Free BugMail")} removal.`, error);
 
       interaction.reply({
         content: "There was an error during self-role removal.",

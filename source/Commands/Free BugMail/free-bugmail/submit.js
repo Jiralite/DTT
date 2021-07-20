@@ -6,12 +6,11 @@ class submit {
     this.#DTT = DTT;
   }
 
-  async traditional(interaction, logText) {
-    logText += `\`${this.name}\` Slash Command. `;
+  async traditional(interaction) {
+    const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
 
     if (interaction.channelId !== this.#DTT.kanal("bugmail-queue").id) {
-      logText += `Wrong channel: ${this.#DTT.guild.channels.resolve(interaction.channelId)}`;
-      this.#DTT.freeBugMailLog(logText);
+      this.#DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
       return interaction.reply({
         content: `Please use this command in ${this.#DTT.kanal("bugmail-queue")}.`,
@@ -22,8 +21,7 @@ class submit {
     const text = interaction.options.getString("text");
 
     if (text.length >= 1500) {
-      logText += `Max character count reached (1500):\n\n${text}`;
-      this.#DTT.freeBugMailLog(logText);
+      this.#DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
 
       return interaction.reply({
         content: "That's way too long. Shorten it down and keep it concise!",
@@ -43,7 +41,7 @@ class submit {
       State: "OPEN"
     });
 
-    FreeBugMail.create(interaction, text, logText);
+    FreeBugMail.create(interaction, text);
   }
 
   static get commandData() {
