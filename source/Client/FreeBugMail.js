@@ -239,6 +239,7 @@ class FreeBugMail {
       }
 
       const message = await this.fetchMessage();
+      message.embeds[0].fields[0] = {};
       message.embeds[0].fields[0].name = "Notes";
       message.embeds[0].fields[0].value = `Claimed by ${interaction.user} ${Formatters.time(~~(Date.now() / 1000), "R")}`;
 
