@@ -140,12 +140,15 @@ DTT.on("inviteDelete", invite => DTT.invites.find(({ code }) => code === invite.
 
 DTT.on("messageCreate", message => {
   if (message.author.bot) return;
-  if (message.channel.id === DTT.kanal("bugmail-queue").id && message.author.id !== DTT.user.id) message.delete();
+
+  if (message.channel.id === DTT.kanal("bugmail-queue").id) {
+    if (!message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES") && message.author.id !== DTT.user.id) message.delete();
+  }
 });
 
 DTT.on("messageDelete", message => {
   if (message.guild.id !== DTT.guild.id) return;
-  if (!message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES")) DTT.freeBugMails.find(({ messageId, state }) => messageId === message.id && state !== "RESOLVED")?.remove();
+  DTT.freeBugMails.find(({ messageId, state }) => messageId === message.id && state !== "RESOLVED")?.remove();
 });
 
 DTT.on("ready", () => {
