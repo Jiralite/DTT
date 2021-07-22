@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "discord.js": "^13.0.0-dev.02f55f0.1626742085",
+    "discord.js": "^13.0.0-dev.5e70694.1626955541",
     "mysql": "^2.18.1"
   }
 }
