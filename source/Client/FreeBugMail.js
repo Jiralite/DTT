@@ -265,7 +265,7 @@ class FreeBugMail {
       this.#DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
 
       this.#DTT.kanal("bugmail-discussion").send({
-        content: `${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("locked-reports")} for clarity!`,
+        content: `${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("bugmailed-reports")} for clarity!`,
         embeds: message.embeds
       });
 
