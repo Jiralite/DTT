@@ -458,7 +458,7 @@ class FreeBugMail {
             {
               type: "ACTION_ROW",
               components: [
-                interaction.message.components[0].components[0].setDisabled(false)
+                message.components[0].components[0].setDisabled(false)
               ]
             }
           ]
