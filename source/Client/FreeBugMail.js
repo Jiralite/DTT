@@ -367,7 +367,14 @@ class FreeBugMail {
 
   alreadyBugMailed(interaction) {
     this.fetchMessage().then(message => {
+      message.embeds[0].fields[0] = {};
+      message.embeds[0].fields[0].name = "Notes";
+      message.embeds[0].fields[0].value = `Disabled by ${interaction.user} ${Formatters.time(~~(Date.now() / 1000), "R")}`;
+
       message.edit({
+        embeds: [
+          message.embeds[0]
+        ],
         components: [
           {
             type: "ACTION_ROW",
