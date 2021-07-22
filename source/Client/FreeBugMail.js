@@ -81,7 +81,7 @@ class FreeBugMail {
     clearTimeout(this.hourTimeout);
 
     this.hourTimeout = setTimeout(() => this.bugmailDiscussion.send({
-      content: `Hey, is anyone with a ${this.freeBugMail} able to help with request #${this.No} belonging to <@${this.userId}>?`,
+      content: `Hey, is anyone with a ${this.freeBugMail} able to help with Free BugMail request #${this.No} belonging to <@${this.userId}>?`,
       allowedMentions: {
         parse: [
           "roles"
@@ -266,12 +266,12 @@ class FreeBugMail {
       this.#DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
 
       this.#DTT.kanal("bugmail-discussion").send({
-        content: `${interaction.user} has just claimed the free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("bugmailed-reports")} for clarity!`,
+        content: `${interaction.user} has just claimed the Free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.#DTT.kanal("bugmailed-reports")} for clarity!`,
         embeds: message.embeds
       });
 
       interaction.update({
-        content: `You have successfully claimed free BugMail request [#${this.No}](${this.messageLink}) belonging to <@${this.userId}>!`,
+        content: `You have successfully claimed Free BugMail request [#${this.No}](${this.messageLink}) belonging to <@${this.userId}>!`,
         components: []
       });
 
@@ -329,7 +329,7 @@ class FreeBugMail {
       if (!interaction.member.roles.cache.has(this.freeBugMail.id)) interaction.member.roles.add(this.freeBugMail);
 
       this.bugmailDiscussion.send({
-        content: `${interaction.user} has completed the free BugMail request of <@${this.userId}>!\nThe ${this.freeBugMail} role has now been added to you!`,
+        content: `${interaction.user} has completed the Free BugMail request of <@${this.userId}>!\nThe ${this.freeBugMail} role has now been added to you!`,
         embeds: message?.embeds,
         allowedMentions: {
           parse: [
@@ -354,7 +354,7 @@ class FreeBugMail {
       "RESOLVED",
       this.No
     ], E => {
-      if (E) this.#DTT.freeBugMailLog("Error removing free BugMail request.", E);
+      if (E) this.#DTT.freeBugMailLog("Error removing Free BugMail request.", E);
       this.state = "RESOLVED";
 
       if (this.disabledMessageId) {
