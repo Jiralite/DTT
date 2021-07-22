@@ -414,7 +414,7 @@ class FreeBugMail {
         });
 
         interaction.update({
-          content: `You have marked Free BugMail request[#${this.No}](${this.messageLink}) as already BugMailed.`,
+          content: `You have marked Free BugMail request [#${this.No}](${this.messageLink}) as already BugMailed.`,
           ephemeral: true,
           components: []
         });
