@@ -55,19 +55,8 @@ DTT.on("interactionCreate", async interaction => {
   if (interaction.isCommand()) {
     let command = DTT.commands.get(interaction.commandName);
     if (!command) return;
-    let subCommand = null;
-    let subCommandGroup = null;
-
-    try {
-      subCommand = interaction.options.getSubCommand();
-    } catch {}
-
-    try {
-      subCommandGroup = interaction.options.getSubCommandGroup();
-    } catch {}
-
-    if (subCommand && subCommandGroup) command = command.get(subCommandGroup).get(subCommand);
-    if (subCommand && !subCommandGroup) command = command.get(subCommand);
+    if (interaction.options.data[0]?.type === "SUB_COMMAND_GROUP") command = command.get(interaction.options.getSubCommandGroup()).get(interaction.options.getSubCommand());
+    if (interaction.options.data[0]?.type === "SUB_COMMAND") command = command.get(interaction.options.getSubCommand());
     command.traditional(interaction);
     return;
   }
