@@ -185,7 +185,7 @@ class FreeBugMail {
 
     this.#DTT.freeBugMailLog(`${interaction.user} is attempting to claim Free BugMail request #${this.No} and is being asked to double check before fully claiming.`);
 
-    interaction.reply({
+    interaction.followUp({
       content: "⚠️ Have you searched in Discord Testers (specifically <#733499719267123200>) to ensure that this isn't already BugMailed?",
       ephemeral: true,
       components: [
