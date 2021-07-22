@@ -348,7 +348,7 @@ class FreeBugMail {
     clearTimeout(this.reminderTimeout);
     this.hourTimeout = null;
     this.reminderTimeout = null;
-    this.#DTT.freeBugMailLog(`Request #${this.No} has been manually deleted and ergo automatically resolved.`);
+    this.#DTT.freeBugMailLog(`Free BugMail request #${this.No} has been manually deleted and ergo automatically resolved.`);
 
     this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
