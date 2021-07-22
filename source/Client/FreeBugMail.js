@@ -464,7 +464,12 @@ class FreeBugMail {
           return;
         }
 
+        message.embeds[0].fields = [];
+
         message.edit({
+          embeds: [
+            message.embeds[0]
+          ],
           components: [
             {
               type: "ACTION_ROW",
