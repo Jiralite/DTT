@@ -411,6 +411,8 @@ class FreeBugMail {
               ]
             }
           ]
+        }).then(({ id }) => {
+          this.disabledMessageId = id;
         });
 
         interaction.update({
