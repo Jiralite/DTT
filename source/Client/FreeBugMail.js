@@ -421,7 +421,7 @@ class FreeBugMail {
   }
 
   get messageLink() {
-    return `https://discord.com/channels/${this.#DTT.guild.id}/${this.bugmailQueue}/${this.messageId}`;
+    return `https://discord.com/channels/${this.#DTT.guild.id}/${this.bugmailQueue.id}/${this.messageId}`;
   }
 
   static addRole(interaction) {
