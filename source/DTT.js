@@ -98,12 +98,13 @@ DTT.on("interactionCreate", async interaction => {
 
     if (interaction.customId === "Free BugMail") return DTT.FreeBugMail.addRole(interaction);
     if (interaction.customId === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
-    const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED)/.exec(interaction.customId);
+    const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED|RESTORE)/.exec(interaction.customId);
 
-    if (claimRequest && interaction.channelId === DTT.kanal("bugmail-queue").id) {
+    if (claimRequest && (interaction.channelId === DTT.kanal("bugmail-queue").id || interaction.channelId === DTT.kanal("bugmail-discussion").id)) {
       if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1]).preClaim(interaction);
       if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1]).claim(interaction);
       if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1]).alreadyBugMailed(interaction);
+      if (claimRequest[2] === "RESTORE") return DTT.freeBugMails.get(+claimRequest[1]).restore(interaction);
     }
 
     const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction.customId);

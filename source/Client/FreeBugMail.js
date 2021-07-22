@@ -13,6 +13,7 @@ class FreeBugMail {
     this.claimedById = freeBugMail["Claimed By ID"] ?? null;
     this.mentioned = !!freeBugMail.Mentioned;
     this.state = freeBugMail.State;
+    this.disabledMessageId = null;
     this.hourTimeout = null;
     this.reminderTimeout = null;
     this.pendingDeletion = false;
@@ -355,6 +356,10 @@ class FreeBugMail {
     ], E => {
       if (E) this.#DTT.freeBugMailLog("Error removing free BugMail request.", E);
       this.state = "RESOLVED";
+
+      this.bugmailDiscussion.messages.fetch(this.disabledMessageId).then(message => message.edit({
+        components: []
+      })).catch(() => null);
     });
   }
 
@@ -392,7 +397,20 @@ class FreeBugMail {
 
         this.bugmailDiscussion.send({
           content: `Free BugMail request #${this.No} has been specified as already BugMailed. It is now pending deletion.`,
-          embeds: message.embeds
+          embeds: message.embeds,
+          components: [
+            {
+              type: "ACTION_ROW",
+              components: [
+                {
+                  type: "BUTTON",
+                  label: "Restore",
+                  customId: `${this.No}-RESTORE`,
+                  style: "PRIMARY"
+                }
+              ]
+            }
+          ]
         });
 
         interaction.update({
@@ -400,6 +418,85 @@ class FreeBugMail {
           ephemeral: true,
           components: []
         });
+      });
+    });
+  }
+
+  restore(interaction) {
+    if (!interaction.member.roles.cache.some(({ id }) => [
+      interaction.client.role("Admin").id,
+      interaction.client.role("Moderator").id,
+      interaction.client.role("DT Staff").id,
+      interaction.client.role("DT Mod or BA").id
+    ].includes(id))) {
+      this.#DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
+
+      return interaction.reply({
+        content: "You do not have permission to perform this interaction.",
+        ephemeral: true
+      });
+    }
+
+    this.fetchMessage().then(message => {
+      this.#DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+        "OPEN",
+        this.No
+      ], E => {
+        if (E) {
+          this.#DTT.log("Error during FreeBugMail#restore().", E);
+
+          interaction.reply({
+            content: "There was an error restoring this Free BugMail request.",
+            ephemeral: true
+          });
+
+          return;
+        }
+
+        message.edit({
+          components: [
+            {
+              type: "ACTION_ROW",
+              components: [
+                interaction.message.components[0].components[0].setDisabled(false)
+              ]
+            }
+          ]
+        });
+
+        interaction.message.edit({
+          components: [
+            {
+              type: "ACTION_ROW",
+              components: [
+                interaction.message.components[0].components[0].setDisabled(true)
+              ]
+            }
+          ]
+        });
+
+        this.#DTT.freeBugMailLog(`${interaction.user} restored Free BugMail request #${this.No}!`);
+        interaction.reply(`Free BugMail request [#${this.No}](${this.messageLink}) has been restored.`);
+      });
+    }).catch(error => {
+      if (error.code === 10008) {
+        interaction.message.edit({
+          components: []
+        });
+
+        this.#DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but the Free BugMail request was not found. The button has now been removed.`);
+
+        return interaction.reply({
+          content: `Apparently, Free BugMail request #${this.No} no longer exists. The button has now been removed.`,
+          ephemeral: true
+        });
+      }
+
+      this.#DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but encountered an error.`, error);
+
+      interaction.reply({
+        content: "There was an error restoring this Free BugMail request.",
+        ephemeral: true
       });
     });
   }
