@@ -137,7 +137,15 @@ DTT.on("messageCreate", message => {
 
 DTT.on("messageDelete", message => {
   if (message.guild.id !== DTT.guild.id) return;
-  DTT.freeBugMails.find(({ messageId, state }) => messageId === message.id && state !== "RESOLVED")?.remove();
+
+  for (const FreeBugMail of DTT.freeBugMails.values()) {
+    if (FreeBugMail.messageId === message.id && FreeBugMail.state !== "RESOLVED") return FreeBugMail.remove();
+
+    if (FreeBugMail.disabledMessageId === message.id) {
+      FreeBugMail.disabledMessageId = null;
+      return;
+    }
+  }
 });
 
 DTT.on("ready", () => {
