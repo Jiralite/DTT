@@ -1,4 +1,4 @@
-class complete {
+class regenerate {
   #DTT;
 
   constructor(DTT) {
@@ -495,4 +495,4 @@ class complete {
   }
 }
 
-module.exports = complete;
+module.exports = regenerate;
