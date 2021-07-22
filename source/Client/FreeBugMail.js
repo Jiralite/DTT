@@ -357,9 +357,11 @@ class FreeBugMail {
       if (E) this.#DTT.freeBugMailLog("Error removing free BugMail request.", E);
       this.state = "RESOLVED";
 
-      this.bugmailDiscussion.messages.fetch(this.disabledMessageId).then(message => message.edit({
-        components: []
-      })).catch(() => null);
+      if (this.disabledMessageId) {
+        this.bugmailDiscussion.messages.fetch(this.disabledMessageId).then(message => message.edit({
+          components: []
+        })).catch(() => null);
+      }
     });
   }
 
