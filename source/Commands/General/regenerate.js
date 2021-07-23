@@ -440,7 +440,12 @@ class regenerate {
               label: "iOS",
               customId: `ROLE-${this.#DTT.role("iOS").id}`,
               style: "PRIMARY"
-            },
+            }
+          ]
+        },
+        {
+          type: "ACTION_ROW",
+          components: [
             {
               type: "BUTTON",
               label: "DBug",
@@ -451,6 +456,12 @@ class regenerate {
               type: "BUTTON",
               label: "Boardless",
               customId: `ROLE-${this.#DTT.role("Boardless").id}`,
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "P0",
+              customId: `ROLE-${this.#DTT.role("P0").id}`,
               style: "PRIMARY"
             }
           ]
