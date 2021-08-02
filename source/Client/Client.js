@@ -144,6 +144,10 @@ class DTT extends Client {
     return this.guilds.resolve("765611756441436160");
   }
 
+  get bbaGuild() {
+    return this.guilds.resolve("391356859518287895");
+  }
+
   get logChannel() {
     return this.kanal("dtt-bot-log");
   }

@@ -44,6 +44,45 @@ function collectInvites() {
   }));
 }
 
+DTT.on("guildMemberAdd", async guildMember => {
+	if (guildMember.guild.id !== DTT.bbaGuild.id) return;
+
+  try {
+    const DTTGuildMember = await DTT.guild.members.fetch(guildMember);
+    const role = guildMember.guild.roles.resolve("816059251045695558"); // Access role in the Bug Bombing Area guild
+    if (DTTGuildMember.roles.has(DTT.role("Tester").id)) await guildMember.roles.add(role);
+  } catch (error) {
+    if (error.code === 10007) {
+      DTT.log(`${guildMember} joined ${guildmember.guild.name} but was not found in this server.`, error);
+      return;
+    }
+
+    if (error.code === 50013) {
+      DTT.log(`${guildMember} joined ${guildmember.guild.name} but lacked permissions to authorise them.`, error);
+      return;
+    }
+
+    DTT.log(`An error occured whilst authorising ${guildMember} in ${guildmember.guild.name}.`, error);
+  }
+});
+
+DTT.on("guildMemberRemove", async guildMember => {
+  if (guildMember.guild.id !== DTT.guild.id) return;
+
+  try {
+    await DTT.bbaGuild.members.fetch(guildMember).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
+  } catch (error) {
+    if (error.code === 10007) return;
+
+    if (error.code === 50013) {
+      DTT.log(`${guildMember} left ${guildmember.guild.name} but lacked permissions to remove them from ${DTT.bbaGuild.name}.`, error);
+      return;
+    }
+
+    DTT.log(`An error occured whilst removing ${guildMember} from ${DTT.bbaGuild.name}.`, error);
+  }
+});
+
 DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
   if (oldGuildmember.guild.id !== DTT.guild.id) return;
   if (oldGuildmember.pending === true && newGuildmember.pending === false) DTT.Verification.sendVerification(newGuildmember);
