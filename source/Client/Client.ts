@@ -13,7 +13,7 @@ const Maria = createPool(mysql);
 export default class DTT extends Client {
   readonly Maria: Pool;
   readonly commands: Collection<string, any>;
-  readonly FreeBugMail;
+  readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
   readonly Verification;
   readonly freeBugMails: Collection<number, any>;

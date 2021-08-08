@@ -1,7 +1,7 @@
-import { ButtonInteraction, CommandInteraction, Formatters, GuildMember, Role, Snowflake, TextChannel } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Formatters, GuildMember, Message, MessageButton, Role, Snowflake, TextChannel } from "discord.js";
 import DTT from "./Client.js";
 
-class FreeBugMail {
+export default class FreeBugMail {
   private readonly DTT: DTT;
   No: number;
   timestamp: number;
@@ -452,13 +452,11 @@ class FreeBugMail {
     });
   }
 
-  restore(interaction) {
-    if (!interaction.member.roles.cache.some(({ id }) => [
-      interaction.client.role("Admin").id,
-      interaction.client.role("Moderator").id,
-      interaction.client.role("DT Staff").id,
-      interaction.client.role("DT Mod or BA").id
-    ].includes(id))) {
+  restore(interaction: ButtonInteraction) {
+    const guildMember = interaction.member as GuildMember;
+    const interactionMessage = interaction.message as Message;
+
+    if (!guildMember.roles.cache.hasAny(this.DTT.role("Admin").id, this.DTT.role("Moderator").id, this.DTT.role("DT Staff").id, this.DTT.role("DT Mod or BA").id)) {
       this.DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
 
       return interaction.reply({
@@ -499,12 +497,12 @@ class FreeBugMail {
           ]
         });
 
-        interaction.message.edit({
+        interactionMessage.edit({
           components: [
             {
               type: "ACTION_ROW",
               components: [
-                interaction.message.components[0].components[0].setDisabled()
+                (interaction.component as MessageButton).setDisabled()
               ]
             }
           ]
@@ -515,7 +513,7 @@ class FreeBugMail {
       });
     }).catch(error => {
       if (error.code === 10008) {
-        interaction.message.edit({
+        interactionMessage.edit({
           components: []
         });
 
@@ -556,27 +554,29 @@ class FreeBugMail {
     return `https://discord.com/channels/${this.DTT.guild.id}/${this.bugmailQueue.id}/${this.messageId}`;
   }
 
-  static addRole(interaction) {
+  static addRole(interaction: ButtonInteraction) {
     const logText = `${interaction.user} interacted with the "Opt in" button.`;
+    const DTT = interaction.client as DTT;
+    const guildMember = interaction.member as GuildMember;
 
-    if (interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
-      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} already exists on account.`);
+    if (guildMember.roles.cache.has(DTT.role("Free BugMail").id)) {
+      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} already exists on account.`);
 
       return interaction.reply({
-        content: `You already have the ${interaction.client.role("Free BugMail")} role.`,
+        content: `You already have the ${DTT.role("Free BugMail")} role.`,
         ephemeral: true
       });
     }
 
-    interaction.member.roles.add(interaction.client.role("Free BugMail")).then(() => {
-      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} added to account.`);
+    guildMember.roles.add(DTT.role("Free BugMail")).then(() => {
+      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} added to account.`);
 
       interaction.reply({
-        content: `The ${interaction.client.role("Free BugMail")} role has been added to you!`,
+        content: `The ${DTT.role("Free BugMail")} role has been added to you!`,
         ephemeral: true
       });
     }).catch(error => {
-      interaction.client.freeBugMailLog(`${logText} Error in ${interaction.client.role("Free BugMail")} addition.`, error);
+      DTT.freeBugMailLog(`${logText} Error in ${DTT.role("Free BugMail")} addition.`, error);
 
       interaction.reply({
         content: "There was an error during self-role addition.",
@@ -585,27 +585,29 @@ class FreeBugMail {
     });
   }
 
-  static removeRole(interaction) {
+  static removeRole(interaction: ButtonInteraction) {
     const logText = `${interaction.user} interacted with the "Opt out" button.`;
+    const DTT = interaction.client as DTT;
+    const guildMember = interaction.member as GuildMember;
 
-    if (!interaction.member.roles.cache.has(interaction.client.role("Free BugMail").id)) {
-      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} does not already exist on account.`);
+    if (!guildMember.roles.cache.has(DTT.role("Free BugMail").id)) {
+      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} does not already exist on account.`);
 
       return interaction.reply({
-        content: `You do not already have the ${interaction.client.role("Free BugMail")} role.`,
+        content: `You do not already have the ${DTT.role("Free BugMail")} role.`,
         ephemeral: true
       });
     }
 
-    interaction.member.roles.remove(interaction.client.role("Free BugMail")).then(() => {
-      interaction.client.freeBugMailLog(`${logText} ${interaction.client.role("Free BugMail")} removed from account.`);
+    guildMember.roles.remove(DTT.role("Free BugMail")).then(() => {
+      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} removed from account.`);
 
       interaction.reply({
-        content: `The ${interaction.client.role("Free BugMail")} role has been removed from you!`,
+        content: `The ${DTT.role("Free BugMail")} role has been removed from you!`,
         ephemeral: true
       });
     }).catch(error => {
-      interaction.client.freeBugMailLog(`${logText} Error in ${interaction.client.role("Free BugMail")} removal.`, error);
+      DTT.freeBugMailLog(`${logText} Error in ${DTT.role("Free BugMail")} removal.`, error);
 
       interaction.reply({
         content: "There was an error during self-role removal.",
@@ -614,5 +616,3 @@ class FreeBugMail {
     });
   }
 }
-
-module.exports = FreeBugMail;
