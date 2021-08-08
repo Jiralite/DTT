@@ -14,7 +14,7 @@ export default class DTT extends Client {
   readonly Maria: Pool;
   readonly commands: Collection<string, any>;
   readonly FreeBugMail;
-  readonly Invite;
+  readonly Invite: typeof Invite;
   readonly Verification;
   readonly freeBugMails: Collection<number, any>;
   readonly invites: Collection<number, any>;
