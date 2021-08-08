@@ -1,4 +1,4 @@
-import { CommandInteraction, Snowflake, TextChannel } from "discord.js";
+import { CommandInteraction, MariaInvite, Snowflake, TextChannel } from "discord.js";
 import DTT from "./Client.js";
 
 export default class Invite {

@@ -1,22 +1,31 @@
-type verificationType = "TESTER" | "ALT" | "DENY";
-type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
+import { ApplicationCommandData, ApplicationCommandPermissionData, Snowflake } from "discord.js";
 
-interface MariaFreeBugMail {
-  No: number;
-  Timestamp: number;
-  "Weekly Timestamp": number;
-  "Message ID": string;
-  "User ID": string;
-  "Claimed By ID": string;
-  Mentioned: boolean;
-  State: FreeBugMailState;
-}
+declare module "discord.js" {
+  interface CommandStructure {
+    applicationCommandData: ApplicationCommandData;
+    permissions: ApplicationCommandPermissionData[];
+  }
 
-interface MariaInvite {
-  No: number;
-  ID: string;
-  "Created Timestamp": number;
-  "Expired Timestamp": number;
-  Expired: boolean;
-  Code: string;
+  type verificationType = "TESTER" | "ALT" | "DENY";
+  type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
+
+  interface MariaFreeBugMail {
+    No: number;
+    Timestamp: number;
+    "Weekly Timestamp": number;
+    "Message ID": Snowflake;
+    "User ID": Snowflake;
+    "Claimed By ID": Snowflake;
+    Mentioned: boolean;
+    State: FreeBugMailState;
+  }
+
+  interface MariaInvite {
+    No: number;
+    ID: Snowflake;
+    "Created Timestamp": number;
+    "Expired Timestamp": number;
+    Expired: boolean;
+    Code: string;
+  }
 }

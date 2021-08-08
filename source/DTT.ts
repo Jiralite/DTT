@@ -1,4 +1,4 @@
-import { GuildMember, TextChannel } from "discord.js";
+import { GuildMember, MariaFreeBugMail, MariaInvite, TextChannel } from "discord.js";
 import Client from "./Client/Client.js";
 import Keys from "./Client/Keys.json";
 

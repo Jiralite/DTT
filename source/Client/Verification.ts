@@ -1,4 +1,4 @@
-import { ButtonInteraction, GuildMember, Message, Snowflake, TextChannel } from "discord.js";
+import { ButtonInteraction, GuildMember, Message, Snowflake, TextChannel, verificationType } from "discord.js";
 import DTT from "./Client";
 
 export default class Verification {

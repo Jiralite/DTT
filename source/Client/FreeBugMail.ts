@@ -1,4 +1,4 @@
-import { ButtonInteraction, CommandInteraction, Formatters, GuildMember, Message, MessageButton, Role, Snowflake, TextChannel } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Formatters, FreeBugMailState, GuildMember, MariaFreeBugMail, Message, MessageButton, Role, Snowflake, TextChannel } from "discord.js";
 import DTT from "./Client.js";
 
 export default class FreeBugMail {
