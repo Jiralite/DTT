@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "allowUnreachableCode": false,
+    "alwaysStrict": true,
     "module": "ES2020",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
