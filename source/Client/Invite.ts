@@ -9,6 +9,7 @@ export default class Invite {
   expiredTimestamp: number;
   expired: boolean;
   code: string;
+  timeout: NodeJS.Timeout | null;
 
   constructor(DTT: DTT, invite: Partial<MariaInvite>) {
     this.DTT = DTT;
@@ -18,6 +19,7 @@ export default class Invite {
     this.expiredTimestamp = +invite["Expired Timestamp"] || null;
     this.expired = !!invite.Expired;
     this.code = invite.Code;
+    this.timeout = null;
   }
 
   create(interaction: CommandInteraction) {
@@ -74,7 +76,7 @@ export default class Invite {
   }
 
   expireTimeout() {
-    setTimeout(() => this.remove(), this.expiredTimestamp - Date.now());
+    this.timeout = setTimeout(() => this.remove(), this.expiredTimestamp - Date.now());
   }
 
   remove() {
@@ -84,6 +86,7 @@ export default class Invite {
     ], E => {
       if (E) return this.DTT.log("Error during Invite#remove().", E);
       this.expired = true;
+      clearTimeout(this.timeout);
 
       this.inviteLogs.send({
         content: `Invite code \`${this.code}\` has just expired. <@${this.id}> generated this invite code.`,
