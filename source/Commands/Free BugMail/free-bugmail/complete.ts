@@ -3,7 +3,7 @@ import DTT from "../../../Client/Client";
 
 export default class {
   private readonly DTT: DTT;
-  name: string;
+  readonly name: string;
 
   constructor(DTT: DTT) {
     this.DTT = DTT;
