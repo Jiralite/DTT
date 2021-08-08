@@ -7,11 +7,10 @@ import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 
-const { discord: { prefix }, mysql } = Keys;
+const { mysql } = Keys;
 const Maria = createPool(mysql);
 
 export default class DTT extends Client {
-  readonly prefix: string;
   readonly Maria: Pool;
   readonly commands: Collection<string, any>;
   readonly FreeBugMail;
@@ -22,7 +21,6 @@ export default class DTT extends Client {
 
   constructor(options: ClientOptions) {
     super(options);
-    this.prefix = prefix;
     this.Maria = Maria;
     this.commands = ((): Collection<string, any> => {
       const commandsCollection: Collection<string, any> = new Collection();
