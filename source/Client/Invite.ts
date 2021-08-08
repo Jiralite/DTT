@@ -1,8 +1,17 @@
-class Invite {
-  #DTT;
+import { CommandInteraction, Snowflake, TextChannel } from "discord.js";
+import DTT from "./Client.js";
 
-  constructor(DTT, invite) {
-    this.#DTT = DTT;
+export default class Invite {
+  private DTT: DTT;
+  No: number;
+  id: Snowflake;
+  createdTimestamp: number;
+  expiredTimestamp: number;
+  expired: boolean;
+  code: string;
+
+  constructor(DTT: DTT, invite: MariaInvite | Partial<MariaInvite>) {
+    this.DTT = DTT;
     this.No = invite.No;
     this.id = invite.ID;
     this.createdTimestamp = +invite["Created Timestamp"] || null;
@@ -11,13 +20,13 @@ class Invite {
     this.code = invite.Code;
   }
 
-  create(interaction) {
-    this.#DTT.kanal("verification").createInvite({
+  create(interaction: CommandInteraction) {
+    this.verification.createInvite({
       maxAge: 86400, // 1 day
       maxUses: 1,
       unique: true
     }).then(invite => {
-      this.#DTT.Maria.query("INSERT INTO `Invites` SET ?;", {
+      this.DTT.Maria.query("INSERT INTO `Invites` SET ?;", {
         ID: interaction.user.id,
         "Created Timestamp": invite.createdTimestamp,
         "Expired Timestamp": invite.expiresTimestamp,
@@ -25,7 +34,7 @@ class Invite {
         Code: invite.code
       }, (E, { insertId }) => {
         if (E) {
-          this.#DTT.log("Error during Invite#create().", E);
+          this.DTT.log("Error during Invite#create().", E);
 
           interaction.reply({
             content: "There was an error creating the invite.",
@@ -39,7 +48,7 @@ class Invite {
         this.createdTimestamp = invite.createdTimestamp;
         this.expiredTimestamp = invite.expiresTimestamp;
         this.code = invite.code;
-        this.#DTT.invites.set(this.No, this);
+        this.DTT.invites.set(this.No, this);
         this.expireTimeout();
 
         interaction.reply({
@@ -55,7 +64,7 @@ class Invite {
         });
       });
     }).catch(error => {
-      this.#DTT.log("Error creating invite.", error);
+      this.DTT.log("Error creating invite.", error);
 
       interaction.reply({
         content: "There was an error creating the invite.",
@@ -69,11 +78,11 @@ class Invite {
   }
 
   remove() {
-    this.#DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
+    this.DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
       true,
       this.No
     ], E => {
-      if (E) return this.#DTT.log("Error during Invite#remove().", E);
+      if (E) return this.DTT.log("Error during Invite#remove().", E);
       this.expired = true;
 
       this.inviteLogs.send({
@@ -85,9 +94,11 @@ class Invite {
     });
   }
 
-  get inviteLogs() {
-    return this.#DTT.kanal("invite-logs");
+  get verification(): TextChannel {
+    return this.DTT.kanal("verification") as TextChannel;
+  }
+
+  get inviteLogs(): TextChannel {
+    return this.DTT.kanal("invite-logs") as TextChannel;
   }
 }
-
-module.exports = Invite;
