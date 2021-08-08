@@ -1,3 +1,4 @@
+type verificationType = "TESTER" | "ALT" | "DENY";
 type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
 
 interface MariaFreeBugMail {

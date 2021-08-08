@@ -103,7 +103,7 @@ DTT.on("interactionCreate", async interaction => {
   }
 
   if (interaction.isButton()) {
-    const joiner = /(Tester|Alt|Deny)-(\d+)/.exec(interaction.customId);
+    const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
     if (joiner) return DTT.Verification.authorise(interaction, joiner[1], joiner[2]);
     const roleAssignment = /ROLE-(\d+)/.exec(interaction.customId);
 
