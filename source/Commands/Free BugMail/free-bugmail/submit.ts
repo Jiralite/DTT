@@ -1,19 +1,23 @@
-class submit {
-  #DTT;
+import { ApplicationCommandOptionData, CommandInteraction } from "discord.js";
+import DTT from "../../../Client/Client";
 
-  constructor(DTT) {
+export default class {
+  private readonly DTT: DTT;
+  readonly name: string;
+
+  constructor(DTT: DTT) {
+    this.DTT = DTT;
     this.name = "submit";
-    this.#DTT = DTT;
   }
 
-  async traditional(interaction) {
+  async traditional(interaction: CommandInteraction) {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
 
-    if (interaction.channelId !== this.#DTT.kanal("bugmail-queue").id) {
-      this.#DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
+    if (interaction.channelId !== this.DTT.kanal("bugmail-queue").id) {
+      this.DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
       return interaction.reply({
-        content: `Please use this command in ${this.#DTT.kanal("bugmail-queue")}.`,
+        content: `Please use this command in ${this.DTT.kanal("bugmail-queue")}.`,
         ephemeral: true
       });
     }
@@ -21,7 +25,7 @@ class submit {
     const text = interaction.options.getString("text");
 
     if (text.length >= 1500) {
-      this.#DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
+      this.DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
 
       return interaction.reply({
         content: "That's way too long. Shorten it down and keep it concise!",
@@ -29,10 +33,11 @@ class submit {
       });
     }
 
-    await interaction.defer();
-    const message = await interaction.fetchReply();
+    const message = await interaction.deferReply({
+      fetchReply: true
+    });
 
-    const FreeBugMail = new this.#DTT.FreeBugMail(this.#DTT, {
+    const FreeBugMail = new this.DTT.FreeBugMail(this.DTT, {
       Timestamp: interaction.createdTimestamp,
       ["Weekly Timestamp"]: interaction.createdTimestamp,
       ["Message ID"]: message.id,
@@ -44,7 +49,7 @@ class submit {
     FreeBugMail.create(interaction, text);
   }
 
-  static get commandData() {
+  static get commandData(): ApplicationCommandOptionData {
     return {
       type: "SUB_COMMAND",
       name: "submit",
@@ -60,5 +65,3 @@ class submit {
     };
   }
 }
-
-module.exports = submit;
