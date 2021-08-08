@@ -1,4 +1,4 @@
-type FreeBugMailState = "OPEN | PENDING | DISABLED | RESOLVED";
+type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
 
 interface MariaFreeBugMail {
   No: number;
