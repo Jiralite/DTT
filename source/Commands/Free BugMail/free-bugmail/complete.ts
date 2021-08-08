@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { ApplicationCommandOptionData, CommandInteraction } from "discord.js";
 import DTT from "../../../Client/Client";
 
 export default class {
@@ -55,7 +55,7 @@ export default class {
     FreeBugMail.resolve(interaction, false);
   }
 
-  static get commandData() {
+  static get commandData(): ApplicationCommandOptionData {
     return {
       type: "SUB_COMMAND",
       name: "complete",
