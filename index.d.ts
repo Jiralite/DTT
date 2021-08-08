@@ -6,7 +6,7 @@ declare module "discord.js" {
     permissions: ApplicationCommandPermissionData[];
   }
 
-  type verificationType = "TESTER" | "ALT" | "DENY";
+  type VerificationType = "TESTER" | "ALT" | "DENY";
   type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
 
   interface MariaFreeBugMail {

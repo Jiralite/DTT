@@ -1,4 +1,4 @@
-import { ButtonInteraction, GuildMember, Message, Snowflake, TextChannel, verificationType } from "discord.js";
+import { ButtonInteraction, GuildMember, Message, Snowflake, TextChannel, VerificationType } from "discord.js";
 import DTT from "./Client";
 
 export default class Verification {
@@ -35,7 +35,7 @@ export default class Verification {
     });
   }
 
-  static async authorise(interaction: ButtonInteraction, authentication: verificationType, guildMemberId: Snowflake) {
+  static async authorise(interaction: ButtonInteraction, authentication: VerificationType, guildMemberId: Snowflake) {
     const DTT = interaction.client as DTT;
 
     if (!(interaction.member as GuildMember).roles.cache.hasAny(DTT.role("Admin").id, DTT.role("Moderator").id, DTT.role("DT Staff").id, DTT.role("DT Mod or BA").id)) {
