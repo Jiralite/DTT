@@ -10,7 +10,7 @@ export default class Invite {
   expired: boolean;
   code: string;
 
-  constructor(DTT: DTT, invite: MariaInvite | Partial<MariaInvite>) {
+  constructor(DTT: DTT, invite: Partial<MariaInvite>) {
     this.DTT = DTT;
     this.No = invite.No;
     this.id = invite.ID;
