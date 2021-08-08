@@ -1,28 +1,32 @@
-class complete {
-  #DTT;
+import { CommandInteraction } from "discord.js";
+import DTT from "../../../Client/Client";
 
-  constructor(DTT) {
+export default class {
+  private readonly DTT: DTT;
+  name: string;
+
+  constructor(DTT: DTT) {
+    this.DTT = DTT;
     this.name = "complete";
-    this.#DTT = DTT;
   }
 
-  async traditional(interaction) {
+  async traditional(interaction: CommandInteraction) {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
 
-    if (interaction.channelId !== this.#DTT.kanal("bugmail-queue").id) {
-      this.#DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
+    if (interaction.channelId !== this.DTT.kanal("bugmail-queue").id) {
+      this.DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
       return interaction.reply({
-        content: `Please use this command in ${this.#DTT.kanal("bugmail-queue")}.`,
+        content: `Please use this command in ${this.DTT.kanal("bugmail-queue")}.`,
         ephemeral: true
       });
     }
 
     const number = interaction.options.getInteger("number");
-    const FreeBugMail = this.#DTT.freeBugMails.get(number);
+    const FreeBugMail = this.DTT.freeBugMails.get(number);
 
     if (!FreeBugMail) {
-      this.#DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
+      this.DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
 
       return interaction.reply({
         content: "Cannot find the Free BugMail request.",
@@ -31,7 +35,7 @@ class complete {
     }
 
     if (FreeBugMail.state === "DISABLED") {
-      this.#DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which has been disabled.`);
+      this.DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which has been disabled.`);
 
       return interaction.reply({
         content: "This Free BugMail request is disabled.",
@@ -40,7 +44,7 @@ class complete {
     }
 
     if ((FreeBugMail.userId !== interaction.user.id && FreeBugMail.claimedById !== interaction.user.id) || FreeBugMail.state !== "PENDING") {
-      this.#DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which the account is not the author of or the claimer of.`);
+      this.DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which the account is not the author of or the claimer of.`);
 
       return interaction.reply({
         content: "This Free BugMail request cannot be completed.",
@@ -67,5 +71,3 @@ class complete {
     };
   }
 }
-
-module.exports = complete;
