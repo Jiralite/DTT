@@ -1,21 +1,31 @@
-const { Client, Collection } = require("discord.js");
-const { readdirSync } = require("fs");
-const { createPool } = require("mysql");
+import { Client, ClientOptions, Collection, Guild, GuildChannel, Role, Snowflake, TextChannel, ThreadChannel } from "discord.js";
+import { readdirSync } from "fs";
+import { createPool, Pool } from "mysql";
 
-const { discord: { prefix }, mysql } = require("./Keys.json");
+import Keys from "./Keys.json";
+import FreeBugMail from "./FreeBugMail.js";
+import Invite from "./Invite.js";
+import Verification from "./Verification.js";
 
-const FreeBugMail = require("./FreeBugMail.js");
-const Invite = require("./Invite.js");
-const Verification = require("./Verification.js");
+const { discord: { prefix }, mysql } = Keys;
 const Maria = createPool(mysql);
 
 class DTT extends Client {
-  constructor(options = {}) {
+  readonly prefix: string;
+  readonly Maria: Pool;
+  readonly commands: Collection<string, any>;
+  readonly FreeBugMail;
+  readonly Invite;
+  readonly Verification;
+  readonly freeBugMails: Collection<string, any>;
+  readonly invites: Collection<string, any>;
+
+  constructor(options: ClientOptions) {
     super(options);
     this.prefix = prefix;
     this.Maria = Maria;
-    this.commands = (() => {
-      const commandsCollection = new Collection();
+    this.commands = ((): Collection<string, any> => {
+      const commandsCollection: Collection<string, any> = new Collection();
 
       const folders = readdirSync("./Commands", {
         withFileTypes: true
@@ -66,7 +76,7 @@ class DTT extends Client {
     this.invites = new Collection();
   }
 
-  log(message, consoleLog = message) {
+  log(message: string, consoleLog: any = message) {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
@@ -76,10 +86,10 @@ class DTT extends Client {
       allowedMentions: {
         parse: []
       }
-    }).catch(error => this.logChannel.send(`${stamp} Couldn't send a response.`));
+    }).catch(() => this.logChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  freeBugMailLog(message, consoleLog = message) {
+  freeBugMailLog(message: string, consoleLog: any = message) {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
@@ -90,10 +100,10 @@ class DTT extends Client {
       allowedMentions: {
         parse: []
       }
-    }).catch(error => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
+    }).catch(() => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  consoleLog(consoleLog, stamp = new Date().toISOString()) {
+  consoleLog(consoleLog: any, stamp = new Date().toISOString()) {
     console.log(`- - - - - ${stamp} - - - - -`);
     console.log(consoleLog);
   }
@@ -132,31 +142,31 @@ class DTT extends Client {
     });
   }
 
-  kanal(channel) {
+  kanal(channel: string): GuildChannel | ThreadChannel {
     return this.guild.channels.resolve(this.kanaly[channel]);
   }
 
-  role(role) {
+  role(role: string): Role {
     return this.guild.roles.resolve(this.roles[role]);
   }
 
-  get guild() {
+  get guild(): Guild {
     return this.guilds.resolve("765611756441436160");
   }
 
-  get bbaGuild() {
+  get bbaGuild(): Guild {
     return this.guilds.resolve("391356859518287895");
   }
 
-  get logChannel() {
-    return this.kanal("dtt-bot-log");
+  get logChannel(): TextChannel {
+    return this.kanal("dtt-bot-log") as TextChannel;
   }
 
-  get freeBugMailLogChannel() {
-    return this.kanal("dtt-bugmail-logs");
+  get freeBugMailLogChannel(): TextChannel {
+    return this.kanal("dtt-bot-log") as TextChannel;
   }
 
-  get kanaly() {
+  get kanaly(): Record<string, Snowflake> {
     return {
       Information: "765620075737776218",
       "read-me": "765620328511963176",
@@ -181,7 +191,7 @@ class DTT extends Client {
     };
   }
 
-  get roles() {
+  get roles(): Record<string, Snowflake> {
     return {
       Admin: "765611993532334120",
       "DTT Bot": "765730622302847037",
