@@ -2,7 +2,7 @@ import { CommandInteraction, Snowflake, TextChannel } from "discord.js";
 import DTT from "./Client.js";
 
 export default class Invite {
-  private DTT: DTT;
+  private readonly DTT: DTT;
   No: number;
   id: Snowflake;
   createdTimestamp: number;
