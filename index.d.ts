@@ -1,3 +1,5 @@
+type FreeBugMailState = "OPEN | PENDING | DISABLED | RESOLVED";
+
 interface MariaFreeBugMail {
   No: number;
   Timestamp: number;
@@ -6,7 +8,7 @@ interface MariaFreeBugMail {
   "User ID": string;
   "Claimed By ID": string;
   Mentioned: boolean;
-  State: string;
+  State: FreeBugMailState;
 }
 
 interface MariaInvite {
