@@ -10,7 +10,7 @@ import Verification from "./Verification.js";
 const { discord: { prefix }, mysql } = Keys;
 const Maria = createPool(mysql);
 
-class DTT extends Client {
+export default class DTT extends Client {
   readonly prefix: string;
   readonly Maria: Pool;
   readonly commands: Collection<string, any>;
@@ -262,5 +262,3 @@ class DTT extends Client {
     }
   }
 }
-
-module.exports = DTT;
