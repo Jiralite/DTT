@@ -1,6 +1,8 @@
-const Client = require("./Client/Client.js");
+import { GuildMember, TextChannel } from "discord.js";
+import Client from "./Client/Client.js";
+import Keys from "./Client/Keys.json";
 
-const { discord: { token } } = require("./Client/Keys.json");
+const { discord: { token } } = Keys;
 
 const DTT = new Client({
   partials: [
@@ -28,7 +30,7 @@ function Maria() {
 }
 
 function collectFreeBugMails() {
-  DTT.Maria.query("SELECT * FROM `Free BugMails`", (E, R) => R.forEach(freeBugMail => {
+  DTT.Maria.query("SELECT * FROM `Free BugMails`", (_E: any, R: MariaFreeBugMail[]) => R.forEach(freeBugMail => {
     const FreeBugMail = new DTT.FreeBugMail(DTT, freeBugMail);
     DTT.freeBugMails.set(FreeBugMail.No, FreeBugMail);
     FreeBugMail.timeout();
@@ -37,7 +39,7 @@ function collectFreeBugMails() {
 }
 
 function collectInvites() {
-  DTT.Maria.query("SELECT * FROM `Invites`", (E, R) => R.forEach(invite => {
+  DTT.Maria.query("SELECT * FROM `Invites`", (_E: any, R: MariaInvite[]) => R.forEach(invite => {
     const Invite = new DTT.Invite(DTT, invite);
     DTT.invites.set(Invite.No, Invite);
     if (!Invite.expired) Invite.expireTimeout();
@@ -50,19 +52,19 @@ DTT.on("guildMemberAdd", async guildMember => {
   try {
     const DTTGuildMember = await DTT.guild.members.fetch(guildMember);
     const role = guildMember.guild.roles.resolve("816059251045695558"); // Access role in the Bug Bombing Area guild
-    if (DTTGuildMember.roles.has(DTT.role("Tester").id)) await guildMember.roles.add(role);
+    if (DTTGuildMember.roles.cache.has(DTT.role("Tester").id)) await guildMember.roles.add(role);
   } catch (error) {
     if (error.code === 10007) {
-      DTT.log(`${guildMember} joined ${guildmember.guild.name} but was not found in this server.`, error);
+      DTT.log(`${guildMember} joined ${guildMember.guild.name} but was not found in this server.`, error);
       return;
     }
 
     if (error.code === 50013) {
-      DTT.log(`${guildMember} joined ${guildmember.guild.name} but lacked permissions to authorise them.`, error);
+      DTT.log(`${guildMember} joined ${guildMember.guild.name} but lacked permissions to authorise them.`, error);
       return;
     }
 
-    DTT.log(`An error occured whilst authorising ${guildMember} in ${guildmember.guild.name}.`, error);
+    DTT.log(`An error occured whilst authorising ${guildMember} in ${guildMember.guild.name}.`, error);
   }
 });
 
@@ -75,7 +77,7 @@ DTT.on("guildMemberRemove", async guildMember => {
     if (error.code === 10007) return;
 
     if (error.code === 50013) {
-      DTT.log(`${guildMember} left ${guildmember.guild.name} but lacked permissions to remove them from ${DTT.bbaGuild.name}.`, error);
+      DTT.log(`${guildMember} left ${guildMember.guild.name} but lacked permissions to remove them from ${DTT.bbaGuild.name}.`, error);
       return;
     }
 
@@ -94,8 +96,8 @@ DTT.on("interactionCreate", async interaction => {
   if (interaction.isCommand()) {
     let command = DTT.commands.get(interaction.commandName);
     if (!command) return;
-    if (interaction.options.data[0]?.type === "SUB_COMMAND_GROUP") command = command.get(interaction.options.getSubCommandGroup()).get(interaction.options.getSubCommand());
-    if (interaction.options.data[0]?.type === "SUB_COMMAND") command = command.get(interaction.options.getSubCommand());
+    if (interaction.options.data[0]?.type === "SUB_COMMAND_GROUP") command = command.get(interaction.options.getSubcommandGroup()).get(interaction.options.getSubcommand());
+    if (interaction.options.data[0]?.type === "SUB_COMMAND") command = command.get(interaction.options.getSubcommand());
     command.traditional(interaction);
     return;
   }
@@ -107,9 +109,10 @@ DTT.on("interactionCreate", async interaction => {
 
     if (roleAssignment) {
       const role = DTT.guild.roles.resolve(roleAssignment[1]);
+      const member = interaction.member as GuildMember;
 
-      if (interaction.member.roles.cache.has(role.id)) {
-        interaction.member.roles.remove(role).then(() => interaction.reply({
+      if (member.roles.cache.has(role.id)) {
+        member.roles.remove(role).then(() => interaction.reply({
           content: `The ${role} role has been removed from you!`,
           ephemeral: true
         })).catch(error => {
@@ -121,7 +124,7 @@ DTT.on("interactionCreate", async interaction => {
           });
         });
       } else {
-        interaction.member.roles.add(role).then(() => interaction.reply({
+        member.roles.add(role).then(() => interaction.reply({
           content: `The ${role} role has been added to you!`,
           ephemeral: true
         })).catch(error => {
@@ -170,7 +173,7 @@ DTT.on("messageCreate", message => {
   if (message.author.bot) return;
 
   if (message.channel.id === DTT.kanal("bugmail-queue").id) {
-    if (!message.channel.permissionsFor(message.author).has("MANAGE_MESSAGES") && message.author.id !== DTT.user.id) message.delete();
+    if (!(message.channel as TextChannel).permissionsFor(message.author).has("MANAGE_MESSAGES") && message.author.id !== DTT.user.id) message.delete();
   }
 });
 
