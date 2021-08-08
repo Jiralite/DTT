@@ -16,8 +16,8 @@ export default class DTT extends Client {
   readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
   readonly Verification;
-  readonly freeBugMails: Collection<number, any>;
-  readonly invites: Collection<number, any>;
+  readonly freeBugMails: Collection<number, FreeBugMail>;
+  readonly invites: Collection<number, Invite>;
 
   constructor(options: ClientOptions) {
     super(options);
