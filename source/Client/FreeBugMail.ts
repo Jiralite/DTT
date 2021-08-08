@@ -134,7 +134,7 @@ export default class FreeBugMail {
     }), 604800000 - (Date.now() - this.weeklyTimestamp));
   }
 
-  resumePendingTimeout(interaction) {
+  resumePendingTimeout(interaction: ButtonInteraction) {
     this.DTT.freeBugMailLog(`${interaction.user} has stated Free BugMail request #${this.No} is still ongoing after a week.`);
 
     this.DTT.Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
@@ -163,7 +163,7 @@ export default class FreeBugMail {
     });
   }
 
-  resolvePendingTimeout(interaction) {
+  resolvePendingTimeout(interaction: ButtonInteraction) {
     this.DTT.freeBugMailLog(`${interaction.user} stated has stated Free BugMail request #${this.No} has been completed after a weekly reminder.`);
 
     interaction.update({
@@ -174,7 +174,9 @@ export default class FreeBugMail {
     this.resolve(interaction, true);
   }
 
-  preClaim(interaction) {
+  preClaim(interaction: ButtonInteraction) {
+    const interactionMessage = interaction.message as Message;
+    const interactionComponent = interaction.component as MessageButton;
     const pendingBugMail = this.DTT.freeBugMails.find(({ claimedById, state }) => claimedById === interaction.user.id && state === "PENDING");
 
     if (pendingBugMail) {
@@ -186,12 +188,12 @@ export default class FreeBugMail {
       });
     }
 
-    interaction.message.edit({
+    interactionMessage.edit({
       components: [
         {
           type: "ACTION_ROW",
           components: [
-            interaction.message.components[0].components[0].setDisabled()
+            interactionComponent.setDisabled()
           ]
         }
       ]
@@ -225,12 +227,12 @@ export default class FreeBugMail {
       if (this.state !== "OPEN" || this.pendingDeletion) return;
       this.DTT.freeBugMailLog(`${interaction.user} did not fully claim Free BugMail request #${this.No}.`);
 
-      interaction.message.edit({
+      interactionMessage.edit({
         components: [
           {
             type: "ACTION_ROW",
             components: [
-              interaction.message.components[0].components[0].setDisabled(false)
+              interactionComponent.setDisabled(false)
             ]
           }
         ]
@@ -315,7 +317,7 @@ export default class FreeBugMail {
     }));
   }
 
-  resolve(interaction: CommandInteraction, fromTimeout: boolean) {
+  resolve(interaction: ButtonInteraction | CommandInteraction, fromTimeout: boolean) {
     this.DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
