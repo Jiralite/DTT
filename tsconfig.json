@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "outDir": "./sourceJS",
+    "esModuleInterop": true,
+    "target": "ES2020"
+  }
+}
