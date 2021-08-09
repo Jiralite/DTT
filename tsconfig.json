@@ -5,6 +5,7 @@
     "noImplicitAny": true,
     "noImplicitOverride": true,
     "noImplicitThis": true,
+    "noUnusedLocals": true,
     "module": "ES2020",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
