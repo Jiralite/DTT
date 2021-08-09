@@ -89,7 +89,7 @@ export default class Verification {
         ephemeral: true
       });
 
-      (interaction.message as Message).delete().catch(error => null);
+      (interaction.message as Message).delete().catch(() => null);
       (DTT.kanal("general") as TextChannel).send(`Welcome to **${DTT.guild.name}**, ${guildMember}! Be sure to check out ${DTT.kanal("roles")} and other channels!`);
     }).catch(error => {
       DTT.log(`Error adding role to ${guildMember}.`, error);
@@ -112,7 +112,7 @@ export default class Verification {
         ephemeral: true
       });
 
-      (interaction.message as Message).delete().catch(error => null);
+      (interaction.message as Message).delete().catch(() => null);
     }).catch(error => {
       DTT.log(`Error adding role to ${guildMember}.`, error);
 
@@ -129,8 +129,8 @@ export default class Verification {
     guildMember.kick().then(() => {
       DTT.log(`${interaction.user} has removed ${guildMember} from this guild - failed verification.`);
       interaction.reply(`${interaction.user} has kicked ${guildMember}.`);
-      (interaction.message as Message).delete().catch(error => null);
-      setTimeout(() => interaction.deleteReply().catch(error => null), 60000);
+      (interaction.message as Message).delete().catch(() => null);
+      setTimeout(() => interaction.deleteReply().catch(() => null), 60000);
     }).catch(error => {
       DTT.log(`Error removing ${guildMember} from this guild.`, error);
 
