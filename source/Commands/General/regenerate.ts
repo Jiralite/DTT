@@ -1,26 +1,26 @@
-import { CommandInteraction, CommandStructure, NewsChannel, TextChannel, ThreadChannel } from "discord.js";
+import { CategoryChannel, CommandInteraction, CommandStructure, GuildMember, Message, MessageSelectOptionData, NewsChannel, Role, Snowflake, TextChannel } from "discord.js";
 import DTT from "../../Client/Client";
 
 export default class {
   private readonly DTT: DTT;
-  readonly name: string;
+  readonly name = "regenerate";
+  messageIds: Snowflake[] = [];
 
   constructor(DTT: DTT) {
     this.DTT = DTT;
-    this.name = "regenerate";
   }
 
   async traditional(interaction: CommandInteraction) {
-    const channel = interaction.channel as TextChannel | NewsChannel | ThreadChannel;
+    const channel = interaction.channel;
 
-    if (channel instanceof ThreadChannel) {
+    if (!(channel instanceof TextChannel || channel instanceof NewsChannel)) {
       return interaction.reply({
-        content: "This cannot be used in a thread channel.",
+        content: "This cannot be used in this channel.",
         ephemeral: true
       });
     }
 
-    if (!channel.permissionsFor(this.DTT.user).has([
+    if (!channel.permissionsFor(interaction.guild!.me as GuildMember).has([
       "VIEW_CHANNEL",
       "SEND_MESSAGES"
     ])) {
@@ -32,35 +32,161 @@ export default class {
 
     const text = interaction.options.getString("channel_name");
 
-    await interaction.deferReply({
-      ephemeral: true
-    });
+    const message = await interaction.deferReply({
+      fetchReply: true
+    }) as Message;
 
-    switch (text) {
-      case "read-me":
-        await this.readMe(channel);
-        break;
-      case "roles":
-        await this.roles(channel);
-        break;
+    try {
+      switch (text) {
+        case "read-me":
+          await this.readMe(channel);
+          break;
+        case "roles":
+          await this.roles(channel);
+          break;
+      }
+
+      message.delete().catch(() => null);
+    } catch (error) {
+      this.DTT.log(`Error regenerating "${text}".`, error);
+      channel.bulkDelete(this.messageIds);
+      interaction.editReply("There was an error regenerating content.");
     }
-
-    interaction.editReply("Channel regenerated.");
   }
 
   async readMe(channel: TextChannel | NewsChannel) {
+    const moderator = this.DTT.role("Moderator");
+    const Information = this.DTT.kanal("Information") as CategoryChannel;
+    const announcements = this.DTT.kanal("announcements");
+    const roles = this.DTT.kanal("roles");
+    const General = this.DTT.kanal("General") as CategoryChannel;
+    const general = this.DTT.kanal("general");
+    const botCommands = this.DTT.kanal("bot-commands");
+    const DTGeneral = this.DTT.kanal("DT General") as CategoryChannel;
+    const a11y = this.DTT.kanal("a11y");
+    const resources = this.DTT.kanal("resources");
+    const bugmailQueue = this.DTT.kanal("bugmail-queue");
+    const bugmailDiscussion = this.DTT.kanal("bugmail-discussion");
+    const DiscordUpdates = this.DTT.kanal("Discord Updates") as CategoryChannel;
+
+    if ([moderator, Information, announcements, roles, General, general, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
+      throw new ReferenceError("Unknown references detected.");
+    }
+
     const message1 = await channel.send({
-      content: `Welcome to **${this.DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${this.DTT.role("Moderator")}s' instructions.\n\nRead below for an explanation of categories!\n\n**__${this.DTT.kanal("Information").name}__**\nYou are here! This category contains an introduction to the server. This channel also includes ${this.DTT.kanal("announcements")} and ${this.DTT.kanal("roles")} which you can view once admitted to the server.\n\n**__${this.DTT.kanal("General").name}__**\nHome to ${this.DTT.kanal("general")} (off-topic chat) and ${this.DTT.kanal("bot-commands")} and other channels which may show up from time to time.\n\n**__${this.DTT.kanal("DT General").name}__**\nChannels in this category relate specifically to Discord Testers, such as:\n• ${this.DTT.kanal("a11y")}\n• ${this.DTT.kanal("resources")}\n• ${this.DTT.kanal("bugmail-queue")}\n• ${this.DTT.kanal("bugmail-discussion")}\n\n**__Testing Categories__**\nThe purpose of these categories are to test bugs specific to the respective platform. These categories also include information related to the platform from Phabricator. Each category also includes a discussion channel, as well as a channel for known issues. Phabricator channels that aren't specific to a testing category fit into ${this.DTT.kanal("DT General").name}.\n\n**__${this.DTT.kanal("Discord Updates").name}__**\nUpdates are sent when there is a new Stable, PTB or Canary build (or host) available and also for when there is a new status issue recorded on https://dis.gd/status.\n\n**__Invite__**\nThe \`/invite\` Slash Command can be used to generate a one-time invite to this server. Wait a day before inviting a new T2 please.`,
+      content: `Welcome to **${this.DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${moderator}s' instructions.\n\nRead below for an explanation of categories!\n\n**__${Information.name}__**\nYou are here! This category contains an introduction to the server. This channel also includes ${announcements} and ${roles} which you can view once admitted to the server.\n\n**__${General.name}__**\nHome to ${general} (off-topic chat) and ${botCommands} and other channels which may show up from time to time.\n\n**__${DTGeneral.name}__**\nChannels in this category relate specifically to Discord Testers, such as:\n• ${a11y}\n• ${resources}\n• ${bugmailQueue}\n• ${bugmailDiscussion}\n\n**__Testing Categories__**\nThe purpose of these categories are to test bugs specific to the respective platform. These categories also include information related to the platform from Phabricator. Each category also includes a discussion channel, as well as a channel for known issues. Phabricator channels that aren't specific to a testing category fit into ${DTGeneral.name}.\n\n**__${DiscordUpdates.name}__**\nUpdates are sent when there is a new Stable, PTB or Canary build (or host) available and also for when there is a new status issue recorded on https://dis.gd/status.\n\n**__Invite__**\nThe \`/invite\` Slash Command can be used to generate a one-time invite to this server. Wait a day before inviting a new T2 please.`,
       allowedMentions: {
         parse: []
       }
     });
 
-    message1.suppressEmbeds();
+    await message1.suppressEmbeds();
+    this.messageIds.push(message1.id);
   }
 
   async roles(channel: TextChannel | NewsChannel) {
-    await channel.send("Please use the buttons to self-assign roles to help identify testers!");
+    const macOSVersionRoles = [
+      this.DTT.role("macOS El Capitan"),
+      this.DTT.role("macOS Sierra"),
+      this.DTT.role("macOS High Sierra"),
+      this.DTT.role("macOS Mojave"),
+      this.DTT.role("macOS Catalina"),
+      this.DTT.role("macOS Big Sur"),
+      this.DTT.role("macOS Monterey")
+    ];
+  
+    const linuxDistributionRoles = [
+      this.DTT.role("Arch Linux"),
+      this.DTT.role("elementary OS"),
+      this.DTT.role("Gentoo Linux"),
+      this.DTT.role("Linux Mint"),
+      this.DTT.role("Manjaro Linux"),
+      this.DTT.role("Pop!_OS"),
+      this.DTT.role("Ubuntu")
+    ];
+  
+    const windowsVersionRoles = [
+      this.DTT.role("Windows 7"),
+      this.DTT.role("Windows 8"),
+      this.DTT.role("Windows 10"),
+      this.DTT.role("Windows 11")
+    ];
+  
+    const androidDeviceRoles = [
+      this.DTT.role("Pixel"),
+      this.DTT.role("Razer Phone"),
+      this.DTT.role("Samsung Galaxy")
+    ];
+  
+    const androidVersionRoles = [
+      this.DTT.role("Android 5"),
+      this.DTT.role("Android 6"),
+      this.DTT.role("Android 7"),
+      this.DTT.role("Android 8"),
+      this.DTT.role("Android 9"),
+      this.DTT.role("Android 10"),
+      this.DTT.role("Android 11"),
+      this.DTT.role("Android 12")
+    ];
+  
+    const iOSDeviceRoles = [
+      this.DTT.role("iPhone"),
+      this.DTT.role("iPod"),
+      this.DTT.role("iPad")
+    ];
+  
+    const iOSVersionRoles = [
+      this.DTT.role("iOS 10"),
+      this.DTT.role("iOS 11"),
+      this.DTT.role("iOS 12"),
+      this.DTT.role("iOS 13"),
+      this.DTT.role("iOS 14"),
+      this.DTT.role("iOS 15"),
+    ];
+  
+    const iOSMiscellaneousRoles = [
+      this.DTT.role("Face ID"),
+      this.DTT.role("4-inch"),
+      this.DTT.role("Hardware Keyboard"),
+      this.DTT.role("Apple Pencil"),
+      this.DTT.role("Apple Watch")
+    ];
+
+    const chromebook = this.DTT.role("Chromebook") as Role;
+  
+    const miscellaneousRoles = [
+      this.DTT.role("Touchscreen PC"),
+      this.DTT.role("GDPR")
+    ];
+  
+    const experimentRoles = [
+      this.DTT.role("Student")
+    ];
+  
+    const discordUpdatesRoles = [
+      this.DTT.role("Status Updates"),
+      this.DTT.role("Canary Updates"),
+      this.DTT.role("PTB Updates"),
+      this.DTT.role("Stable Updates")
+    ];
+  
+    const phabricatorUpdatesRoles = [
+      this.DTT.role("Desktop"),
+      this.DTT.role("Android"),
+      this.DTT.role("iOS"),
+      this.DTT.role("DBug"),
+      this.DTT.role("Boardless"),
+      this.DTT.role("P0")
+    ];
+
+    if ([...macOSVersionRoles, ...linuxDistributionRoles, ...windowsVersionRoles, ...androidDeviceRoles, ...androidVersionRoles, ...iOSDeviceRoles, ...iOSVersionRoles, ...iOSMiscellaneousRoles, chromebook, ...miscellaneousRoles, ...experimentRoles, ...discordUpdatesRoles, ...phabricatorUpdatesRoles].some(variable => variable === null)) {
+      throw new ReferenceError("Unknown references detected.");
+    }
+    
+    const options = (componentOptions: Role[]): MessageSelectOptionData[] => componentOptions.map(({ id, name }) => ({
+      label: name,
+      value: id
+    }));
 
     await channel.send({
       content: "**__macOS__**",
@@ -69,51 +195,12 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "macOS El Capitan",
-              customId: `ROLE-${this.DTT.role("macOS El Capitan").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "macOS Sierra",
-              customId: `ROLE-${this.DTT.role("macOS Sierra").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "macOS High Sierra",
-              customId: `ROLE-${this.DTT.role("macOS High Sierra").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "macOS Mojave",
-              customId: `ROLE-${this.DTT.role("macOS Mojave").id}`,
-              style: "PRIMARY"
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: "macOS Catalina",
-              customId: `ROLE-${this.DTT.role("macOS Catalina").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "macOS Big Sur",
-              customId: `ROLE-${this.DTT.role("macOS Big Sur").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "macOS Monterey",
-              customId: `ROLE-${this.DTT.role("macOS Monterey").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign macOS version roles!",
+              minValues: 0,
+              maxValues: macOSVersionRoles.length,
+              options: options(macOSVersionRoles as Role[])
             }
           ]
         }
@@ -127,10 +214,12 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Linux",
-              customId: `ROLE-${this.DTT.role("Linux").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign Linux distribution roles!",
+              minValues: 0,
+              maxValues: linuxDistributionRoles.length,
+              options: options(linuxDistributionRoles as Role[])
             }
           ]
         }
@@ -144,103 +233,12 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Windows 7",
-              customId: `ROLE-${this.DTT.role("Windows 7").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Windows 8",
-              customId: `ROLE-${this.DTT.role("Windows 8").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Windows 10",
-              customId: `ROLE-${this.DTT.role("Windows 10").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Windows 11",
-              customId: `ROLE-${this.DTT.role("Windows 11").id}`,
-              style: "PRIMARY"
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__iOS__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: "iPhone",
-              customId: `ROLE-${this.DTT.role("iPhone").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "iPod",
-              customId: `ROLE-${this.DTT.role("iPod").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "iPad",
-              customId: `ROLE-${this.DTT.role("iPad").id}`,
-              style: "PRIMARY"
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: "iOS 10",
-              customId: `ROLE-${this.DTT.role("iOS 10").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "iOS 11",
-              customId: `ROLE-${this.DTT.role("iOS 11").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "iOS 12",
-              customId: `ROLE-${this.DTT.role("iOS 12").id}`,
-              style: "PRIMARY"
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: "iOS 13",
-              customId: `ROLE-${this.DTT.role("iOS 13").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "iOS 14",
-              customId: `ROLE-${this.DTT.role("iOS 14").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "iOS 15",
-              customId: `ROLE-${this.DTT.role("iOS 15").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign Windows version roles!",
+              minValues: 0,
+              maxValues: windowsVersionRoles.length,
+              options: options(windowsVersionRoles as Role[])
             }
           ]
         }
@@ -254,22 +252,12 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Android Alpha",
-              customId: `ROLE-${this.DTT.role("Android Alpha").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Android 5",
-              customId: `ROLE-${this.DTT.role("Android 5").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Android 6",
-              customId: `ROLE-${this.DTT.role("Android 6").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign Android device roles!",
+              minValues: 0,
+              maxValues: androidDeviceRoles.length,
+              options: options(androidDeviceRoles as Role[])
             }
           ]
         },
@@ -277,22 +265,31 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Android 7",
-              customId: `ROLE-${this.DTT.role("Android 7").id}`,
-              style: "PRIMARY"
-            },
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign Android version roles!",
+              minValues: 0,
+              maxValues: androidVersionRoles.length,
+              options: options(androidVersionRoles as Role[])
+            }
+          ]
+        }
+      ]
+    });
+
+    await channel.send({
+      content: "**__iOS__**",
+      components: [
+        {
+          type: "ACTION_ROW",
+          components: [
             {
-              type: "BUTTON",
-              label: "Android 8",
-              customId: `ROLE-${this.DTT.role("Android 8").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Android 9",
-              customId: `ROLE-${this.DTT.role("Android 9").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign iOS device roles!",
+              minValues: 0,
+              maxValues: iOSDeviceRoles.length,
+              options: options(iOSDeviceRoles as Role[])
             }
           ]
         },
@@ -300,22 +297,25 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Android 10",
-              customId: `ROLE-${this.DTT.role("Android 10").id}`,
-              style: "PRIMARY"
-            },
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign iOS version roles!",
+              minValues: 0,
+              maxValues: iOSVersionRoles.length,
+              options: options(iOSVersionRoles as Role[])
+            }
+          ]
+        },
+        {
+          type: "ACTION_ROW",
+          components: [
             {
-              type: "BUTTON",
-              label: "Android 11",
-              customId: `ROLE-${this.DTT.role("Android 11").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Android 12",
-              customId: `ROLE-${this.DTT.role("Android 12").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign miscellanous iOS info!",
+              minValues: 0,
+              maxValues: iOSMiscellaneousRoles.length,
+              options: options(iOSMiscellaneousRoles as Role[])
             }
           ]
         }
@@ -323,44 +323,15 @@ export default class {
     });
 
     await channel.send({
-      content: "**__Chromebook__**",
+      content: "**__Chrome OS__**",
       components: [
         {
           type: "ACTION_ROW",
           components: [
             {
               type: "BUTTON",
-              label: "Chromebook",
-              customId: `ROLE-${this.DTT.role("Chromebook").id}`,
-              style: "PRIMARY"
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Accessories__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: "Mobile Hardware Keyboard",
-              customId: `ROLE-${this.DTT.role("Mobile Hardware Keyboard").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Apple Pencil",
-              customId: `ROLE-${this.DTT.role("Apple Pencil").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Apple Watch",
-              customId: `ROLE-${this.DTT.role("Apple Watch").id}`,
+              label: chromebook.name,
+              customId: `SELFROLE-${chromebook.id}`,
               style: "PRIMARY"
             }
           ]
@@ -375,23 +346,36 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Touchscreen PC",
-              customId: `ROLE-${this.DTT.role("Touchscreen PC").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "GDPR",
-              customId: `ROLE-${this.DTT.role("GDPR").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign miscellanous roles!",
+              minValues: 0,
+              maxValues: miscellaneousRoles.length,
+              options: options(miscellaneousRoles as Role[])
             }
           ]
         }
       ]
     });
 
-    await channel.send("**__Experiments__**\n\nThere are currently no experiment roles.");
+    await channel.send({
+      content: "**__Experiments__**",
+      components: [
+        {
+          type: "ACTION_ROW",
+          components: [
+            {
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign Experiment roles!",
+              minValues: 0,
+              maxValues: experimentRoles.length,
+              options: options(experimentRoles as Role[])
+            }
+          ]
+        }
+      ]
+    });
 
     await channel.send("There are also other roles we use for notifying purposes. Check them out!");
 
@@ -402,28 +386,12 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Status Updates",
-              customId: `ROLE-${this.DTT.role("Status Updates").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Canary Updates",
-              customId: `ROLE-${this.DTT.role("Canary Updates").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "PTB Updates",
-              customId: `ROLE-${this.DTT.role("PTB Updates").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Stable Updates",
-              customId: `ROLE-${this.DTT.role("Stable Updates").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign Experiment roles!",
+              minValues: 0,
+              maxValues: discordUpdatesRoles.length,
+              options: options(discordUpdatesRoles as Role[])
             }
           ]
         }
@@ -437,45 +405,12 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "BUTTON",
-              label: "Desktop",
-              customId: `ROLE-${this.DTT.role("Desktop").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Android",
-              customId: `ROLE-${this.DTT.role("Android").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "iOS",
-              customId: `ROLE-${this.DTT.role("iOS").id}`,
-              style: "PRIMARY"
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: "DBug",
-              customId: `ROLE-${this.DTT.role("DBug").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "Boardless",
-              customId: `ROLE-${this.DTT.role("Boardless").id}`,
-              style: "PRIMARY"
-            },
-            {
-              type: "BUTTON",
-              label: "P0",
-              customId: `ROLE-${this.DTT.role("P0").id}`,
-              style: "PRIMARY"
+              type: "SELECT_MENU",
+              customId: "SELFROLE",
+              placeholder: "Assign Experiment roles!",
+              minValues: 0,
+              maxValues: phabricatorUpdatesRoles.length,
+              options: options(phabricatorUpdatesRoles as Role[])
             }
           ]
         }
@@ -510,7 +445,7 @@ export default class {
       },
       permissions: [
         {
-          id: this.DTT.role("Admin").id,
+          id: (this.DTT.role("Admin") as Role).id,
           type: "ROLE",
           permission: true
         }

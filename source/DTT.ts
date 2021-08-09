@@ -1,4 +1,4 @@
-import { GuildMember, MariaFreeBugMail, MariaInvite, Snowflake, TextChannel, VerificationType } from "discord.js";
+import { GuildMember, MariaFreeBugMail, MariaInvite, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
 import Client from "./Client/Client.js";
 import Keys from "./Client/Keys.json";
 
@@ -105,7 +105,7 @@ DTT.on("interactionCreate", (interaction): any => {
   if (interaction.isButton()) {
     const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
     if (joiner) return DTT.Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
-    const roleAssignment = /ROLE-(\d+)/.exec(interaction.customId);
+    const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 
     if (roleAssignment) {
       const role = DTT.guild.roles.resolve(roleAssignment[1]);
@@ -164,6 +164,48 @@ DTT.on("interactionCreate", (interaction): any => {
       if (weekBugMail[2] === "PENDING") return FreeBugMail.resumePendingTimeout(interaction);
       if (weekBugMail[2] === "RESOLVED") return FreeBugMail.resolvePendingTimeout(interaction);
     }
+  }
+
+  if (interaction.isSelectMenu()) {
+    const roles: Role[] = interaction.values.map(id => DTT.role(id));
+
+    if (roles.some(role => role === null)) {
+      DTT.log("Error during self-role. Detected role ids that couldn't be found.")
+
+      return interaction.reply({
+        content: "Error: detected a role that couldn't be found.",
+        ephemeral: true
+      });
+    }
+
+    const guildMember = interaction.member as GuildMember;
+    const rolesToSet = guildMember.roles.cache.clone();
+    const rolesAdded = [];
+    const rolesRemoved = [];
+
+    for (const role of roles) {
+      if (rolesToSet.has(role.id)) {
+        rolesToSet.delete(role.id);
+        rolesRemoved.push(role);
+      } else {
+        rolesToSet.set(role.id, role);
+        rolesAdded.push(role);
+      }
+    }
+
+    guildMember.roles.set(rolesToSet).then(() => {
+      interaction.reply({
+        content: `Roles added: ${rolesAdded.join(" & ") || "None."}\nRoles removed: ${rolesRemoved.join(" & ") || "None."}`,
+        ephemeral: true
+      });
+    }).catch(error => {
+      DTT.log("Error during applying self-roles.", error);
+
+      interaction.reply({
+        content: "There was an error applying self-roles.",
+        ephemeral: true
+      });
+    });
   }
 });
 
