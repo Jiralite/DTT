@@ -1,30 +1,31 @@
-import { ButtonInteraction, CommandInteraction, Formatters, FreeBugMailState, GuildMember, MariaFreeBugMail, Message, MessageButton, Role, Snowflake, TextChannel } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Formatters, FreeBugMailData, FreeBugMailState, GuildMember, Message, MessageButton, Role, Snowflake, TextChannel } from "discord.js";
+import { OkPacket } from "mysql";
 import DTT from "./Client.js";
 
 export default class FreeBugMail {
   private readonly DTT: DTT;
-  No: number;
+  No: number | null;
   timestamp: number;
   weeklyTimestamp: number;
   messageId: Snowflake;
   userId: Snowflake;
-  claimedById: Snowflake;
+  claimedById: Snowflake | null;
   mentioned: boolean;
-  state: FreeBugMailState;
-  disabledMessageId: Snowflake;
+  state: FreeBugMailState | null;
+  disabledMessageId: Snowflake | null;
   hourTimeout: NodeJS.Timeout | null;
   reminderTimeout: NodeJS.Timeout | null;
   pendingDeletion: boolean;
 
-  constructor(DTT: DTT, freeBugMail: Partial<MariaFreeBugMail>) {
+  constructor(DTT: DTT, freeBugMail: FreeBugMailData) {
     this.DTT = DTT;
     this.No = freeBugMail.No;
     this.timestamp = +freeBugMail.Timestamp;
     this.weeklyTimestamp = +freeBugMail["Weekly Timestamp"];
     this.messageId = freeBugMail["Message ID"];
     this.userId = freeBugMail["User ID"];
-    this.claimedById = freeBugMail["Claimed By ID"] ?? null;
-    this.mentioned = !!freeBugMail.Mentioned;
+    this.claimedById = freeBugMail["Claimed By ID"];
+    this.mentioned = Boolean(freeBugMail.Mentioned);
     this.state = freeBugMail.State;
     this.disabledMessageId = null;
     this.hourTimeout = null;
@@ -40,7 +41,7 @@ export default class FreeBugMail {
       ["User ID"]: this.userId,
       Mentioned: this.mentioned,
       State: this.state
-    }, (E, { insertId }) => {
+    }, (E, { insertId }: OkPacket) => {
       if (E) {
         this.DTT.log("Error during FreeBugMail#create().", E);
         interaction.editReply("There was an error during Free BugMail creation.");
@@ -48,6 +49,8 @@ export default class FreeBugMail {
       }
 
       this.No = insertId;
+      this.mentioned = false;
+      this.state = "OPEN";
       this.mentionedTimeout();
       this.DTT.freeBugMails.set(this.No, this);
 
@@ -56,7 +59,7 @@ export default class FreeBugMail {
           {
             description: text,
             timestamp: Date.now(),
-            color: interaction.guild.me.displayColor,
+            color: interaction.guild!.me!.displayColor,
             footer: {
               text: `#${this.No}`
             },
@@ -91,7 +94,7 @@ export default class FreeBugMail {
 
   mentionedTimeout() {
     if (this.state !== "OPEN" || this.mentioned) return;
-    clearTimeout(this.hourTimeout);
+    if (this.hourTimeout !== null) clearTimeout(this.hourTimeout);
 
     this.hourTimeout = setTimeout(() => this.bugmailDiscussion.send({
       content: `Hey, is anyone with a ${this.freeBugMail} able to help with Free BugMail request #${this.No} belonging to <@${this.userId}>?`,
@@ -108,7 +111,7 @@ export default class FreeBugMail {
 
   timeout() {
     if (this.state !== "PENDING") return;
-    clearTimeout(this.reminderTimeout);
+    if (this.reminderTimeout !== null) clearTimeout(this.reminderTimeout);
 
     this.reminderTimeout = setTimeout(() => this.bugmailDiscussion.send({
       content: `Hey, <@${this.claimedById}>. It's been a week. Is Free BugMail request #${this.No} still ongoing?`,
@@ -281,7 +284,7 @@ export default class FreeBugMail {
 
       message.react("<a:typing:852637406334156800>");
       const guildMember = interaction.member as GuildMember;
-      if (guildMember.roles.cache.has(this.DTT.role("Free BugMail").id)) guildMember.roles.remove(this.DTT.role("Free BugMail"));
+      if (guildMember.roles.cache.has(this.freeBugMail.id)) guildMember.roles.remove(this.freeBugMail);
       this.DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
 
       this.bugmailDiscussion.send({
@@ -296,7 +299,7 @@ export default class FreeBugMail {
 
       this.claimedById = interaction.user.id;
       this.state = "PENDING";
-      clearTimeout(this.hourTimeout);
+      if (this.hourTimeout !== null) clearTimeout(this.hourTimeout);
       this.hourTimeout = null;
       this.timeout();
     });
@@ -333,7 +336,7 @@ export default class FreeBugMail {
         return;
       }
 
-      clearTimeout(this.reminderTimeout);
+      if (this.reminderTimeout !== null) clearTimeout(this.reminderTimeout);
       this.state = "RESOLVED";
       this.reminderTimeout = null;
       const message = await this.fetchMessage().catch(() => null);
@@ -364,8 +367,8 @@ export default class FreeBugMail {
   }
 
   remove() {
-    clearTimeout(this.hourTimeout);
-    clearTimeout(this.reminderTimeout);
+    if (this.hourTimeout !== null) clearTimeout(this.hourTimeout);
+    if (this.reminderTimeout !== null) clearTimeout(this.reminderTimeout);
     this.hourTimeout = null;
     this.reminderTimeout = null;
     this.DTT.freeBugMailLog(`Free BugMail request #${this.No} has been manually deleted and ergo automatically resolved.`);
@@ -458,7 +461,7 @@ export default class FreeBugMail {
     const guildMember = interaction.member as GuildMember;
     const interactionMessage = interaction.message as Message;
 
-    if (!guildMember.roles.cache.hasAny(this.DTT.role("Admin").id, this.DTT.role("Moderator").id, this.DTT.role("DT Staff").id, this.DTT.role("DT Mod or BA").id)) {
+    if (!guildMember.roles.cache.hasAny(...this.DTT.modRoles.map(({ id }) => id))) {
       this.DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
 
       return interaction.reply({
@@ -560,25 +563,32 @@ export default class FreeBugMail {
     const logText = `${interaction.user} interacted with the "Opt in" button.`;
     const DTT = interaction.client as DTT;
     const guildMember = interaction.member as GuildMember;
+    const freeBugMail = DTT.role("Free BugMail");
 
-    if (guildMember.roles.cache.has(DTT.role("Free BugMail").id)) {
-      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} already exists on account.`);
+    if (freeBugMail === null) {
+      DTT.freeBugMailLog(`${logText} Apparently, the Free BugMail role cannot be found.`);
+      interaction.reply("There was an error opting in.");
+      return;
+    }
+
+    if (guildMember.roles.cache.has(freeBugMail.id)) {
+      DTT.freeBugMailLog(`${logText} ${freeBugMail} already exists on account.`);
 
       return interaction.reply({
-        content: `You already have the ${DTT.role("Free BugMail")} role.`,
+        content: `You already have the ${freeBugMail} role.`,
         ephemeral: true
       });
     }
 
-    guildMember.roles.add(DTT.role("Free BugMail")).then(() => {
-      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} added to account.`);
+    guildMember.roles.add(freeBugMail).then(() => {
+      DTT.freeBugMailLog(`${logText} ${freeBugMail} added to account.`);
 
       interaction.reply({
-        content: `The ${DTT.role("Free BugMail")} role has been added to you!`,
+        content: `The ${freeBugMail} role has been added to you!`,
         ephemeral: true
       });
     }).catch(error => {
-      DTT.freeBugMailLog(`${logText} Error in ${DTT.role("Free BugMail")} addition.`, error);
+      DTT.freeBugMailLog(`${logText} Error in ${freeBugMail} addition.`, error);
 
       interaction.reply({
         content: "There was an error during self-role addition.",
@@ -591,25 +601,32 @@ export default class FreeBugMail {
     const logText = `${interaction.user} interacted with the "Opt out" button.`;
     const DTT = interaction.client as DTT;
     const guildMember = interaction.member as GuildMember;
+    const freeBugMail = DTT.role("Free BugMail");
 
-    if (!guildMember.roles.cache.has(DTT.role("Free BugMail").id)) {
-      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} does not already exist on account.`);
+    if (freeBugMail === null) {
+      DTT.freeBugMailLog(`${logText} Apparently, the Free BugMail role cannot be found.`);
+      interaction.reply("There was an error opting out.");
+      return;
+    }
+
+    if (!guildMember.roles.cache.has(freeBugMail.id)) {
+      DTT.freeBugMailLog(`${logText} ${freeBugMail} does not already exist on account.`);
 
       return interaction.reply({
-        content: `You do not already have the ${DTT.role("Free BugMail")} role.`,
+        content: `You do not already have the ${freeBugMail} role.`,
         ephemeral: true
       });
     }
 
-    guildMember.roles.remove(DTT.role("Free BugMail")).then(() => {
-      DTT.freeBugMailLog(`${logText} ${DTT.role("Free BugMail")} removed from account.`);
+    guildMember.roles.remove(freeBugMail).then(() => {
+      DTT.freeBugMailLog(`${logText} ${freeBugMail} removed from account.`);
 
       interaction.reply({
-        content: `The ${DTT.role("Free BugMail")} role has been removed from you!`,
+        content: `The ${freeBugMail} role has been removed from you!`,
         ephemeral: true
       });
     }).catch(error => {
-      DTT.freeBugMailLog(`${logText} Error in ${DTT.role("Free BugMail")} removal.`, error);
+      DTT.freeBugMailLog(`${logText} Error in ${freeBugMail} removal.`, error);
 
       interaction.reply({
         content: "There was an error during self-role removal.",

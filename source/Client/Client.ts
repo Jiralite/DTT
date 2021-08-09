@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection, CommandStructure, Guild, GuildChannel, Role, Snowflake, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Collection, CommandStructure, Guild, Role, Snowflake, TextChannel } from "discord.js";
 import { readdirSync } from "fs";
 import { createPool, Pool } from "mysql";
 
@@ -15,7 +15,7 @@ export default class DTT extends Client {
   readonly commands: Collection<string, any>;
   readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
-  readonly Verification;
+  readonly Verification: typeof Verification;
   readonly freeBugMails: Collection<number, FreeBugMail>;
   readonly invites: Collection<number, Invite>;
 
@@ -129,28 +129,28 @@ export default class DTT extends Client {
     const applicationCommandsPermissions = await this.guild.commands.permissions.set({
       fullPermissions: applicationCommands.map(({ id, name }) => ({
         id,
-        permissions: commands.find(({ applicationCommandData }) => applicationCommandData.name === name).permissions
+        permissions: commands.find(({ applicationCommandData }) => applicationCommandData.name === name)!.permissions
       }))
     });
 
-    this.consoleLog(applicationCommandsPermissions.map((_, id) => `Set the permissions of ${applicationCommands.get(id).name}.`).join("\n"));
+    this.consoleLog(applicationCommandsPermissions.map((_, id) => `Set the permissions of ${applicationCommands.get(id)!.name}.`).join("\n"));
     this.consoleLog("Finished applying commands!");
   }
 
-  kanal(channel: string): GuildChannel | ThreadChannel {
+  kanal(channel: string) {
     return this.guild.channels.resolve(this.kanaly[channel]);
   }
 
-  role(role: string): Role {
+  role(role: string) {
     return this.guild.roles.resolve(this.roles[role]);
   }
 
-  get guild(): Guild {
-    return this.guilds.resolve("765611756441436160");
+  get guild() {
+    return this.guilds.resolve("765611756441436160") as Guild;
   }
 
-  get bbaGuild(): Guild {
-    return this.guilds.resolve("391356859518287895");
+  get bbaGuild() {
+    return this.guilds.resolve("391356859518287895") as Guild;
   }
 
   get logChannel(): TextChannel {
@@ -238,7 +238,6 @@ export default class DTT extends Client {
       "iOS 13": "852472643386343434",
       "iOS 14": "852472652333711370",
       "iOS 15": "852472663288578049",
-      "Android Alpha": "855118301004431380",
       "Android 5": "852469985163214858",
       "Android 6": "852471384738365480",
       "Android 7": "852471462584385566",
@@ -255,5 +254,14 @@ export default class DTT extends Client {
       GDPR: "818960617972957195",
       Shame: "789692216880660561",
     }
+  }
+
+  get modRoles() {
+    return [
+      this.role("Admin") as Role,
+      this.role("Moderator") as Role,
+      this.role("DT Staff") as Role,
+      this.role("DT Mod or BA") as Role
+    ];
   }
 }

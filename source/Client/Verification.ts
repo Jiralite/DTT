@@ -38,7 +38,7 @@ export default class Verification {
   static async authorise(interaction: ButtonInteraction, authentication: VerificationType, guildMemberId: Snowflake) {
     const DTT = interaction.client as DTT;
 
-    if (!(interaction.member as GuildMember).roles.cache.hasAny(DTT.role("Admin").id, DTT.role("Moderator").id, DTT.role("DT Staff").id, DTT.role("DT Mod or BA").id)) {
+    if (!(interaction.member as GuildMember).roles.cache.hasAny(...DTT.modRoles.map(({ id }) => id))) {
       DTT.log(`${interaction.user} interacted with a verification button but failed authorisation checks.`);
 
       return interaction.reply({
@@ -80,12 +80,19 @@ export default class Verification {
 
   static authoriseTester(interaction: ButtonInteraction, guildMember: GuildMember) {
     const DTT = interaction.client as DTT;
+    const tester = DTT.role("Tester");
+
+    if (tester === null) {
+      DTT.log(`Error adding role to ${guildMember}. Apparently, the Tester role cannot be found.`);
+      interaction.reply(`There was an error authorising ${guildMember}`);
+      return;
+    }
     
-    guildMember.roles.add(DTT.role("Tester")).then(() => {
-      DTT.log(`${interaction.user} has verified ${guildMember} as a ${DTT.role("Tester")}.`);
+    guildMember.roles.add(tester).then(() => {
+      DTT.log(`${interaction.user} has verified ${guildMember} as a ${tester}.`);
 
       interaction.reply({
-        content: `You have given the ${DTT.role("Tester")} role to ${guildMember}.`,
+        content: `You have given the ${tester} role to ${guildMember}.`,
         ephemeral: true
       });
 
@@ -95,7 +102,7 @@ export default class Verification {
       DTT.log(`Error adding role to ${guildMember}.`, error);
 
       interaction.reply({
-        content: "Error adding role to guildmember.",
+        content: "Error adding role to guild member.",
         ephemeral: true
       });
     });
@@ -103,12 +110,19 @@ export default class Verification {
 
   static authoriseAlt(interaction: ButtonInteraction, guildMember: GuildMember) {
     const DTT = interaction.client as DTT;
+    const altAccount = DTT.role("Alt Account");
 
-    guildMember.roles.add(DTT.role("Alt Account")).then(() => {
-      DTT.log(`${interaction.user} has verified ${guildMember} as an ${DTT.role("Alt Account")}.`);
+    if (altAccount === null) {
+      DTT.log(`Error adding role to ${guildMember}. Apparently, the Alt Account role cannot be found.`);
+      interaction.reply(`There was an error authorising ${guildMember}`);
+      return;
+    }
+
+    guildMember.roles.add(altAccount).then(() => {
+      DTT.log(`${interaction.user} has verified ${guildMember} as an ${altAccount}.`);
 
       interaction.reply({
-        content: `You have given the ${DTT.role("Alt Account")} role to ${guildMember}.`,
+        content: `You have given the ${altAccount} role to ${guildMember}.`,
         ephemeral: true
       });
 
@@ -117,7 +131,7 @@ export default class Verification {
       DTT.log(`Error adding role to ${guildMember}.`, error);
 
       interaction.reply({
-        content: "Error adding role to guildmember.",
+        content: "Error adding role to guild member.",
         ephemeral: true
       });
     });
@@ -135,7 +149,7 @@ export default class Verification {
       DTT.log(`Error removing ${guildMember} from this guild.`, error);
 
       interaction.reply({
-        content: "Error kicking guildmember.",
+        content: "Error kicking guild member.",
         ephemeral: true
       });
     });

@@ -9,23 +9,23 @@ declare module "discord.js" {
   type VerificationType = "TESTER" | "ALT" | "DENY";
   type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
 
-  interface MariaFreeBugMail {
-    No: number;
+  interface FreeBugMailData {
+    No: number | null;
     Timestamp: number;
     "Weekly Timestamp": number;
     "Message ID": Snowflake;
     "User ID": Snowflake;
-    "Claimed By ID": Snowflake;
-    Mentioned: boolean;
-    State: FreeBugMailState;
+    "Claimed By ID": Snowflake | null;
+    Mentioned: boolean | null;
+    State: FreeBugMailState | null;
   }
 
-  interface MariaInvite {
-    No: number;
+  interface InviteData {
+    No: number | null;
     ID: Snowflake;
-    "Created Timestamp": number;
-    "Expired Timestamp": number;
-    Expired: boolean;
-    Code: string;
+    "Created Timestamp": number | null;
+    "Expired Timestamp": number | null;
+    Expired: boolean | null;
+    Code: string | null;
   }
 }

@@ -3,27 +3,46 @@ import DTT from "../../../Client/Client";
 
 export default class {
   private readonly DTT: DTT;
-  readonly name: string;
+  readonly name = "edit";
 
   constructor(DTT: DTT) {
     this.DTT = DTT;
-    this.name = "edit";
   }
 
   async traditional(interaction: CommandInteraction) {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
+    const bugmailQueue = this.DTT.kanal("bugmail-queue");
+    
+    if (bugmailQueue === null) {
+      this.DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
 
-    if (interaction.channelId !== this.DTT.kanal("bugmail-queue").id) {
+      return interaction.reply({
+        content: "Error, cannot find the BugMail Queue channel.",
+        ephemeral: true
+      });
+    }
+
+    if (interaction.channelId !== bugmailQueue.id) {
       this.DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
       return interaction.reply({
-        content: `Please use this command in ${this.DTT.kanal("bugmail-queue")}.`,
+        content: `Please use this command in ${bugmailQueue}.`,
         ephemeral: true
       });
     }
 
     const number = interaction.options.getInteger("number");
     const text = interaction.options.getString("text");
+
+    if (number === null || text === null) {
+      this.DTT.freeBugMailLog(`${logText} Required parameters \`number\` and \`text\` both not supplied.`);
+
+      return interaction.reply({
+        content: "Error: required parameters did not have arguments.",
+        ephemeral: true
+      });
+    }
+
     const FreeBugMail = this.DTT.freeBugMails.get(number);
 
     if (!FreeBugMail) {

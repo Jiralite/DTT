@@ -1,4 +1,4 @@
-import { GuildMember, MariaFreeBugMail, MariaInvite, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
+import { FreeBugMailData, GuildMember, InviteData, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
 import Client from "./Client/Client.js";
 import Keys from "./Client/Keys.json";
 
@@ -30,19 +30,19 @@ function Maria() {
 }
 
 function collectFreeBugMails() {
-  DTT.Maria.query("SELECT * FROM `Free BugMails`", (_E: any, R: MariaFreeBugMail[]) => R.forEach(freeBugMail => {
+  DTT.Maria.query("SELECT * FROM `Free BugMails`", (_E: any, R: FreeBugMailData[]) => R.forEach(freeBugMail => {
     const FreeBugMail = new DTT.FreeBugMail(DTT, freeBugMail);
-    DTT.freeBugMails.set(FreeBugMail.No, FreeBugMail);
+    DTT.freeBugMails.set(FreeBugMail.No as number, FreeBugMail);
     FreeBugMail.timeout();
     FreeBugMail.mentionedTimeout();
   }));
 }
 
 function collectInvites() {
-  DTT.Maria.query("SELECT * FROM `Invites`", (_E: any, R: MariaInvite[]) => R.forEach(invite => {
+  DTT.Maria.query("SELECT * FROM `Invites`", (_E: any, R: InviteData[]) => R.forEach(invite => {
     const Invite = new DTT.Invite(DTT, invite);
-    DTT.invites.set(Invite.No, Invite);
-    if (!Invite.expired) Invite.expireTimeout();
+    DTT.invites.set(Invite.No as number, Invite);
+    Invite.expireTimeout();
   }));
 }
 
@@ -51,8 +51,8 @@ DTT.on("guildMemberAdd", async guildMember => {
 
   try {
     const DTTGuildMember = await DTT.guild.members.fetch(guildMember);
-    const role = guildMember.guild.roles.resolve("816059251045695558"); // Access role in the Bug Bombing Area guild
-    if (DTTGuildMember.roles.cache.has(DTT.role("Tester").id)) await guildMember.roles.add(role);
+    const role = guildMember.guild.roles.resolve("816059251045695558") as Role; // Access role in the Bug Bombing Area guild
+    if (DTTGuildMember.roles.cache.has(DTT.role("Tester")!.id)) await guildMember.roles.add(role);
   } catch (error) {
     if (error.code === 10007) {
       DTT.log(`${guildMember} joined ${guildMember.guild.name} but was not found in this server.`, error);
@@ -72,7 +72,7 @@ DTT.on("guildMemberRemove", async guildMember => {
   if (guildMember.guild.id !== DTT.guild.id) return;
 
   try {
-    await DTT.bbaGuild.members.fetch(guildMember).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
+    await DTT.bbaGuild.members.fetch(guildMember as GuildMember).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
   } catch (error) {
     if (error.code === 10007) return;
 
@@ -108,7 +108,7 @@ DTT.on("interactionCreate", (interaction): any => {
     const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 
     if (roleAssignment) {
-      const role = DTT.guild.roles.resolve(roleAssignment[1]);
+      const role = DTT.guild.roles.resolve(roleAssignment[1]) as Role;
       const member = interaction.member as GuildMember;
 
       if (member.roles.cache.has(role.id)) {
@@ -142,11 +142,11 @@ DTT.on("interactionCreate", (interaction): any => {
     if (interaction.customId === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
     const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED|RESTORE)/.exec(interaction.customId);
 
-    if (claimRequest && (interaction.channelId === DTT.kanal("bugmail-queue").id || interaction.channelId === DTT.kanal("bugmail-discussion").id)) {
-      if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1]).preClaim(interaction);
-      if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1]).claim(interaction);
-      if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1]).alreadyBugMailed(interaction);
-      if (claimRequest[2] === "RESTORE") return DTT.freeBugMails.get(+claimRequest[1]).restore(interaction);
+    if (claimRequest && (interaction.channelId === DTT.kanal("bugmail-queue")!.id || interaction.channelId === DTT.kanal("bugmail-discussion")!.id)) {
+      if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1])!.preClaim(interaction);
+      if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1])!.claim(interaction);
+      if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1])!.alreadyBugMailed(interaction);
+      if (claimRequest[2] === "RESTORE") return DTT.freeBugMails.get(+claimRequest[1])!.restore(interaction);
     }
 
     const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction.customId);
@@ -154,20 +154,20 @@ DTT.on("interactionCreate", (interaction): any => {
     if (weekBugMail) {
       const FreeBugMail = DTT.freeBugMails.get(+weekBugMail[1]);
 
-      if (interaction.user.id !== FreeBugMail.claimedById) {
+      if (interaction.user.id !== FreeBugMail!.claimedById) {
         return interaction.reply({
-          content: `We're currently awaiting the response of <@${FreeBugMail.claimedById}> right now, not you!`,
+          content: `We're currently awaiting the response of <@${FreeBugMail!.claimedById}> right now, not you!`,
           ephemeral: true
         });
       }
 
-      if (weekBugMail[2] === "PENDING") return FreeBugMail.resumePendingTimeout(interaction);
-      if (weekBugMail[2] === "RESOLVED") return FreeBugMail.resolvePendingTimeout(interaction);
+      if (weekBugMail[2] === "PENDING") return FreeBugMail!.resumePendingTimeout(interaction);
+      if (weekBugMail[2] === "RESOLVED") return FreeBugMail!.resolvePendingTimeout(interaction);
     }
   }
 
   if (interaction.isSelectMenu()) {
-    const roles: Role[] = interaction.values.map(id => DTT.role(id));
+    const roles: Role[] = interaction.values.map(id => DTT.role(id) as Role);
 
     if (roles.some(role => role === null)) {
       DTT.log("Error during self-role. Detected role ids that couldn't be found.")
@@ -180,8 +180,8 @@ DTT.on("interactionCreate", (interaction): any => {
 
     const guildMember = interaction.member as GuildMember;
     const rolesToSet = guildMember.roles.cache.clone();
-    const rolesAdded = [];
-    const rolesRemoved = [];
+    const rolesAdded: Role[] = [];
+    const rolesRemoved: Role[] = [];
 
     for (const role of roles) {
       if (rolesToSet.has(role.id)) {
@@ -214,13 +214,13 @@ DTT.on("inviteDelete", invite => DTT.invites.find(({ code }) => code === invite.
 DTT.on("messageCreate", message => {
   if (message.author.bot) return;
 
-  if (message.channel.id === DTT.kanal("bugmail-queue").id) {
-    if (!(message.channel as TextChannel).permissionsFor(message.author).has("MANAGE_MESSAGES") && message.author.id !== DTT.user.id) message.delete();
+  if (message.channel.id === DTT.kanal("bugmail-queue")!.id) {
+    if (!(message.channel as TextChannel).permissionsFor(message.author)!.has("MANAGE_MESSAGES") && message.author.id !== DTT.user!.id) message.delete();
   }
 });
 
 DTT.on("messageDelete", message => {
-  if (message.guild.id !== DTT.guild.id) return;
+  if (message.guild!.id !== DTT.guild.id) return;
 
   for (const FreeBugMail of DTT.freeBugMails.values()) {
     if (FreeBugMail.messageId === message.id && FreeBugMail.state !== "RESOLVED") return FreeBugMail.remove();

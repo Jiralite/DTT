@@ -14,7 +14,7 @@ module.exports = (DTT: DTT): CommandStructure => ({
   },
   permissions: [
     {
-      id: DTT.role("Tester").id,
+      id: DTT.role("Tester")!.id,
       type: "ROLE",
       permission: true
     }

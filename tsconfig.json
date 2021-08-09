@@ -7,6 +7,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "strict": true,
     "module": "ES2020",
     "moduleResolution": "Node",
     "resolveJsonModule": true,

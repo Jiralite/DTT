@@ -1,23 +1,33 @@
-import { CommandInteraction, CommandStructure } from "discord.js";
+import { CommandInteraction, CommandStructure, GuildMember } from "discord.js";
 import DTT from "../../Client/Client";
 
 export default class {
   private readonly DTT: DTT;
-  readonly name: string;
+  readonly name = "invite";
 
   constructor(DTT: DTT) {
     this.DTT = DTT;
-    this.name = "invite";
   }
 
   async traditional(interaction: CommandInteraction) {
-    if (!this.DTT.kanal("verification").permissionsFor(this.DTT.user).has("CREATE_INSTANT_INVITE")) {
+    const verification = this.DTT.kanal("verification");
+    
+    if (verification === null) {
+      this.DTT.log(`Apparently, the verification channel cannot be found.`);
+
+      return interaction.reply({
+        content: "Error, cannot find the verification channel.",
+        ephemeral: true
+      });
+    }
+
+    if (!verification.permissionsFor(interaction.guild!.me as GuildMember).has("CREATE_INSTANT_INVITE")) {
       interaction.reply({
         content: "Apparently, I do not have invite permissions.",
         ephemeral: true
       });
 
-      this.DTT.log(`${interaction.user} attempted to create an invite but I lacked invite permissions for ${this.DTT.kanal("verification")}.`);
+      this.DTT.log(`${interaction.user} attempted to create an invite but I lacked invite permissions for ${verification}.`);
       return;
     }
 
@@ -31,7 +41,12 @@ export default class {
     }
 
     const Invite = new this.DTT.Invite(this.DTT, {
-      ID: interaction.user.id
+      No: null,
+      ID: interaction.user.id,
+      "Created Timestamp": null,
+      "Expired Timestamp": null,
+      Expired: null,
+      Code: null
     });
 
     Invite.create(interaction);
@@ -46,7 +61,7 @@ export default class {
       },
       permissions: [
         {
-          id: this.DTT.role("Tester").id,
+          id: this.DTT.role("Tester")!.id,
           type: "ROLE",
           permission: true
         }

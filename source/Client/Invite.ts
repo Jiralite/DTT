@@ -1,23 +1,24 @@
-import { CommandInteraction, MariaInvite, Snowflake, TextChannel } from "discord.js";
+import { CommandInteraction, InviteData, Snowflake, TextChannel } from "discord.js";
+import { OkPacket } from "mysql";
 import DTT from "./Client.js";
 
 export default class Invite {
   private readonly DTT: DTT;
-  No: number;
+  No: number | null;
   id: Snowflake;
-  createdTimestamp: number;
-  expiredTimestamp: number;
+  createdTimestamp: number | null;
+  expiredTimestamp: number | null;
   expired: boolean;
-  code: string;
+  code: string | null;
   timeout: NodeJS.Timeout | null;
 
-  constructor(DTT: DTT, invite: Partial<MariaInvite>) {
+  constructor(DTT: DTT, invite: InviteData) {
     this.DTT = DTT;
     this.No = invite.No;
     this.id = invite.ID;
-    this.createdTimestamp = +invite["Created Timestamp"] || null;
-    this.expiredTimestamp = +invite["Expired Timestamp"] || null;
-    this.expired = !!invite.Expired;
+    this.createdTimestamp = invite["Created Timestamp"] === null ? null : +invite["Created Timestamp"];
+    this.expiredTimestamp = invite["Expired Timestamp"] === null ? null : +invite["Expired Timestamp"];
+    this.expired = Boolean(invite.Expired);
     this.code = invite.Code;
     this.timeout = null;
   }
@@ -34,7 +35,7 @@ export default class Invite {
         "Expired Timestamp": invite.expiresTimestamp,
         Expired: false,
         Code: invite.code
-      }, (E, { insertId }) => {
+      }, (E, { insertId }: OkPacket) => {
         if (E) {
           this.DTT.log("Error during Invite#create().", E);
 
@@ -49,6 +50,7 @@ export default class Invite {
         this.No = insertId;
         this.createdTimestamp = invite.createdTimestamp;
         this.expiredTimestamp = invite.expiresTimestamp;
+        this.expired = false;
         this.code = invite.code;
         this.DTT.invites.set(this.No, this);
         this.expireTimeout();
@@ -76,7 +78,7 @@ export default class Invite {
   }
 
   expireTimeout() {
-    this.timeout = setTimeout(() => this.remove(), this.expiredTimestamp - Date.now());
+    if (!this.expired && this.expiredTimestamp !== null) this.timeout = setTimeout(() => this.remove(), this.expiredTimestamp - Date.now());
   }
 
   remove() {
@@ -86,7 +88,7 @@ export default class Invite {
     ], E => {
       if (E) return this.DTT.log("Error during Invite#remove().", E);
       this.expired = true;
-      clearTimeout(this.timeout);
+      if (this.timeout !== null) clearTimeout(this.timeout);
 
       this.inviteLogs.send({
         content: `Invite code \`${this.code}\` has just expired. <@${this.id}> generated this invite code.`,
