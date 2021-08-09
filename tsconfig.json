@@ -4,6 +4,7 @@
     "alwaysStrict": true,
     "noImplicitAny": true,
     "noImplicitOverride": true,
+    "noImplicitThis": true,
     "module": "ES2020",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
