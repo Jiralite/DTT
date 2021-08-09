@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection, Guild, GuildChannel, Role, Snowflake, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Collection, CommandStructure, Guild, GuildChannel, Role, Snowflake, TextChannel, ThreadChannel } from "discord.js";
 import { readdirSync } from "fs";
 import { createPool, Pool } from "mysql";
 
@@ -107,7 +107,7 @@ export default class DTT extends Client {
   }
 
   applyCommands() {
-    const commands = [];
+    const commands: CommandStructure[] = [];
 
     const folders = readdirSync(`${__dirname}/../Commands`, {
       withFileTypes: true

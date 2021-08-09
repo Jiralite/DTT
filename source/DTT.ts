@@ -1,4 +1,4 @@
-import { GuildMember, MariaFreeBugMail, MariaInvite, TextChannel } from "discord.js";
+import { GuildMember, MariaFreeBugMail, MariaInvite, Snowflake, TextChannel, VerificationType } from "discord.js";
 import Client from "./Client/Client.js";
 import Keys from "./Client/Keys.json";
 
@@ -90,7 +90,7 @@ DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
   if (oldGuildmember.pending === true && newGuildmember.pending === false) DTT.Verification.sendVerification(newGuildmember);
 });
 
-DTT.on("interactionCreate", async interaction => {
+DTT.on("interactionCreate", (interaction): any => {
   if (interaction.guildId !== DTT.guild.id) return;
 
   if (interaction.isCommand()) {
@@ -104,7 +104,7 @@ DTT.on("interactionCreate", async interaction => {
 
   if (interaction.isButton()) {
     const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
-    if (joiner) return DTT.Verification.authorise(interaction, joiner[1], joiner[2]);
+    if (joiner) return DTT.Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
     const roleAssignment = /ROLE-(\d+)/.exec(interaction.customId);
 
     if (roleAssignment) {
