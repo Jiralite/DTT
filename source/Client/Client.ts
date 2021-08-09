@@ -106,7 +106,7 @@ export default class DTT extends Client {
     console.log(consoleLog);
   }
 
-  applyCommands() {
+  async applyCommands() {
     const commands: CommandStructure[] = [];
 
     const folders = readdirSync(`${__dirname}/../Commands`, {
@@ -123,18 +123,18 @@ export default class DTT extends Client {
       }
     }
 
-    this.guild.commands.set(commands.map(command => command.applicationCommandData)).then(applicationCommands => {
-      this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
-      const permissionPromises = [];
+    const applicationCommands = await this.guild.commands.set(commands.map(({ applicationCommandData }) => applicationCommandData));
+    this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
 
-      for (const applicationCommand of applicationCommands.values()) {
-        permissionPromises.push(applicationCommand.permissions.set({
-          permissions: commands.find(({ applicationCommandData: { name } }) => name === applicationCommand.name).permissions
-        }).then(() => this.consoleLog(`Updated the permissions of ${applicationCommand.name}.`)));
-      }
-
-      Promise.all(permissionPromises).then(() => this.consoleLog("Finished applying commands!"));
+    const applicationCommandsPermissions = await this.guild.commands.permissions.set({
+      fullPermissions: applicationCommands.map(({ id, name }) => ({
+        id,
+        permissions: commands.find(({ applicationCommandData }) => applicationCommandData.name === name).permissions
+      }))
     });
+
+    this.consoleLog(applicationCommandsPermissions.map((_, id) => `Set the permissions of ${applicationCommands.get(id).name}.`).join("\n"));
+    this.consoleLog("Finished applying commands!");
   }
 
   kanal(channel: string): GuildChannel | ThreadChannel {
