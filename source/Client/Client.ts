@@ -118,10 +118,7 @@ export default class DTT extends Client {
         withFileTypes: true
       })) {
         if (file.isDirectory()) {
-          for (const subfile of readdirSync(`${__dirname}/../Commands/${folder}/${file.name}`)) {
-            if (subfile !== "index.js") continue;
-            commands.push(require(`${__dirname}/../Commands/${folder}/${file.name}/${subfile}`)(this));
-          }
+          commands.push(require(`${__dirname}/../Commands/${folder}/${file.name}/index.js`)(this));
         } else commands.push(new (require(`${__dirname}/../Commands/${folder}/${file.name}`))(this).commandData);
       }
     }
