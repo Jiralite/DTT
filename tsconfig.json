@@ -11,6 +11,7 @@
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
+    "strictPropertyInitialization": true,
     "module": "ES2020",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
