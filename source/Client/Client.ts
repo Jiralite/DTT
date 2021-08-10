@@ -1,5 +1,5 @@
 import { Client, ClientOptions, Collection, CommandStructure, Guild, Role, Snowflake, TextChannel } from "discord.js";
-import { createPool, Pool } from "mysql";
+import { createPool, KeysData, Pool } from "mysql";
 
 import Keys from "./Keys.json";
 import FreeBugMail from "./FreeBugMail.js";
@@ -13,7 +13,7 @@ import submit from "../Commands/Free BugMail/free-bugmail/submit.js";
 import invite from "../Commands/General/invite.js";
 import regenerate from "../Commands/General/regenerate.js";
 
-const { mysql } = Keys;
+const { mysql } = Keys as KeysData;
 const Maria = createPool(mysql);
 
 export default class DTT extends Client {

@@ -1,13 +1,13 @@
-import { ApplicationCommandData, ApplicationCommandPermissionData, Snowflake } from "discord.js";
+import { Snowflake } from "discord.js";
 
 declare module "discord.js" {
+  type VerificationType = "TESTER" | "ALT" | "DENY";
+  type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
+  
   interface CommandStructure {
     applicationCommandData: ApplicationCommandData;
     permissions: ApplicationCommandPermissionData[];
   }
-
-  type VerificationType = "TESTER" | "ALT" | "DENY";
-  type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
 
   interface FreeBugMailData {
     No: number | null;
@@ -27,5 +27,14 @@ declare module "discord.js" {
     "Expired Timestamp": number | null;
     Expired: boolean | null;
     Code: string | null;
+  }
+}
+
+declare module "mysql" {
+  interface KeysData {
+    discord: {
+      token: string;
+    },
+    mysql: PoolConfig
   }
 }
