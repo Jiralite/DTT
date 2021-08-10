@@ -6,19 +6,12 @@ import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 
-const commandsCollection: Collection<string, any> = new Collection();
 import complete from "../Commands/Free BugMail/free-bugmail/complete.js";
 import edit from "../Commands/Free BugMail/free-bugmail/edit.js";
 import index from "../Commands/Free BugMail/free-bugmail/index.js";
 import submit from "../Commands/Free BugMail/free-bugmail/submit.js";
 import invite from "../Commands/General/invite.js";
 import regenerate from "../Commands/General/regenerate.js";
-commandsCollection.set("free-bugmail", new Collection());
-commandsCollection.get("free-bugmail").set("complete", new complete(this));
-commandsCollection.get("free-bugmail").set("edit", new edit(this));
-commandsCollection.get("free-bugmail").set("submit", new submit(this));
-commandsCollection.set("invite", new invite(this));
-commandsCollection.set("regenerate", new regenerate(this));
 
 const { mysql } = Keys;
 const Maria = createPool(mysql);
@@ -35,7 +28,16 @@ export default class DTT extends Client {
   constructor(options: ClientOptions) {
     super(options);
     this.Maria = Maria;
-    this.commands = commandsCollection;
+    this.commands = (() => {
+      const commandsCollection: Collection<string, any> = new Collection();
+      commandsCollection.set("free-bugmail", new Collection());
+      commandsCollection.get("free-bugmail").set("complete", new complete(this));
+      commandsCollection.get("free-bugmail").set("edit", new edit(this));
+      commandsCollection.get("free-bugmail").set("submit", new submit(this));
+      commandsCollection.set("invite", new invite(this));
+      commandsCollection.set("regenerate", new regenerate(this));
+      return commandsCollection;
+    })();
     this.FreeBugMail = FreeBugMail;
     this.Invite = Invite;
     this.Verification = Verification;
