@@ -381,7 +381,7 @@ export default class {
             {
               type: "SELECT_MENU",
               customId: "SELFROLE",
-              placeholder: "Assign Experiment roles!",
+              placeholder: "Assign Discord updates roles!",
               minValues: 0,
               maxValues: discordUpdatesRoles.length,
               options: options(discordUpdatesRoles as Role[])
@@ -400,7 +400,7 @@ export default class {
             {
               type: "SELECT_MENU",
               customId: "SELFROLE",
-              placeholder: "Assign Experiment roles!",
+              placeholder: "Assign Phabricator roles!",
               minValues: 0,
               maxValues: phabricatorUpdatesRoles.length,
               options: options(phabricatorUpdatesRoles as Role[])
