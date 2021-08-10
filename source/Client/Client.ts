@@ -216,7 +216,7 @@ export default class DTT extends Client {
       "Android 11": "852471514904920075",
       "Android 12": "852471524829036544",
       Chromebook: "806742949756796948",
-      "Mobile Hardware Keyboard": "766338637368524820",
+      "Hardware Keyboard": "766338637368524820",
       "Apple Pencil": "766337433712197642",
       "Apple Watch": "766338782273732649",
       "Touchscreen PC": "766339616944816179",
