@@ -1,11 +1,24 @@
 import { Client, ClientOptions, Collection, CommandStructure, Guild, Role, Snowflake, TextChannel } from "discord.js";
-import { readdirSync } from "fs";
 import { createPool, Pool } from "mysql";
 
 import Keys from "./Keys.json";
 import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
 import Verification from "./Verification.js";
+
+const commandsCollection: Collection<string, any> = new Collection();
+import complete from "../Commands/Free BugMail/free-bugmail/complete.js";
+import edit from "../Commands/Free BugMail/free-bugmail/edit.js";
+import index from "../Commands/Free BugMail/free-bugmail/index.js";
+import submit from "../Commands/Free BugMail/free-bugmail/submit.js";
+import invite from "../Commands/General/invite.js";
+import regenerate from "../Commands/General/regenerate.js";
+
+commandsCollection.set("complete", complete);
+commandsCollection.set("edit", edit);
+commandsCollection.set("submit", submit);
+commandsCollection.set("invite", invite);
+commandsCollection.set("regenerate", regenerate);
 
 const { mysql } = Keys;
 const Maria = createPool(mysql);
@@ -22,51 +35,7 @@ export default class DTT extends Client {
   constructor(options: ClientOptions) {
     super(options);
     this.Maria = Maria;
-    this.commands = ((): Collection<string, any> => {
-      const commandsCollection: Collection<string, any> = new Collection();
-
-      const folders = readdirSync("./Commands", {
-        withFileTypes: true
-      }).filter(file => file.isDirectory()).map(({ name }) => name);
-
-      for (const folder of folders) {
-        for (const file of readdirSync(`./Commands/${folder}`, {
-          withFileTypes: true
-        })) {
-          if (file.isDirectory()) {
-            commandsCollection.set(file.name, new Collection());
-
-            for (const subfile of readdirSync(`./Commands/${folder}/${file.name}`, {
-              withFileTypes: true
-            })) {
-              if (subfile.name === "index.js") continue;
-
-              if (subfile.isDirectory()) {
-                commandsCollection.get(file.name).set(subfile.name, new Collection());
-
-                for (const subsubfile of readdirSync(`./Commands/${folder}/${file.name}/${subfile.name}`)) {
-                  if (subsubfile === "index.js") continue;
-                  const subsubcommand = new (require(`../Commands/${folder}/${file.name}/${subfile.name}/${subsubfile}`))(this);
-                  commandsCollection.get(file.name).get(subfile.name).set(subsubcommand.name, subsubcommand);
-                }
-
-                continue;
-              }
-
-              const subcommand = new (require(`../Commands/${folder}/${file.name}/${subfile.name}`))(this);
-              commandsCollection.get(file.name).set(subcommand.name, subcommand);
-            }
-
-            continue;
-          }
-
-          const command = new (require(`../Commands/${folder}/${file.name}`))(this);
-          commandsCollection.set(command.name, command);
-        }
-      }
-
-      return commandsCollection;
-    })();
+    this.commands = commandsCollection;
     this.FreeBugMail = FreeBugMail;
     this.Invite = Invite;
     this.Verification = Verification;
@@ -108,21 +77,9 @@ export default class DTT extends Client {
 
   async applyCommands() {
     const commands: CommandStructure[] = [];
-
-    const folders = readdirSync(`${__dirname}/../Commands`, {
-      withFileTypes: true
-    }).filter(file => file.isDirectory()).map(({ name }) => name);
-
-    for (const folder of folders) {
-      for (const file of readdirSync(`${__dirname}/../Commands/${folder}`, {
-        withFileTypes: true
-      })) {
-        if (file.isDirectory()) {
-          commands.push(require(`${__dirname}/../Commands/${folder}/${file.name}/index.js`)(this));
-        } else commands.push(new (require(`${__dirname}/../Commands/${folder}/${file.name}`))(this).commandData);
-      }
-    }
-
+    commands.push(index(this));
+    commands.push(new invite(this).commandData);
+    commands.push(new regenerate(this).commandData);
     const applicationCommands = await this.guild.commands.set(commands.map(({ applicationCommandData }) => applicationCommandData));
     this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
 

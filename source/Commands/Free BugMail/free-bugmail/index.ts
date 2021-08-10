@@ -1,11 +1,15 @@
 import { ApplicationCommandOptionData, CommandStructure } from "discord.js";
-import { readdirSync } from "fs";
 import DTT from "../../../Client/Client";
+import complete from "./complete.js";
+import edit from "./edit.js";
+import submit from "./submit.js";
 
 const options: ApplicationCommandOptionData[] = [];
-for (const file of readdirSync(__dirname).filter(file => file !== "index.js")) options.push(require(`${__dirname}/${file}`).commandData);
+options.push(complete.commandData);
+options.push(edit.commandData);
+options.push(submit.commandData);
 
-module.exports = (DTT: DTT): CommandStructure => ({
+export default (DTT: DTT): CommandStructure => ({
   applicationCommandData: {
     name: "free-bugmail",
     description: "The command for the Free BugMail queue!",
