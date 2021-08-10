@@ -13,10 +13,10 @@ import index from "../Commands/Free BugMail/free-bugmail/index.js";
 import submit from "../Commands/Free BugMail/free-bugmail/submit.js";
 import invite from "../Commands/General/invite.js";
 import regenerate from "../Commands/General/regenerate.js";
-
-commandsCollection.set("complete", complete);
-commandsCollection.set("edit", edit);
-commandsCollection.set("submit", submit);
+commandsCollection.set("free-bugmail", new Collection());
+commandsCollection.get("free-bugmail").set("complete", complete);
+commandsCollection.get("free-bugmail").set("edit", edit);
+commandsCollection.get("free-bugmail").set("submit", submit);
 commandsCollection.set("invite", invite);
 commandsCollection.set("regenerate", regenerate);
 
