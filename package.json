@@ -10,5 +10,6 @@
   "scripts": {
     "prestart": "npm install && tsc",
     "start": "node --experimental-json-modules sourceJS/DTT.js"
-  }
+  },
+  "private": true
 }
