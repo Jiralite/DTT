@@ -3,6 +3,7 @@
   "script": "npm",
   "cwd": "./",
   "args": "start",
+  "time": true,
   "watch": true,
   "ignore_watch": [
     "node_modules",
