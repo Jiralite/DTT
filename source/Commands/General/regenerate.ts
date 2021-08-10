@@ -31,6 +31,7 @@ export default class {
     }
 
     const text = interaction.options.getString("channel_name");
+    this.messageIds = [];
 
     const message = await interaction.deferReply({
       fetchReply: true
