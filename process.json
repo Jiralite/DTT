@@ -5,7 +5,8 @@
   "args": "start",
   "watch": true,
   "ignore_watch": [
-    "node_modules"
+    "node_modules",
+    "package-lock.json"
   ],
   "max_restarts": 5,
   "autorestart": true,
