@@ -422,6 +422,7 @@ export default class {
   }
 
   async bugmailQueue(channel: TextChannel | NewsChannel) {
+    if (!channel.permissionsFor(this.DTT.guild.me as GuildMember).has("MANAGE_MESSAGES")) throw new Error("Msising permissions");
     const freeBugMail = this.DTT.role("Free BugMail");
     const typing = this.DTT.emodzhi("typing");
     const bugmailedReports = this.DTT.kanal("bugmailed-reports");
