@@ -14,11 +14,11 @@ import submit from "../Commands/Free BugMail/free-bugmail/submit.js";
 import invite from "../Commands/General/invite.js";
 import regenerate from "../Commands/General/regenerate.js";
 commandsCollection.set("free-bugmail", new Collection());
-commandsCollection.get("free-bugmail").set("complete", complete);
-commandsCollection.get("free-bugmail").set("edit", edit);
-commandsCollection.get("free-bugmail").set("submit", submit);
-commandsCollection.set("invite", invite);
-commandsCollection.set("regenerate", regenerate);
+commandsCollection.get("free-bugmail").set("complete", new complete(this));
+commandsCollection.get("free-bugmail").set("edit", new edit(this));
+commandsCollection.get("free-bugmail").set("submit", new submit(this));
+commandsCollection.set("invite", new invite(this));
+commandsCollection.set("regenerate", new regenerate(this));
 
 const { mysql } = Keys;
 const Maria = createPool(mysql);
