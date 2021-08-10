@@ -98,16 +98,8 @@ export default class {
       this.DTT.role("macOS Big Sur"),
       this.DTT.role("macOS Monterey")
     ];
-  
-    const linuxDistributionRoles = [
-      this.DTT.role("Arch Linux"),
-      this.DTT.role("elementary OS"),
-      this.DTT.role("Gentoo Linux"),
-      this.DTT.role("Linux Mint"),
-      this.DTT.role("Manjaro Linux"),
-      this.DTT.role("Pop!_OS"),
-      this.DTT.role("Ubuntu")
-    ];
+
+    const linux = this.DTT.role("Linux") as Role;
   
     const windowsVersionRoles = [
       this.DTT.role("Windows 7"),
@@ -118,7 +110,6 @@ export default class {
   
     const androidDeviceRoles = [
       this.DTT.role("Pixel"),
-      this.DTT.role("Razer Phone"),
       this.DTT.role("Samsung Galaxy")
     ];
   
@@ -183,7 +174,7 @@ export default class {
       this.DTT.role("P0")
     ];
 
-    if ([...macOSVersionRoles, ...linuxDistributionRoles, ...windowsVersionRoles, ...androidDeviceRoles, ...androidVersionRoles, ...iOSDeviceRoles, ...iOSVersionRoles, ...iOSMiscellaneousRoles, chromebook, ...miscellaneousRoles, ...experimentRoles, ...discordUpdatesRoles, ...phabricatorUpdatesRoles].some(variable => variable === null)) {
+    if ([...macOSVersionRoles, linux, ...windowsVersionRoles, ...androidDeviceRoles, ...androidVersionRoles, ...iOSDeviceRoles, ...iOSVersionRoles, ...iOSMiscellaneousRoles, chromebook, ...miscellaneousRoles, ...experimentRoles, ...discordUpdatesRoles, ...phabricatorUpdatesRoles].some(variable => variable === null)) {
       throw new ReferenceError("Unknown references detected.");
     }
     
@@ -218,12 +209,10 @@ export default class {
           type: "ACTION_ROW",
           components: [
             {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign Linux distribution roles!",
-              minValues: 0,
-              maxValues: linuxDistributionRoles.length,
-              options: options(linuxDistributionRoles as Role[])
+              type: "BUTTON",
+              label: linux.name,
+              customId: `SELFROLE-${linux.id}`,
+              style: "PRIMARY"
             }
           ]
         }
