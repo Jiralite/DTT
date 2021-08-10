@@ -121,7 +121,7 @@ export default class DTT extends Client {
   }
 
   get freeBugMailLogChannel(): TextChannel {
-    return this.kanal("dtt-bugmail-log") as TextChannel;
+    return this.kanal("dtt-bugmail-logs") as TextChannel;
   }
 
   get _emodzhi(): Record<string, Snowflake> {
