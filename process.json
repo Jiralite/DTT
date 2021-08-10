@@ -1,0 +1,13 @@
+{
+  "name": "DTT",
+  "script": "npm",
+  "cwd": "./",
+  "args": "start",
+  "watch": true,
+  "ignore_watch": [
+    "node_modules"
+  ],
+  "max_restarts": 5,
+  "autorestart": true,
+  "pre-setup": "npm start"
+}
