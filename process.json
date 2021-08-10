@@ -6,7 +6,8 @@
   "watch": true,
   "ignore_watch": [
     "node_modules",
-    "package-lock.json"
+    "package-lock.json",
+    "sourceJS/"
   ],
   "max_restarts": 5,
   "autorestart": true,
