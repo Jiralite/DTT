@@ -221,7 +221,7 @@ export default class DTT extends Client {
       "Apple Watch": "766338782273732649",
       "Touchscreen PC": "766339616944816179",
       GDPR: "818960617972957195",
-      Shame: "789692216880660561",
+      Booster: "789692216880660561",
     }
   }
 
