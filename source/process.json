@@ -5,6 +5,5 @@
   "time": true,
   "watch": true,
   "max_restarts": 5,
-  "autorestart": true,
-  "pre-setup": "npm start"
+  "autorestart": true
 }
