@@ -96,6 +96,10 @@ export default class DTT extends Client {
     this.consoleLog("Finished applying commands!");
   }
 
+  emodzhi(emoji: string) {
+    return this.guild.emojis.resolve(this._emodzhi[emoji]);
+  }
+
   kanal(channel: string) {
     return this.guild.channels.resolve(this.kanaly[channel]);
   }
@@ -118,6 +122,12 @@ export default class DTT extends Client {
 
   get freeBugMailLogChannel(): TextChannel {
     return this.kanal("dtt-bot-log") as TextChannel;
+  }
+
+  get _emodzhi(): Record<string, Snowflake> {
+    return {
+      typing: "852637406334156800"
+    };
   }
 
   get kanaly(): Record<string, Snowflake> {

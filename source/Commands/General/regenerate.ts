@@ -44,6 +44,9 @@ export default class {
         case "roles":
           await this.roles(channel);
           break;
+        case "bugmail-queue":
+          await this.bugmailQueue(channel);
+          break;
       }
 
       message.delete().catch(() => null);
@@ -418,6 +421,46 @@ export default class {
     });
   }
 
+  async bugmailQueue(channel: TextChannel | NewsChannel) {
+    const freeBugMail = this.DTT.role("Free BugMail");
+    const typing = this.DTT.emodzhi("typing");
+    const bugmailedReports = this.DTT.kanal("bugmailed-reports");
+    const bugmailedDiscussion = this.DTT.kanal("bugmail-discussion");
+
+    if ([freeBugMail, typing, bugmailedReports, bugmailedDiscussion].some(variable => variable === null)) {
+      throw new ReferenceError("Unknown references detected.");
+    }
+
+    const message1 = await channel.send({
+      content: `Oh no! Do you need to BugMail something, but your BugMail isn't free? There's still hope!\n\nYou can drop your question in here via the \`/free-bugmail\` submit Application Command and wait for someone to claim your question! Those with a ${freeBugMail} can claim a request by then clicking on the "Claim" button. This lets others know that the query has been BugMailed via the ${typing} reaction. ⚠️ **Important**: Make sure you do background checks in <#733499719267123200> and ${bugmailedReports} etc. to ensure that the query isn't already BugMailed. Once you are sure it isn't in BugMail, claim first _then_ BugMail.\n\nOnce claimed, make sure to follow up with the BugMail responses in ${bugmailedDiscussion}!\n\n📝 If a request has not been claimed for an hour, the ${freeBugMail} role will be mentioned!\n\nFinally, once the request is complete, you can use the \`/free-bugmail complete\` Application Command to complete it!\n\nAlso, this is an opt-in feature, so here's 2 buttons to opt in & opt out for the ${freeBugMail} role!`,
+      components: [
+        {
+          type: "ACTION_ROW",
+          components: [
+            {
+              type: "BUTTON",
+              label: "Opt in",
+              customId: "Free BugMail",
+              style: "PRIMARY"
+            },
+            {
+              type: "BUTTON",
+              label: "Opt out",
+              customId: "No Free BugMail",
+              style: "SECONDARY"
+            }
+          ]
+        }
+      ],
+      allowedMentions: {
+        parse: []
+      }
+    });
+
+    await message1.pin();
+    this.messageIds.push(message1.id);
+  }
+
   get commandData(): CommandStructure {
     return {
       applicationCommandData: {
@@ -437,6 +480,10 @@ export default class {
               {
                 name: "Read Me",
                 value: "read-me"
+              },
+              {
+                name: "BugMail Queue",
+                value: "bugmail-queue"
               }
             ]
           }
