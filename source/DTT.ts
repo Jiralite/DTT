@@ -167,6 +167,7 @@ DTT.on("interactionCreate", (interaction): any => {
   }
 
   if (interaction.isSelectMenu()) {
+    if (interaction.customId !== "SELFROLE") return;
     const roles: Role[] = interaction.values.map(id => DTT.role(id) as Role);
 
     if (roles.some(role => role === null)) {
