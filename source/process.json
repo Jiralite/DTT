@@ -1,15 +1,10 @@
 {
   "name": "DTT",
   "script": "npm",
-  "cwd": "./",
+  "cwd": "./sourceJS",
   "args": "start",
   "time": true,
   "watch": true,
-  "ignore_watch": [
-    "node_modules",
-    "package-lock.json",
-    "sourceJS/"
-  ],
   "max_restarts": 5,
   "autorestart": true,
   "pre-setup": "npm start"
