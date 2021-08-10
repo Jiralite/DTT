@@ -168,7 +168,7 @@ DTT.on("interactionCreate", (interaction): any => {
 
   if (interaction.isSelectMenu()) {
     if (interaction.customId !== "SELFROLE") return;
-    const roles: Role[] = interaction.values.map(id => DTT.role(id) as Role);
+    const roles: Role[] = interaction.values.map(id => DTT.guild.roles.resolve(id) as Role);
 
     if (roles.some(role => role === null)) {
       DTT.log("Error during self-role. Detected role ids that couldn't be found.")
