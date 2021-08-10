@@ -1,7 +1,6 @@
 {
   "name": "DTT",
   "script": "npm",
-  "cwd": "./sourceJS",
   "args": "start",
   "time": true,
   "watch": true,
