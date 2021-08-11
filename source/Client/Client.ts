@@ -225,6 +225,7 @@ export default class DTT extends Client {
       Chromebook: "806742949756796948",
       "Touchscreen PC": "766339616944816179",
       GDPR: "818960617972957195",
+      "Per-server Avatar": "874820745824452608",
       Student: "862457751703519252",
       Booster: "789692216880660561",
     }

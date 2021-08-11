@@ -155,6 +155,7 @@ export default class {
     ];
   
     const experimentRoles = [
+      this.DTT.role("Per-server Avatar"),
       this.DTT.role("Student")
     ];
   
