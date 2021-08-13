@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection, CommandStructure, Guild, Role, Snowflake, TextChannel } from "discord.js";
+import { Client, ClientOptions, Collection, Guild, Role, Snowflake, TextChannel } from "discord.js";
 import { createPool, KeysData, Pool } from "mysql";
 
 import Keys from "./Keys.json";
@@ -6,12 +6,7 @@ import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 
-import complete from "../Commands/Free BugMail/free-bugmail/complete.js";
-import edit from "../Commands/Free BugMail/free-bugmail/edit.js";
-import index from "../Commands/Free BugMail/free-bugmail/index.js";
-import submit from "../Commands/Free BugMail/free-bugmail/submit.js";
-import invite from "../Commands/General/invite.js";
-import regenerate from "../Commands/General/regenerate.js";
+import * as commands from "../Commands/index.js";
 
 const { mysql } = Keys as KeysData;
 const Maria = createPool(mysql);
@@ -30,12 +25,14 @@ export default class DTT extends Client {
     this.Maria = Maria;
     this.commands = (() => {
       const commandsCollection: Collection<string, any> = new Collection();
-      commandsCollection.set("free-bugmail", new Collection());
-      commandsCollection.get("free-bugmail").set("complete", new complete(this));
-      commandsCollection.get("free-bugmail").set("edit", new edit(this));
-      commandsCollection.get("free-bugmail").set("submit", new submit(this));
-      commandsCollection.set("invite", new invite(this));
-      commandsCollection.set("regenerate", new regenerate(this));
+
+      for (const commandtype of Object.values(commands)) {
+        for (const command of commandtype) {
+          const _command = new command(this);
+          commandsCollection.set(_command.name, _command);
+        }
+      }
+
       return commandsCollection;
     })();
     this.FreeBugMail = FreeBugMail;
@@ -78,17 +75,13 @@ export default class DTT extends Client {
   }
 
   async applyCommands() {
-    const commands: CommandStructure[] = [];
-    commands.push(index(this));
-    commands.push(new invite(this).commandData);
-    commands.push(new regenerate(this).commandData);
-    const applicationCommands = await this.guild.commands.set(commands.map(({ applicationCommandData }) => applicationCommandData));
+    const applicationCommands = await this.guild.commands.set(this.commands.map(({ commandData: { applicationCommandData } }) => applicationCommandData));
     this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
 
     const applicationCommandsPermissions = await this.guild.commands.permissions.set({
       fullPermissions: applicationCommands.map(({ id, name }) => ({
         id,
-        permissions: commands.find(({ applicationCommandData }) => applicationCommandData.name === name)!.permissions
+        permissions: this.commands.get(name)!.commandData.permissions
       }))
     });
 

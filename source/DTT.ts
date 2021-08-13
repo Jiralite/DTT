@@ -96,9 +96,13 @@ DTT.on("interactionCreate", (interaction): any => {
   if (interaction.isCommand()) {
     let command = DTT.commands.get(interaction.commandName);
     if (!command) return;
-    if (interaction.options.data[0]?.type === "SUB_COMMAND_GROUP") command = command.get(interaction.options.getSubcommandGroup()).get(interaction.options.getSubcommand());
-    if (interaction.options.data[0]?.type === "SUB_COMMAND") command = command.get(interaction.options.getSubcommand());
-    command.traditional(interaction);
+
+    try {
+      command[interaction.options.getSubcommand()](interaction);
+    } catch {
+      command.traditional(interaction);
+    }
+
     return;
   }
 
