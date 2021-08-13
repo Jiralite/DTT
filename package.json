@@ -1,15 +1,17 @@
 {
   "type": "module",
+  "scripts": {
+    "prestart": "npm install && tsc",
+    "start": "node --experimental-json-modules sourceJS/DTT.js"
+  },
   "dependencies": {
     "@types/mysql": "^2.15.19",
     "@types/node": "^16.4.10",
     "discord.js": "^13.1.0",
-    "mysql": "^2.18.1",
-    "typescript": "^4.3.5"
+    "mysql": "^2.18.1"
   },
-  "scripts": {
-    "prestart": "npm install && tsc",
-    "start": "node --experimental-json-modules sourceJS/DTT.js"
+  "devDependencies": {
+    "typescript": "^4.3.5"
   },
   "private": true
 }
