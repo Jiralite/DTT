@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "prestart": "npm install && tsc",
-    "start": "node --experimental-json-modules sourceJS/DTT.js"
+    "start": "node --require dotenv/config sourceJS/DTT.js"
   },
   "dependencies": {
     "@types/mysql": "^2.15.19",

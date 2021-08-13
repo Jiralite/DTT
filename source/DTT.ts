@@ -1,8 +1,5 @@
 import { FreeBugMailData, GuildMember, InviteData, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
-import { KeysData } from "mysql";
 import Client from "./Client/Client.js";
-import Keys from "./Client/Keys.json";
-const { discord: { token } } = Keys as KeysData;
 
 const DTT = new Client({
   partials: [
@@ -237,4 +234,4 @@ DTT.on("ready", () => {
   Maria();
 });
 
-DTT.login(token);
+DTT.login(process.env.DISCORD_TOKEN);

@@ -1,15 +1,19 @@
 import { Client, ClientOptions, Collection, Guild, Role, Snowflake, TextChannel } from "discord.js";
-import { createPool, KeysData, Pool } from "mysql";
+import { createPool, Pool } from "mysql";
 
-import Keys from "./Keys.json";
 import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 
 import * as commands from "../Commands/index.js";
 
-const { mysql } = Keys as KeysData;
-const Maria = createPool(mysql);
+const Maria = createPool({
+  host: process.env.MARIA_HOST,
+  user: process.env.MARIA_USER,
+  password: process.env.MARIA_PASSWORD,
+  database: process.env.MARIA_DATABASE,
+  charset: process.env.MARIA_CHARSET
+});
 
 export default class DTT extends Client {
   readonly Maria: Pool;

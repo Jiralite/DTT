@@ -29,12 +29,3 @@ declare module "discord.js" {
     Code: string | null;
   }
 }
-
-declare module "mysql" {
-  interface KeysData {
-    discord: {
-      token: string;
-    },
-    mysql: PoolConfig
-  }
-}
