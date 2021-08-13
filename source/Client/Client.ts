@@ -139,6 +139,8 @@ export default class DTT extends Client {
       "bot-commands": "765623545631735858",
       starboard: "801239097058263061",
       voice: "847280182997286932",
+      Feedback: "859648069176131584",
+      feedback: "875152317878505513",
       "DT General": "803249681391026266",
       a11y: "861691101563846707",
       resources: "773631998970822657",

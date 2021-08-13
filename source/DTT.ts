@@ -101,6 +101,7 @@ DTT.on("interactionCreate", (interaction): any => {
   if (interaction.isButton()) {
     const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
     if (joiner) return DTT.Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
+    if (interaction.customId === "SELFROLE_BACK") return DTT.commands.get("roles").traditional(interaction);
     const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 
     if (roleAssignment) {
@@ -163,7 +164,8 @@ DTT.on("interactionCreate", (interaction): any => {
   }
 
   if (interaction.isSelectMenu()) {
-    if (interaction.customId !== "SELFROLE") return;
+    if (interaction.customId === "SELFROLE_CATEGORY") return DTT.commands.get("roles").categoryInteraction(interaction, interaction.values[0]);
+    if (!interaction.customId.startsWith("SELFROLE")) return;
     const roles: Role[] = interaction.values.map(id => DTT.guild.roles.resolve(id) as Role);
 
     if (roles.some(role => role === null)) {
@@ -181,12 +183,16 @@ DTT.on("interactionCreate", (interaction): any => {
     const rolesRemoved: Role[] = [];
 
     for (const role of roles) {
+      if (!rolesToSet.has(role.id)) {
+        rolesToSet.set(role.id, role);
+        rolesAdded.push(role);
+      }
+    }
+
+    for (const role of DTT.commands.get("roles")[interaction.customId.slice(9)].filter((role: Role) => !roles.some(({ id }) => id === role.id))) {
       if (rolesToSet.has(role.id)) {
         rolesToSet.delete(role.id);
         rolesRemoved.push(role);
-      } else {
-        rolesToSet.set(role.id, role);
-        rolesAdded.push(role);
       }
     }
 

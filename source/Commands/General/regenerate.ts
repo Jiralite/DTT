@@ -1,4 +1,4 @@
-import { CategoryChannel, CommandInteraction, CommandStructure, GuildMember, Message, MessageSelectOptionData, NewsChannel, Role, Snowflake, TextChannel } from "discord.js";
+import { CategoryChannel, CommandInteraction, CommandStructure, GuildMember, Message, NewsChannel, Role, Snowflake, TextChannel } from "discord.js";
 import DTT from "../../Client/Client";
 
 export default class {
@@ -42,9 +42,6 @@ export default class {
         case "read-me":
           await this.readMe(channel);
           break;
-        case "roles":
-          await this.roles(channel);
-          break;
         case "bugmail-queue":
           await this.bugmailQueue(channel);
           break;
@@ -66,6 +63,7 @@ export default class {
     const General = this.DTT.kanal("General") as CategoryChannel;
     const general = this.DTT.kanal("general");
     const botCommands = this.DTT.kanal("bot-commands");
+    const Feedback = this.DTT.kanal("Feedback") as CategoryChannel;
     const DTGeneral = this.DTT.kanal("DT General") as CategoryChannel;
     const a11y = this.DTT.kanal("a11y");
     const resources = this.DTT.kanal("resources");
@@ -73,343 +71,20 @@ export default class {
     const bugmailDiscussion = this.DTT.kanal("bugmail-discussion");
     const DiscordUpdates = this.DTT.kanal("Discord Updates") as CategoryChannel;
 
-    if ([moderator, Information, announcements, roles, General, general, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
+    if ([moderator, Information, announcements, roles, General, general, Feedback, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
       throw new ReferenceError("Unknown references detected.");
     }
 
     const message1 = await channel.send({
-      content: `Welcome to **${this.DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${moderator}s' instructions.\n\nRead below for an explanation of categories!\n\n**__${Information.name}__**\nYou are here! This category contains an introduction to the server. This channel also includes ${announcements} and ${roles} which you can view once admitted to the server.\n\n**__${General.name}__**\nHome to ${general} (off-topic chat) and ${botCommands} and other channels which may show up from time to time.\n\n**__${DTGeneral.name}__**\nChannels in this category relate specifically to Discord Testers, such as:\n• ${a11y}\n• ${resources}\n• ${bugmailQueue}\n• ${bugmailDiscussion}\n\n**__Testing Categories__**\nThe purpose of these categories are to test bugs specific to the respective platform. These categories also include information related to the platform from Phabricator. Each category also includes a discussion channel, as well as a channel for known issues. Phabricator channels that aren't specific to a testing category fit into ${DTGeneral.name}.\n\n**__${DiscordUpdates.name}__**\nUpdates are sent when there is a new Stable, PTB or Canary build (or host) available and also for when there is a new status issue recorded on https://dis.gd/status.\n\n**__Invite__**\nThe \`/invite\` Slash Command can be used to generate a one-time invite to this server. Wait a day before inviting a new T2 please.`,
+      content: `Welcome to **${this.DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${moderator}s' instructions.\n\nRead below for an explanation of categories!`,
       allowedMentions: {
         parse: []
       }
     });
 
     await message1.suppressEmbeds();
-    this.messageIds.push(message1.id);
-  }
-
-  async roles(channel: TextChannel | NewsChannel) {
-    const macOSVersionRoles = [
-      this.DTT.role("macOS El Capitan"),
-      this.DTT.role("macOS Sierra"),
-      this.DTT.role("macOS High Sierra"),
-      this.DTT.role("macOS Mojave"),
-      this.DTT.role("macOS Catalina"),
-      this.DTT.role("macOS Big Sur"),
-      this.DTT.role("macOS Monterey")
-    ];
-
-    const linux = this.DTT.role("Linux") as Role;
-  
-    const windowsVersionRoles = [
-      this.DTT.role("Windows 7"),
-      this.DTT.role("Windows 8"),
-      this.DTT.role("Windows 10"),
-      this.DTT.role("Windows 11")
-    ];
-  
-    const androidDeviceRoles = [
-      this.DTT.role("Pixel"),
-      this.DTT.role("Samsung Galaxy")
-    ];
-  
-    const androidVersionRoles = [
-      this.DTT.role("Android 5"),
-      this.DTT.role("Android 6"),
-      this.DTT.role("Android 7"),
-      this.DTT.role("Android 8"),
-      this.DTT.role("Android 9"),
-      this.DTT.role("Android 10"),
-      this.DTT.role("Android 11"),
-      this.DTT.role("Android 12")
-    ];
-  
-    const iOSDeviceRoles = [
-      this.DTT.role("iPhone"),
-      this.DTT.role("iPod"),
-      this.DTT.role("iPad")
-    ];
-  
-    const iOSVersionRoles = [
-      this.DTT.role("iOS 10"),
-      this.DTT.role("iOS 11"),
-      this.DTT.role("iOS 12"),
-      this.DTT.role("iOS 13"),
-      this.DTT.role("iOS 14"),
-      this.DTT.role("iOS 15"),
-    ];
-  
-    const iOSMiscellaneousRoles = [
-      this.DTT.role("Face ID"),
-      this.DTT.role("4-inch"),
-      this.DTT.role("Hardware Keyboard"),
-      this.DTT.role("Apple Pencil"),
-      this.DTT.role("Apple Watch")
-    ];
-
-    const chromebook = this.DTT.role("Chromebook") as Role;
-  
-    const miscellaneousRoles = [
-      this.DTT.role("Touchscreen PC"),
-      this.DTT.role("GDPR")
-    ];
-  
-    const experimentRoles = [
-      this.DTT.role("Per-server Avatar"),
-      this.DTT.role("Student")
-    ];
-  
-    const discordUpdatesRoles = [
-      this.DTT.role("Status Updates"),
-      this.DTT.role("Canary Updates"),
-      this.DTT.role("PTB Updates"),
-      this.DTT.role("Stable Updates")
-    ];
-  
-    const phabricatorUpdatesRoles = [
-      this.DTT.role("Desktop"),
-      this.DTT.role("Android"),
-      this.DTT.role("iOS"),
-      this.DTT.role("DBug"),
-      this.DTT.role("Boardless"),
-      this.DTT.role("P0")
-    ];
-
-    if ([...macOSVersionRoles, linux, ...windowsVersionRoles, ...androidDeviceRoles, ...androidVersionRoles, ...iOSDeviceRoles, ...iOSVersionRoles, ...iOSMiscellaneousRoles, chromebook, ...miscellaneousRoles, ...experimentRoles, ...discordUpdatesRoles, ...phabricatorUpdatesRoles].some(variable => variable === null)) {
-      throw new ReferenceError("Unknown references detected.");
-    }
-    
-    const options = (componentOptions: Role[]): MessageSelectOptionData[] => componentOptions.map(({ id, name }) => ({
-      label: name,
-      value: id
-    }));
-
-    await channel.send({
-      content: "**__macOS__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign macOS version roles!",
-              minValues: 0,
-              maxValues: macOSVersionRoles.length,
-              options: options(macOSVersionRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Linux__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: linux.name,
-              customId: `SELFROLE-${linux.id}`,
-              style: "PRIMARY"
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Windows__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign Windows version roles!",
-              minValues: 0,
-              maxValues: windowsVersionRoles.length,
-              options: options(windowsVersionRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Android__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign Android device roles!",
-              minValues: 0,
-              maxValues: androidDeviceRoles.length,
-              options: options(androidDeviceRoles as Role[])
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign Android version roles!",
-              minValues: 0,
-              maxValues: androidVersionRoles.length,
-              options: options(androidVersionRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__iOS__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign iOS device roles!",
-              minValues: 0,
-              maxValues: iOSDeviceRoles.length,
-              options: options(iOSDeviceRoles as Role[])
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign iOS version roles!",
-              minValues: 0,
-              maxValues: iOSVersionRoles.length,
-              options: options(iOSVersionRoles as Role[])
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign miscellanous iOS info!",
-              minValues: 0,
-              maxValues: iOSMiscellaneousRoles.length,
-              options: options(iOSMiscellaneousRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Chrome OS__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: chromebook.name,
-              customId: `SELFROLE-${chromebook.id}`,
-              style: "PRIMARY"
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Miscellaneous__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign miscellanous roles!",
-              minValues: 0,
-              maxValues: miscellaneousRoles.length,
-              options: options(miscellaneousRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Experiments__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign Experiment roles!",
-              minValues: 0,
-              maxValues: experimentRoles.length,
-              options: options(experimentRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send("There are also other roles we use for notifying purposes. Check them out!");
-
-    await channel.send({
-      content: "**__Discord Updates__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign Discord updates roles!",
-              minValues: 0,
-              maxValues: discordUpdatesRoles.length,
-              options: options(discordUpdatesRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
-
-    await channel.send({
-      content: "**__Phabricator Updates__**",
-      components: [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE",
-              placeholder: "Assign Phabricator roles!",
-              minValues: 0,
-              maxValues: phabricatorUpdatesRoles.length,
-              options: options(phabricatorUpdatesRoles as Role[])
-            }
-          ]
-        }
-      ]
-    });
+    const message2 = await channel.send(`**__${Information.name}__**\nYou are here! This category contains an introduction to the server. This channel also includes ${announcements} and ${roles} which you can view once admitted to the server.\n\n**__${General.name}__**\nHome to ${general} (off-topic chat) and ${botCommands} and other channels which may show up from time to time.\n\n**__${Feedback.name}__**\nSelf-explanatory - this category contains feedback channels.\n\n**__${DTGeneral.name}__**\nChannels in this category relate specifically to Discord Testers, such as:\n• ${a11y}\n• ${resources}\n• ${bugmailQueue}\n• ${bugmailDiscussion}\n\n**__Testing Categories__**\nThe purpose of these categories are to test bugs specific to the respective platform. These categories also include information related to the platform from Phabricator. Each category also includes a discussion channel, as well as a channel for known issues. Phabricator channels that aren't specific to a testing category fit into ${DTGeneral.name}.\n\n**__${DiscordUpdates.name}__**\nUpdates are sent when there is a new Stable, PTB or Canary build (or host) available and also for when there is a new status issue recorded on https://dis.gd/status.\n\n**__Roles__**\nThe \`/roles\` slash command can be used to self-assign roles. Please self-assign roles to help identify testers!\n\n**__Invite__**\nThe \`/invite\` slash command can be used to generate a one-time invite to this server. Wait a day before inviting a new T2 please.`);
+    this.messageIds.push(message1.id, message2.id);
   }
 
   async bugmailQueue(channel: TextChannel | NewsChannel) {
