@@ -97,7 +97,7 @@ export default class Verification {
       });
 
       (interaction.message as Message).delete().catch(() => null);
-      (DTT.kanal("general") as TextChannel).send(`Welcome to **${DTT.guild.name}**, ${guildMember}! Be sure to check out ${DTT.kanal("roles")} and other channels!`);
+      (DTT.kanal("general") as TextChannel).send(`Welcome to **${DTT.guild.name}**, ${guildMember}! Be sure to check out the channels in this server!`);
     }).catch(error => {
       DTT.log(`Error adding role to ${guildMember}.`, error);
 

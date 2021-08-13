@@ -59,7 +59,6 @@ export default class {
     const moderator = this.DTT.role("Moderator");
     const Information = this.DTT.kanal("Information") as CategoryChannel;
     const announcements = this.DTT.kanal("announcements");
-    const roles = this.DTT.kanal("roles");
     const General = this.DTT.kanal("General") as CategoryChannel;
     const general = this.DTT.kanal("general");
     const botCommands = this.DTT.kanal("bot-commands");
@@ -71,7 +70,7 @@ export default class {
     const bugmailDiscussion = this.DTT.kanal("bugmail-discussion");
     const DiscordUpdates = this.DTT.kanal("Discord Updates") as CategoryChannel;
 
-    if ([moderator, Information, announcements, roles, General, general, Feedback, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
+    if ([moderator, Information, announcements, General, general, Feedback, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
       throw new ReferenceError("Unknown references detected.");
     }
 

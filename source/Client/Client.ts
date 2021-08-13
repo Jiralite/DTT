@@ -132,7 +132,6 @@ export default class DTT extends Client {
       Information: "765620075737776218",
       "read-me": "765620328511963176",
       verification: "765621889682374656",
-      roles: "765706613155430411",
       announcements: "765620353191903303",
       General: "765620128356106271",
       general: "765720809519316992",
