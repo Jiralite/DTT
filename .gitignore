@@ -1,5 +1,5 @@
 .DS_Store
-Keys.json
+.env
 test.js
 test.ts
 package-lock.json
