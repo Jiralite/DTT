@@ -96,13 +96,8 @@ DTT.on("interactionCreate", (interaction): any => {
   if (interaction.isCommand()) {
     let command = DTT.commands.get(interaction.commandName);
     if (!command) return;
-
-    try {
-      command[interaction.options.getSubcommand()](interaction);
-    } catch {
-      command.traditional(interaction);
-    }
-
+    const subcommand = interaction.options.getSubcommand(false);
+    subcommand === null ? command.traditional(interaction) : command[subcommand](interaction);
     return;
   }
 
