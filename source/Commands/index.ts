@@ -1,2 +1,7 @@
-export { default as Free_BugMail } from "./Free BugMail/index.js";
-export { default as General } from "./General/index.js";
+import Free_BugMail from "./Free BugMail/index.js";
+import General from "./General/index.js";
+
+export default [
+  Free_BugMail,
+  General
+];

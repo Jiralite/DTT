@@ -5,7 +5,7 @@ import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 
-import * as commands from "../Commands/index.js";
+import commands from "../Commands/index.js";
 
 const Maria = createPool({
   host: process.env.MARIA_HOST,
@@ -30,11 +30,9 @@ export default class DTT extends Client {
     this.commands = (() => {
       const commandsCollection: Collection<string, any> = new Collection();
 
-      for (const commandtype of Object.values(commands)) {
-        for (const command of commandtype) {
-          const _command = new command(this);
-          commandsCollection.set(_command.name, _command);
-        }
+      for (const command of commands.flat()) {
+        const _command = new command(this);
+        commandsCollection.set(_command.name, _command);
       }
 
       return commandsCollection;
