@@ -44,7 +44,7 @@ function collectInvites() {
 }
 
 DTT.on("guildMemberAdd", async guildMember => {
-	if (guildMember.guild.id !== DTT.bbaGuild.id) return;
+  if (guildMember.guild.id !== DTT.bbaGuild.id) return;
 
   try {
     const DTTGuildMember = await DTT.guild.members.fetch(guildMember);
@@ -91,7 +91,7 @@ DTT.on("interactionCreate", (interaction): any => {
   if (interaction.guildId !== DTT.guild.id) return;
 
   if (interaction.isCommand()) {
-    let command = DTT.commands.get(interaction.commandName);
+    const command = DTT.commands.get(interaction.commandName);
     if (!command) return;
     const subcommand = interaction.options.getSubcommand(false);
     subcommand === null ? command.traditional(interaction) : command[subcommand](interaction);

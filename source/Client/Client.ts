@@ -223,8 +223,8 @@ export default class DTT extends Client {
       GDPR: "818960617972957195",
       "Per-server Avatar": "874820745824452608",
       Student: "862457751703519252",
-      Booster: "789692216880660561",
-    }
+      Booster: "789692216880660561"
+    };
   }
 
   get modRoles() {

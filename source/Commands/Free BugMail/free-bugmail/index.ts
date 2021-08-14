@@ -12,7 +12,7 @@ export default class {
   async submit(interaction: CommandInteraction) {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
     const bugmailQueue = this.DTT.kanal("bugmail-queue");
-    
+
     if (bugmailQueue === null) {
       this.DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
 
@@ -72,7 +72,7 @@ export default class {
   edit(interaction: CommandInteraction) {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
     const bugmailQueue = this.DTT.kanal("bugmail-queue");
-    
+
     if (bugmailQueue === null) {
       this.DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
 
@@ -147,7 +147,7 @@ export default class {
   complete(interaction: CommandInteraction) {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
     const bugmailQueue = this.DTT.kanal("bugmail-queue");
-    
+
     if (bugmailQueue === null) {
       this.DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
 

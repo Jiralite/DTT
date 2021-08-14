@@ -9,11 +9,11 @@ export default class {
     this.DTT = DTT;
   }
 
-  async traditional(interaction: CommandInteraction) {
+  traditional(interaction: CommandInteraction) {
     const verification = this.DTT.kanal("verification");
-    
+
     if (verification === null) {
-      this.DTT.log(`Apparently, the verification channel cannot be found.`);
+      this.DTT.log("Apparently, the verification channel cannot be found.");
 
       return interaction.reply({
         content: "Error, cannot find the verification channel.",

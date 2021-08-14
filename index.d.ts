@@ -4,7 +4,7 @@ declare module "discord.js" {
   type VerificationType = "TESTER" | "ALT" | "DENY";
   type FreeBugMailState = "OPEN" | "PENDING" | "DISABLED" | "RESOLVED";
   type RoleCategories = "macOS" | "Linux" | "Windows" | "Android" | "iOS" | "Chrome OS" | "Miscellaneous" | "Experiments" | "Discord Updates" | "Phabricator Updates";
-  
+
   interface CommandStructure {
     applicationCommandData: ApplicationCommandData;
     permissions: ApplicationCommandPermissionData[];

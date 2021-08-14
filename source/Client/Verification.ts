@@ -87,7 +87,7 @@ export default class Verification {
       interaction.reply(`There was an error authorising ${guildMember}`);
       return;
     }
-    
+
     guildMember.roles.add(tester).then(() => {
       DTT.log(`${interaction.user} has verified ${guildMember} as a ${tester}.`);
 

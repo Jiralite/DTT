@@ -24,7 +24,7 @@ export default class {
   }
 
   traditional(interaction: ButtonInteraction | CommandInteraction) {
-    const content: string = "Choose a category to self-assign roles from!";
+    const content = "Choose a category to self-assign roles from!";
 
     const components: MessageActionRowOptions[] = [
       {
@@ -249,7 +249,7 @@ export default class {
             }
           ]
         }
-      ]
+      ];
     }
 
     if (category === "Experiments") {
@@ -369,7 +369,7 @@ export default class {
       this.DTT.role("iOS 12"),
       this.DTT.role("iOS 13"),
       this.DTT.role("iOS 14"),
-      this.DTT.role("iOS 15"),
+      this.DTT.role("iOS 15")
     ] as Role[];
   }
 
