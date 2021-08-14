@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection, Guild, Role, Snowflake, TextChannel } from "discord.js";
+import { Client, ClientOptions, Collection, DTTChannels, DTTEmojis, DTTRoles, Guild, Role, TextChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -91,15 +91,15 @@ export default class DTT extends Client {
     this.consoleLog("Finished applying commands!");
   }
 
-  emodzhi(emoji: string) {
+  emodzhi(emoji: keyof DTTEmojis) {
     return this.guild.emojis.resolve(this._emodzhi[emoji]);
   }
 
-  kanal(channel: string) {
+  kanal(channel: keyof DTTChannels) {
     return this.guild.channels.resolve(this.kanaly[channel]);
   }
 
-  role(role: string) {
+  role(role: keyof DTTRoles) {
     return this.guild.roles.resolve(this.roles[role]);
   }
 
@@ -119,13 +119,13 @@ export default class DTT extends Client {
     return this.kanal("dtt-bugmail-logs") as TextChannel;
   }
 
-  get _emodzhi(): Record<string, Snowflake> {
+  get _emodzhi(): DTTEmojis {
     return {
       typing: "852637406334156800"
     };
   }
 
-  get kanaly(): Record<string, Snowflake> {
+  get kanaly(): DTTChannels {
     return {
       Information: "765620075737776218",
       "read-me": "765620328511963176",
@@ -151,7 +151,7 @@ export default class DTT extends Client {
     };
   }
 
-  get roles(): Record<string, Snowflake> {
+  get roles(): DTTRoles {
     return {
       Admin: "765611993532334120",
       "DTT Bot": "765730622302847037",
