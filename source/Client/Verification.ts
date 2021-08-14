@@ -6,7 +6,7 @@ export default class Verification {
     const DTT = guildMember.client as DTT;
 
     (DTT.kanal("verification") as TextChannel).send({
-      content: `Welcome to **${guildMember.guild.name}**, ${guildMember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to ${DTT.user}!`,
+      content: `Welcome to **${guildMember.guild.name}**, ${guildMember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to <@873604718893617203>!`,
       components: [
         {
           type: "ACTION_ROW",
