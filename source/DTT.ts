@@ -169,7 +169,7 @@ DTT.on("interactionCreate", (interaction): any => {
     const roles: Role[] = interaction.values.map(id => DTT.guild.roles.resolve(id) as Role);
 
     if (roles.some(role => role === null)) {
-      DTT.log("Error during self-role. Detected role ids that couldn't be found.")
+      DTT.log("Error during self-role. Detected role ids that couldn't be found.");
 
       return interaction.reply({
         content: "Error: detected a role that couldn't be found.",
