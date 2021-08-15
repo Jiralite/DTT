@@ -17,7 +17,7 @@ const Maria = createPool({
 
 export default class DTT extends Client {
   readonly Maria: Pool;
-  readonly commands: Collection<string, any>;
+  readonly commands: Collection<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
   readonly Verification: typeof Verification;
@@ -28,7 +28,7 @@ export default class DTT extends Client {
     super(options);
     this.Maria = Maria;
     this.commands = (() => {
-      const commandsCollection: Collection<string, any> = new Collection();
+      const commandsCollection: Collection<string, any> = new Collection(); // eslint-disable-line @typescript-eslint/no-explicit-any
 
       for (const command of commands.flat()) {
         const _command = new command(this);
@@ -44,7 +44,8 @@ export default class DTT extends Client {
     this.invites = new Collection();
   }
 
-  log(message: string, consoleLog: any = message) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  log(message: string, consoleLog: any = message): void {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
@@ -57,7 +58,8 @@ export default class DTT extends Client {
     }).catch(() => this.logChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  freeBugMailLog(message: string, consoleLog: any = message) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  freeBugMailLog(message: string, consoleLog: any = message): void {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
@@ -71,7 +73,8 @@ export default class DTT extends Client {
     }).catch(() => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  consoleLog(consoleLog: any, stamp = new Date().toISOString()) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  consoleLog(consoleLog: any, stamp = new Date().toISOString()): void {
     console.log(`- - - - - ${stamp} - - - - -`);
     console.log(consoleLog);
   }

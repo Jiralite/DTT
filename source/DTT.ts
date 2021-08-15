@@ -1,4 +1,5 @@
 import { FreeBugMailData, GuildMember, InviteData, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
+import { MysqlError } from "mysql";
 import Client from "./Client/Client.js";
 
 const DTT = new Client({
@@ -27,7 +28,7 @@ function Maria() {
 }
 
 function collectFreeBugMails() {
-  DTT.Maria.query("SELECT * FROM `Free BugMails`", (_E: any, R: FreeBugMailData[]) => R.forEach(freeBugMail => {
+  DTT.Maria.query("SELECT * FROM `Free BugMails`", (_E: MysqlError, R: FreeBugMailData[]) => R.forEach(freeBugMail => {
     const FreeBugMail = new DTT.FreeBugMail(DTT, freeBugMail);
     DTT.freeBugMails.set(FreeBugMail.No as number, FreeBugMail);
     FreeBugMail.timeout();
@@ -36,7 +37,7 @@ function collectFreeBugMails() {
 }
 
 function collectInvites() {
-  DTT.Maria.query("SELECT * FROM `Invites`", (_E: any, R: InviteData[]) => R.forEach(invite => {
+  DTT.Maria.query("SELECT * FROM `Invites`", (_E: MysqlError, R: InviteData[]) => R.forEach(invite => {
     const Invite = new DTT.Invite(DTT, invite);
     DTT.invites.set(Invite.No as number, Invite);
     Invite.expireTimeout();
@@ -87,7 +88,7 @@ DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
   if (oldGuildmember.pending === true && newGuildmember.pending === false) DTT.Verification.sendVerification(newGuildmember);
 });
 
-DTT.on("interactionCreate", (interaction): any => {
+DTT.on("interactionCreate", interaction => {
   if (interaction.guildId !== DTT.guild.id) return;
 
   if (interaction.isCommand()) {
