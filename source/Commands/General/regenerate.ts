@@ -128,6 +128,9 @@ export default class {
   }
 
   get commandData(): CommandStructure {
+    const admin = this.DTT.role("Admin");
+    if (admin === null) throw new ReferenceError("Could not find the Admin role.");
+
     return {
       applicationCommandData: {
         name: "regenerate",
@@ -158,7 +161,7 @@ export default class {
       },
       permissions: [
         {
-          id: (this.DTT.role("Admin") as Role).id,
+          id: admin.id,
           type: "ROLE",
           permission: true
         }

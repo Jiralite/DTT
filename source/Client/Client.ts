@@ -80,18 +80,22 @@ export default class DTT extends Client {
   }
 
   async applyCommands() {
-    const applicationCommands = await this.guild.commands.set(this.commands.map(({ commandData: { applicationCommandData } }) => applicationCommandData));
-    this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
+    try {
+      const applicationCommands = await this.guild.commands.set(this.commands.map(({ commandData: { applicationCommandData } }) => applicationCommandData));
+      this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
 
-    const applicationCommandsPermissions = await this.guild.commands.permissions.set({
-      fullPermissions: applicationCommands.map(({ id, name }) => ({
-        id,
-        permissions: this.commands.get(name)!.commandData.permissions
-      }))
-    });
+      const applicationCommandsPermissions = await this.guild.commands.permissions.set({
+        fullPermissions: applicationCommands.map(({ id, name }) => ({
+          id,
+          permissions: this.commands.get(name)!.commandData.permissions
+        }))
+      });
 
-    this.consoleLog(applicationCommandsPermissions.map((_, id) => `Set the permissions of ${applicationCommands.get(id)!.name}.`).join("\n"));
-    this.consoleLog("Finished applying commands!");
+      this.consoleLog(applicationCommandsPermissions.map((_, id) => `Set the permissions of ${applicationCommands.get(id)!.name}.`).join("\n"));
+      this.consoleLog("Finished applying commands!");
+    } catch (error) {
+      this.log("Fail to apply commands.", error);
+    }
   }
 
   emodzhi(emoji: keyof DTTEmojis) {

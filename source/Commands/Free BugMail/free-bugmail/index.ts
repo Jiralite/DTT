@@ -211,6 +211,9 @@ export default class {
   }
 
   get commandData(): CommandStructure {
+    const tester = this.DTT.role("Tester");
+    if (tester === null) throw new ReferenceError("Could not find the Tester role.");
+
     return {
       applicationCommandData: {
         name: "free-bugmail",
@@ -269,7 +272,7 @@ export default class {
       },
       permissions: [
         {
-          id: this.DTT.role("Tester")!.id,
+          id: tester.id,
           type: "ROLE",
           permission: true
         }
