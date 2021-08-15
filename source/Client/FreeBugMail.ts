@@ -282,7 +282,8 @@ export default class FreeBugMail {
         components: []
       });
 
-      message.react("<a:typing:852637406334156800>");
+      const typing = this.DTT.emodzhi("typing");
+      typing !== null ? message.react(typing) : this.DTT.freeBugMailLog(`Couldn't find the "typing" emoji to react with for Free BugMail request #${this.No}.`);
       const guildMember = interaction.member as GuildMember;
       if (guildMember.roles.cache.has(this.freeBugMail.id)) guildMember.roles.remove(this.freeBugMail);
       this.DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
