@@ -11,6 +11,15 @@ export default class {
   }
 
   async traditional(interaction: CommandInteraction) {
+    if (interaction.guild === null) {
+      this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
+
+      return interaction.reply({
+        content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to tak by myself?",
+        ephemeral: true
+      });
+    }
+
     const channel = interaction.channel;
 
     if (!(channel instanceof TextChannel || channel instanceof NewsChannel)) {
@@ -20,7 +29,7 @@ export default class {
       });
     }
 
-    if (!channel.permissionsFor(interaction.guild!.me as GuildMember).has([
+    if (!channel.permissionsFor(interaction.guild.me as GuildMember).has([
       "VIEW_CHANNEL",
       "SEND_MESSAGES"
     ])) {

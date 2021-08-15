@@ -87,10 +87,11 @@ export default class DTT extends Client {
       const applicationCommandsPermissions = await this.guild.commands.permissions.set({
         fullPermissions: applicationCommands.map(({ id, name }) => ({
           id,
-          permissions: this.commands.get(name)!.commandData.permissions
+          permissions: this.commands.get(name).commandData.permissions
         }))
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.consoleLog(applicationCommandsPermissions.map((_, id) => `Set the permissions of ${applicationCommands.get(id)!.name}.`).join("\n"));
       this.consoleLog("Finished applying commands!");
     } catch (error) {

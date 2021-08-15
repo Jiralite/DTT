@@ -10,6 +10,15 @@ export default class {
   }
 
   traditional(interaction: CommandInteraction) {
+    if (interaction.guild === null) {
+      this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
+
+      return interaction.reply({
+        content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to tak by myself?",
+        ephemeral: true
+      });
+    }
+
     const verification = this.DTT.kanal("verification");
 
     if (verification === null) {
@@ -21,7 +30,7 @@ export default class {
       });
     }
 
-    if (!verification.permissionsFor(interaction.guild!.me as GuildMember).has("CREATE_INSTANT_INVITE")) {
+    if (!verification.permissionsFor(interaction.guild.me as GuildMember).has("CREATE_INSTANT_INVITE")) {
       interaction.reply({
         content: "Apparently, I do not have invite permissions.",
         ephemeral: true

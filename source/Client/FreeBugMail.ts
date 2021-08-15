@@ -59,7 +59,7 @@ export default class FreeBugMail {
           {
             description: text,
             timestamp: Date.now(),
-            color: interaction.guild!.me!.displayColor,
+            color: interaction.guild?.me?.displayColor ?? 0,
             footer: {
               text: `#${this.No}`
             },
