@@ -1,4 +1,4 @@
-import { CategoryChannel, CommandInteraction, CommandStructure, GuildMember, Message, NewsChannel, Role, Snowflake, TextChannel } from "discord.js";
+import { CategoryChannel, CommandInteraction, CommandStructure, GuildMember, Message, NewsChannel, Snowflake, TextChannel } from "discord.js";
 import DTT from "../../Client/Client";
 
 export default class {
