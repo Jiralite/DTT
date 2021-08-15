@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection, DTTChannels, DTTEmojis, DTTRoles, Guild, Role, TextChannel } from "discord.js";
+import { Client, ClientOptions, Collection, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -73,13 +73,13 @@ export default class DTT extends Client {
     }).catch(() => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
   consoleLog(consoleLog: any, stamp = new Date().toISOString()): void {
     console.log(`- - - - - ${stamp} - - - - -`);
     console.log(consoleLog);
   }
 
-  async applyCommands() {
+  async applyCommands(): Promise<void> {
     try {
       const applicationCommands = await this.guild.commands.set(this.commands.map(({ commandData: { applicationCommandData } }) => applicationCommandData));
       this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
@@ -99,23 +99,23 @@ export default class DTT extends Client {
     }
   }
 
-  emodzhi(emoji: keyof DTTEmojis) {
+  emodzhi(emoji: keyof DTTEmojis): GuildEmoji | null {
     return this.guild.emojis.resolve(this._emodzhi[emoji]);
   }
 
-  kanal(channel: keyof DTTChannels) {
+  kanal(channel: keyof DTTChannels): GuildChannel | ThreadChannel | null {
     return this.guild.channels.resolve(this.kanaly[channel]);
   }
 
-  role(role: keyof DTTRoles) {
+  role(role: keyof DTTRoles): Role | null {
     return this.guild.roles.resolve(this.roles[role]);
   }
 
-  get guild() {
+  get guild(): Guild {
     return this.guilds.resolve("765611756441436160") as Guild;
   }
 
-  get bbaGuild() {
+  get bbaGuild(): Guild {
     return this.guilds.resolve("391356859518287895") as Guild;
   }
 
@@ -235,12 +235,12 @@ export default class DTT extends Client {
     };
   }
 
-  get modRoles() {
+  get modRoles(): (Role | null)[] {
     return [
-      this.role("Admin") as Role,
-      this.role("Moderator") as Role,
-      this.role("DT Staff") as Role,
-      this.role("DT Mod or BA") as Role
+      this.role("Admin"),
+      this.role("Moderator"),
+      this.role("DT Staff"),
+      this.role("DT Mod or BA")
     ];
   }
 }

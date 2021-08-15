@@ -10,33 +10,39 @@ export default class {
     this.DTT = DTT;
   }
 
-  async traditional(interaction: CommandInteraction) {
+  async traditional(interaction: CommandInteraction): Promise<void> {
     if (interaction.guild === null) {
       this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
-      return interaction.reply({
+      interaction.reply({
         content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to tak by myself?",
         ephemeral: true
       });
+
+      return;
     }
 
     const channel = interaction.channel;
 
     if (!(channel instanceof TextChannel || channel instanceof NewsChannel)) {
-      return interaction.reply({
+      interaction.reply({
         content: "This cannot be used in this channel.",
         ephemeral: true
       });
+
+      return;
     }
 
     if (!channel.permissionsFor(interaction.guild.me as GuildMember).has([
       "VIEW_CHANNEL",
       "SEND_MESSAGES"
     ])) {
-      return interaction.reply({
+      interaction.reply({
         content: "`VIEW_CHANNEL` & `SEND_MESSAGES` are required to execute this command here.",
         ephemeral: true
       });
+
+      return;
     }
 
     const text = interaction.options.getString("channel_name");
@@ -64,7 +70,7 @@ export default class {
     }
   }
 
-  async readMe(channel: TextChannel | NewsChannel) {
+  async readMe(channel: TextChannel | NewsChannel): Promise<void> {
     const moderator = this.DTT.role("Moderator");
     const Information = this.DTT.kanal("Information") as CategoryChannel;
     const announcements = this.DTT.kanal("announcements");
@@ -95,7 +101,7 @@ export default class {
     this.messageIds.push(message1.id, message2.id);
   }
 
-  async bugmailQueue(channel: TextChannel | NewsChannel) {
+  async bugmailQueue(channel: TextChannel | NewsChannel): Promise<void> {
     if (!channel.permissionsFor(this.DTT.guild.me as GuildMember).has("MANAGE_MESSAGES")) throw new Error("Missing permissions");
     const freeBugMail = this.DTT.role("Free BugMail");
     const typing = this.DTT.emodzhi("typing");

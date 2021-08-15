@@ -23,7 +23,7 @@ export default class {
     ];
   }
 
-  traditional(interaction: ButtonInteraction | CommandInteraction) {
+  traditional(interaction: ButtonInteraction | CommandInteraction): void {
     const content = "Choose a category to self-assign roles from!";
 
     const components: MessageActionRowOptions[] = [
@@ -61,7 +61,7 @@ export default class {
     }
   }
 
-  categoryInteraction(interaction: SelectMenuInteraction, category: RoleCategories) {
+  categoryInteraction(interaction: SelectMenuInteraction, category: RoleCategories): void {
     const components = this.category(interaction.member as GuildMember, category);
 
     interaction.update({
@@ -309,7 +309,7 @@ export default class {
     throw new Error("Unknown category.");
   }
 
-  get macOSVersionRoles() {
+  get macOSVersionRoles(): Role[] {
     return [
       this.DTT.role("macOS El Capitan"),
       this.DTT.role("macOS Sierra"),
@@ -321,11 +321,11 @@ export default class {
     ] as Role[];
   }
 
-  get linux() {
+  get linux(): Role {
     return this.DTT.role("Linux") as Role;
   }
 
-  get windowsVersionRoles() {
+  get windowsVersionRoles(): Role[] {
     return [
       this.DTT.role("Windows 7"),
       this.DTT.role("Windows 8"),
@@ -334,14 +334,14 @@ export default class {
     ] as Role[];
   }
 
-  get androidDeviceRoles() {
+  get androidDeviceRoles(): Role[] {
     return [
       this.DTT.role("Pixel"),
       this.DTT.role("Samsung Galaxy")
     ] as Role[];
   }
 
-  get androidVersionRoles() {
+  get androidVersionRoles(): Role[] {
     return [
       this.DTT.role("Android 5"),
       this.DTT.role("Android 6"),
@@ -354,7 +354,7 @@ export default class {
     ] as Role[];
   }
 
-  get iOSDeviceRoles() {
+  get iOSDeviceRoles(): Role[] {
     return [
       this.DTT.role("iPhone"),
       this.DTT.role("iPod"),
@@ -362,7 +362,7 @@ export default class {
     ] as Role[];
   }
 
-  get iOSVersionRoles() {
+  get iOSVersionRoles(): Role[] {
     return [
       this.DTT.role("iOS 10"),
       this.DTT.role("iOS 11"),
@@ -373,7 +373,7 @@ export default class {
     ] as Role[];
   }
 
-  get iOSMiscellaneousRoles() {
+  get iOSMiscellaneousRoles(): Role[] {
     return [
       this.DTT.role("Face ID"),
       this.DTT.role("4-inch"),
@@ -383,25 +383,25 @@ export default class {
     ] as Role[];
   }
 
-  get chromebook() {
+  get chromebook(): Role {
     return this.DTT.role("Chromebook") as Role;
   }
 
-  get miscellaneousRoles() {
+  get miscellaneousRoles(): Role[] {
     return [
       this.DTT.role("Touchscreen PC"),
       this.DTT.role("GDPR")
     ] as Role[];
   }
 
-  get experimentRoles() {
+  get experimentRoles(): Role[] {
     return [
       this.DTT.role("Per-server Avatar"),
       this.DTT.role("Student")
     ] as Role[];
   }
 
-  get discordUpdatesRoles() {
+  get discordUpdatesRoles(): Role[] {
     return [
       this.DTT.role("Status Updates"),
       this.DTT.role("Canary Updates"),
@@ -410,7 +410,7 @@ export default class {
     ] as Role[];
   }
 
-  get phabricatorUpdatesRoles() {
+  get phabricatorUpdatesRoles(): Role[] {
     return [
       this.DTT.role("Desktop"),
       this.DTT.role("Android"),

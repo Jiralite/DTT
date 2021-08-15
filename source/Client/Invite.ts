@@ -23,7 +23,7 @@ export default class Invite {
     this.timeout = null;
   }
 
-  create(interaction: CommandInteraction) {
+  create(interaction: CommandInteraction): void {
     this.verification.createInvite({
       maxAge: 86400, // 1 day
       maxUses: 1,
@@ -77,11 +77,11 @@ export default class Invite {
     });
   }
 
-  expireTimeout() {
+  expireTimeout(): void {
     if (!this.expired && this.expiredTimestamp !== null) this.timeout = setTimeout(() => this.remove(), this.expiredTimestamp - Date.now());
   }
 
-  remove() {
+  remove(): void {
     this.DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
       true,
       this.No

@@ -1,8 +1,8 @@
-import { ButtonInteraction, GuildMember, Message, Snowflake, TextChannel, VerificationType } from "discord.js";
+import { ButtonInteraction, GuildMember, Message, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
 import DTT from "./Client";
 
 export default class Verification {
-  static sendVerification(guildMember: GuildMember) {
+  static sendVerification(guildMember: GuildMember): void {
     const DTT = guildMember.client as DTT;
 
     (DTT.kanal("verification") as TextChannel).send({
@@ -35,10 +35,22 @@ export default class Verification {
     });
   }
 
-  static async authorise(interaction: ButtonInteraction, authentication: VerificationType, guildMemberId: Snowflake) {
+  static async authorise(interaction: ButtonInteraction, authentication: VerificationType, guildMemberId: Snowflake): Promise<void> {
     const DTT = interaction.client as DTT;
+    const modRoles = DTT.modRoles;
 
-    if (!(interaction.member as GuildMember).roles.cache.hasAny(...DTT.modRoles.map(({ id }) => id))) {
+    if (modRoles.some(modRole => modRole === null)) {
+      DTT.log("Could not locate the moderators. One or more roles could not be found.");
+
+      interaction.reply({
+        content: "Couldn't locate the moderators. Is this server civil?",
+        ephemeral: true
+      });
+
+      return;
+    }
+
+    if (!(interaction.member as GuildMember).roles.cache.hasAny(...modRoles.map((modRole => (modRole as Role).id)))) {
       DTT.log(`${interaction.user} interacted with a verification button but failed authorisation checks.`);
 
       return interaction.reply({
@@ -63,10 +75,12 @@ export default class Verification {
         const guildMemberManualMention = `<@${guildMemberId}>`;
         DTT.log(`Error during verification: ${guildMemberManualMention} no longer in server.`);
 
-        return interaction.update({
+        interaction.update({
           content: `${guildMemberManualMention} no longer appears to be in the server.`,
           components: []
         }).then(() => setTimeout(() => (interaction.message as Message).delete().catch(() => null), 10000));
+
+        return;
       }
 
       DTT.log("Error fetching guild member.");
@@ -78,7 +92,7 @@ export default class Verification {
     }
   }
 
-  static authoriseTester(interaction: ButtonInteraction, guildMember: GuildMember) {
+  static authoriseTester(interaction: ButtonInteraction, guildMember: GuildMember): void {
     const DTT = interaction.client as DTT;
     const tester = DTT.role("Tester");
 
@@ -108,7 +122,7 @@ export default class Verification {
     });
   }
 
-  static authoriseAlt(interaction: ButtonInteraction, guildMember: GuildMember) {
+  static authoriseAlt(interaction: ButtonInteraction, guildMember: GuildMember): void {
     const DTT = interaction.client as DTT;
     const altAccount = DTT.role("Alt Account");
 
@@ -137,7 +151,7 @@ export default class Verification {
     });
   }
 
-  static authoriseKick(interaction: ButtonInteraction, guildMember: GuildMember) {
+  static authoriseKick(interaction: ButtonInteraction, guildMember: GuildMember): void {
     const DTT = interaction.client as DTT;
 
     guildMember.kick().then(() => {
