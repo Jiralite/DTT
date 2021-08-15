@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "test": "npx eslint .",
+    "test": "npx eslint . && tsc",
     "prestart": "npm install && tsc",
     "start": "node --require dotenv/config sourceJS/DTT.js"
   },
