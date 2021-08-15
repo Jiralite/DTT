@@ -110,6 +110,15 @@ DTT.on("interactionCreate", interaction => {
     return;
   }
 
+  if (interaction.isContextMenu()) {
+    interaction.reply({
+      content: "your ban has been scheduled for tomorrow",
+      ephemeral: true
+    });
+
+    return;
+  }
+
   if (interaction.isButton()) {
     const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
     if (joiner) return DTT.Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
