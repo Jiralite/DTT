@@ -95,7 +95,16 @@ DTT.on("interactionCreate", interaction => {
 
   if (interaction.isCommand()) {
     const command = DTT.commands.get(interaction.commandName);
-    if (!command) return;
+
+    if (!command) {
+      interaction.reply({
+        content: "your ban has been scheduled for tomorrow",
+        ephemeral: true
+      });
+
+      return;
+    }
+
     const subcommand = interaction.options.getSubcommand(false);
     subcommand === null ? command.traditional(interaction) : command[subcommand](interaction);
     return;
