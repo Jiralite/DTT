@@ -10,7 +10,7 @@ export default class {
   }
 
   async submit(interaction: CommandInteraction): Promise<void> {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
+    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
     const bugmailQueue = this.DTT.kanal("bugmail-queue");
 
     if (bugmailQueue === null) {
@@ -78,7 +78,7 @@ export default class {
   }
 
   edit(interaction: CommandInteraction): void {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
+    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
     const bugmailQueue = this.DTT.kanal("bugmail-queue");
 
     if (bugmailQueue === null) {
@@ -167,7 +167,7 @@ export default class {
   }
 
   complete(interaction: CommandInteraction): void {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${this.name}\` Slash Command.`;
+    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
     const bugmailQueue = this.DTT.kanal("bugmail-queue");
 
     if (bugmailQueue === null) {
