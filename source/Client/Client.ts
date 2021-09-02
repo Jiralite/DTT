@@ -30,7 +30,7 @@ export default class DTT extends Client {
     this.commands = (() => {
       const commandsCollection: Collection<string, any> = new Collection(); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-      for (const command of commands.flat()) {
+      for (const command of commands) {
         const _command = new command(this);
         commandsCollection.set(_command.name, _command);
       }
