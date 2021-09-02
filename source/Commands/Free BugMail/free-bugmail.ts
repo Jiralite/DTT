@@ -1,5 +1,5 @@
 import { CommandInteraction, CommandStructure } from "discord.js";
-import DTT from "../../../Client/Client";
+import DTT from "../../Client/Client";
 
 export default class {
   private readonly DTT: DTT;

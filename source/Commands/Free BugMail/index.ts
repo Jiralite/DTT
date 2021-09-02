@@ -1,4 +1,4 @@
-import free_bugmail from "./free-bugmail/index.js";
+import free_bugmail from "./free-bugmail.js";
 
 export default [
   free_bugmail
