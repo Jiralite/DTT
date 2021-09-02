@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, Role, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Collection, Command, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -17,7 +17,7 @@ const Maria = createPool({
 
 export default class DTT extends Client {
   readonly Maria: Pool;
-  readonly commands: Collection<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+  readonly commands: Collection<string, Command>;
   readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
   readonly Verification: typeof Verification;
@@ -27,11 +27,10 @@ export default class DTT extends Client {
   constructor(options: ClientOptions) {
     super(options);
     this.Maria = Maria;
-    this.commands = (() => commands.reduce((commandsCollection, command) => {
+    this.commands = commands.reduce((commandsCollection, command) => {
       const _command = new command(this);
       return commandsCollection.set(_command.name, _command);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }, new Collection<string, any>()))();
+    }, new Collection<string, Command>());
     this.FreeBugMail = FreeBugMail;
     this.Invite = Invite;
     this.Verification = Verification;
@@ -82,7 +81,7 @@ export default class DTT extends Client {
       const applicationCommandsPermissions = await this.guild.commands.permissions.set({
         fullPermissions: applicationCommands.map(({ id, name }) => ({
           id,
-          permissions: this.commands.get(name).commandData.permissions
+          permissions: this.commands.get(name)!.commandData.permissions // eslint-disable-line @typescript-eslint/no-non-null-assertion
         }))
       });
 

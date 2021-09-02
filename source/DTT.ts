@@ -1,4 +1,4 @@
-import { FreeBugMailData, GuildMember, InviteData, Role, Snowflake, VerificationType } from "discord.js";
+import { FreeBugMailData, GuildMember, InviteData, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import { MysqlError } from "mysql";
 import Client from "./Client/Client.js";
 
@@ -105,8 +105,7 @@ DTT.on("interactionCreate", interaction => {
       return;
     }
 
-    const subcommand = interaction.options.getSubcommand(false);
-    subcommand === null ? command.traditional(interaction) : command[subcommand](interaction);
+    command.handle(interaction, interaction.options.getSubcommand(false));
     return;
   }
 
@@ -122,7 +121,7 @@ DTT.on("interactionCreate", interaction => {
   if (interaction.isButton()) {
     const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
     if (joiner) return DTT.Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
-    if (interaction.customId === "SELFROLE_BACK") return DTT.commands.get("roles").traditional(interaction);
+    if (interaction.customId === "SELFROLE_BACK") return DTT.commands.get("roles")?.handle(interaction);
     const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 
     if (roleAssignment) {
@@ -186,7 +185,7 @@ DTT.on("interactionCreate", interaction => {
   }
 
   if (interaction.isSelectMenu()) {
-    if (interaction.customId === "SELFROLE_CATEGORY") return DTT.commands.get("roles").categoryInteraction(interaction, interaction.values[0]);
+    if (interaction.customId === "SELFROLE_CATEGORY") return (DTT.commands.get("roles") as RolesCommand)?.categoryInteraction(interaction, interaction.values[0] as RoleCategories);
     if (!interaction.customId.startsWith("SELFROLE")) return;
     const roles: Role[] = interaction.values.map(id => DTT.guild.roles.resolve(id) as Role);
 
@@ -211,7 +210,7 @@ DTT.on("interactionCreate", interaction => {
       }
     }
 
-    for (const role of DTT.commands.get("roles")[interaction.customId.slice(9)].filter((role: Role) => !roles.some(({ id }) => id === role.id))) {
+    for (const role of (DTT.commands.get("roles") as RolesCommand).resolveSelectMenuCategoryRoles(interaction.customId.slice(9) as SubRoleCategories).filter((role: Role) => !roles.some(({ id }) => id === role.id))) {
       if (rolesToSet.has(role.id)) {
         rolesToSet.delete(role.id);
         rolesRemoved.push(role);

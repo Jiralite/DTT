@@ -1,9 +1,10 @@
-import { ButtonInteraction, CommandInteraction, CommandStructure, GuildMember, MessageActionRowOptions, MessageSelectOptionData, Role, RoleCategories, SelectMenuInteraction } from "discord.js";
+import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, GuildMember, MessageActionRowOptions, MessageSelectOptionData, Role, RoleCategories, RolesCommand, SelectMenuInteraction, SubRoleCategories } from "discord.js";
 import DTT from "../../Client/Client";
 
-export default class {
+export default class implements RolesCommand {
   private readonly DTT: DTT;
   readonly name = "roles";
+  readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
   readonly categories: RoleCategories[];
 
   constructor(DTT: DTT) {
@@ -23,7 +24,11 @@ export default class {
     ];
   }
 
-  traditional(interaction: ButtonInteraction | CommandInteraction): void {
+  async handle(interaction: ButtonInteraction | CommandInteraction): Promise<void> {
+    return await Promise.resolve(this.execute(interaction));
+  }
+
+  execute(interaction: ButtonInteraction | CommandInteraction): void {
     const content = "Choose a category to self-assign roles from!";
 
     const components: MessageActionRowOptions[] = [
@@ -309,6 +314,35 @@ export default class {
     throw new Error("Unknown category.");
   }
 
+  resolveSelectMenuCategoryRoles(categoryRoleName: SubRoleCategories): Role[] {
+    switch (categoryRoleName) {
+      case "macOSVersionRoles":
+        return this.macOSVersionRoles;
+      case "windowsVersionRoles":
+        return this.windowsVersionRoles;
+      case "androidDeviceRoles":
+        return this.androidDeviceRoles;
+      case "androidVersionRoles":
+        return this.androidVersionRoles;
+      case "iOSDeviceRoles":
+        return this.iOSDeviceRoles;
+      case "iOSVersionRoles":
+        return this.iOSVersionRoles;
+      case "iOSMiscellaneousRoles":
+        return this.iOSMiscellaneousRoles;
+      case "miscellaneousRoles":
+        return this.miscellaneousRoles;
+      case "experimentRoles":
+        return this.experimentRoles;
+      case "discordUpdatesRoles":
+        return this.discordUpdatesRoles;
+      case "phabricatorUpdatesRoles":
+        return this.phabricatorUpdatesRoles;
+      default:
+        throw new ReferenceError("Unknown subrole categories.");
+    }
+  }
+
   get macOSVersionRoles(): Role[] {
     return [
       this.DTT.role("macOS El Capitan"),
@@ -427,8 +461,9 @@ export default class {
 
     return {
       applicationCommandData: {
-        name: "roles",
+        name: this.name,
         description: "Yields self-assignable roles.",
+        type: this.type,
         defaultPermission: false
       },
       permissions: [

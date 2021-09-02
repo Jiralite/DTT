@@ -1,12 +1,24 @@
-import { CommandInteraction, CommandStructure } from "discord.js";
+import { CommandInteraction, CommandStructure, Constants, FreeBugMailCommand } from "discord.js";
 import DTT from "../../Client/Client";
 
-export default class {
+export default class implements FreeBugMailCommand {
   private readonly DTT: DTT;
   readonly name = "free-bugmail";
+  readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
   constructor(DTT: DTT) {
     this.DTT = DTT;
+  }
+
+  async handle(interaction: CommandInteraction, subcommand: string): Promise<void> {
+    switch (subcommand) {
+      case "submit":
+        return this.submit(interaction);
+      case "edit":
+        return await Promise.resolve(this.edit(interaction));
+      case "complete":
+        return await Promise.resolve(this.complete(interaction));
+    }
   }
 
   async submit(interaction: CommandInteraction): Promise<void> {
@@ -40,12 +52,10 @@ export default class {
     if (text === null) {
       this.DTT.freeBugMailLog(`${logText} Required parameter \`text\` was not supplied.`);
 
-      interaction.reply({
+      return await interaction.reply({
         content: "Error: required parameter did not have an argument.",
         ephemeral: true
       });
-
-      return;
     }
 
     if (text.length >= 1500) {
@@ -250,9 +260,9 @@ export default class {
 
     return {
       applicationCommandData: {
-        name: "free-bugmail",
+        name: this.name,
         description: "The command for the Free BugMail queue!",
-        type: "CHAT_INPUT",
+        type: this.type,
         options: [
           {
             type: "SUB_COMMAND",

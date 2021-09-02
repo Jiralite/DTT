@@ -1,15 +1,20 @@
-import { CommandInteraction, CommandStructure, GuildMember } from "discord.js";
+import { CommandInteraction, CommandStructure, Constants, GuildMember, InviteCommand } from "discord.js";
 import DTT from "../../Client/Client";
 
-export default class {
+export default class implements InviteCommand {
   private readonly DTT: DTT;
   readonly name = "invite";
+  readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
   constructor(DTT: DTT) {
     this.DTT = DTT;
   }
 
-  traditional(interaction: CommandInteraction): void {
+  async handle(interaction: CommandInteraction): Promise<void> {
+    return await Promise.resolve(this.execute(interaction));
+  }
+
+  execute(interaction: CommandInteraction): void {
     if (interaction.guild === null) {
       this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
@@ -73,8 +78,9 @@ export default class {
 
     return {
       applicationCommandData: {
-        name: "invite",
+        name: this.name,
         description: "Generates a one-time invite.",
+        type: this.type,
         defaultPermission: false
       },
       permissions: [

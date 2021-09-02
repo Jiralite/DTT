@@ -1,16 +1,21 @@
-import { CategoryChannel, CommandInteraction, CommandStructure, GuildMember, Message, NewsChannel, Snowflake, TextChannel } from "discord.js";
+import { CategoryChannel, CommandInteraction, CommandStructure, Constants, GuildMember, Message, NewsChannel, RegenerateCommand, Snowflake, TextChannel } from "discord.js";
 import DTT from "../../Client/Client";
 
-export default class {
+export default class implements RegenerateCommand {
   private readonly DTT: DTT;
   readonly name = "regenerate";
+  readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
   messageIds: Snowflake[] = [];
 
   constructor(DTT: DTT) {
     this.DTT = DTT;
   }
 
-  async traditional(interaction: CommandInteraction): Promise<void> {
+  async handle(interaction: CommandInteraction): Promise<void> {
+    return await this.execute(interaction);
+  }
+
+  async execute(interaction: CommandInteraction): Promise<void> {
     if (interaction.guild === null) {
       this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
@@ -148,8 +153,9 @@ export default class {
 
     return {
       applicationCommandData: {
-        name: "regenerate",
+        name: this.name,
         description: "Regenerates a channel's information.",
+        type: this.type,
         options: [
           {
             type: "STRING",
