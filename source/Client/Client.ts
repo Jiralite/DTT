@@ -27,16 +27,11 @@ export default class DTT extends Client {
   constructor(options: ClientOptions) {
     super(options);
     this.Maria = Maria;
-    this.commands = (() => {
-      const commandsCollection: Collection<string, any> = new Collection(); // eslint-disable-line @typescript-eslint/no-explicit-any
-
-      for (const command of commands) {
-        const _command = new command(this);
-        commandsCollection.set(_command.name, _command);
-      }
-
-      return commandsCollection;
-    })();
+    this.commands = (() => commands.reduce((commandsCollection, command) => {
+      const _command = new command(this);
+      return commandsCollection.set(_command.name, _command);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }, new Collection<string, any>()))();
     this.FreeBugMail = FreeBugMail;
     this.Invite = Invite;
     this.Verification = Verification;
