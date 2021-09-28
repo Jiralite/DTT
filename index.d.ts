@@ -29,6 +29,10 @@ declare module "discord.js" {
     bugmailQueue(channel: TextChannel | NewsChannel): Promise<void>;
   }
 
+  interface RememberCommand extends Command {
+    execute(interaction: CommandInteraction): Promise<void>;
+  }
+
   interface RolesCommand extends Command {
     execute(interaction: ButtonInteraction | CommandInteraction): void;
     categoryInteraction(interaction: SelectMenuInteraction | NewsChannel, category: RoleCategories): void;

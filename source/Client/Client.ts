@@ -1,4 +1,7 @@
-import { Client, ClientOptions, Collection, Command, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, Role, TextChannel, ThreadChannel } from "discord.js";
+import { readdirSync } from "fs";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { Client, ClientOptions, Collection, Command, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -6,6 +9,7 @@ import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 
 import commands from "../Commands/index.js";
+const headingsPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
 
 const Maria = createPool({
   host: process.env.MARIA_HOST,
@@ -17,24 +21,32 @@ const Maria = createPool({
 
 export default class DTT extends Client {
   readonly Maria: Pool;
-  readonly commands: Collection<string, Command>;
   readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
   readonly Verification: typeof Verification;
+  readonly commands: Collection<string, Command>;
   readonly freeBugMails: Collection<number, FreeBugMail>;
+  readonly images: Map<string, MessageAttachment>;
   readonly invites: Collection<number, Invite>;
 
   constructor(options: ClientOptions) {
     super(options);
     this.Maria = Maria;
+    this.FreeBugMail = FreeBugMail;
+    this.Invite = Invite;
+    this.Verification = Verification;
+
     this.commands = commands.reduce((commandsCollection, command) => {
       const _command = new command(this);
       return commandsCollection.set(_command.name, _command);
     }, new Collection<string, Command>());
-    this.FreeBugMail = FreeBugMail;
-    this.Invite = Invite;
-    this.Verification = Verification;
+
     this.freeBugMails = new Collection();
+
+    this.images = readdirSync(headingsPath).filter(heading => heading.endsWith(".png")).reduce((headingsMap, heading) => {
+      return headingsMap.set(heading.slice(0, heading.indexOf(".")), new MessageAttachment(`${headingsPath}/${heading}`));
+    }, new Map<string, MessageAttachment>());
+
     this.invites = new Collection();
   }
 
