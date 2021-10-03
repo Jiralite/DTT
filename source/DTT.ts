@@ -44,7 +44,12 @@ function collectInvites() {
   }));
 }
 
-DTT.on("guildMemberAdd", async guildMember => {
+DTT.on(Constants.Events.CLIENT_READY, () => {
+  DTT.log("Selflessly slaving away.");
+  Maria();
+});
+
+DTT.on(Constants.Events.GUILD_MEMBER_ADD, async guildMember => {
   if (guildMember.guild.id !== DTT.bbaGuild.id) return;
 
   try {
@@ -70,7 +75,7 @@ DTT.on("guildMemberAdd", async guildMember => {
   }
 });
 
-DTT.on("guildMemberRemove", async guildMember => {
+DTT.on(Constants.Events.GUILD_MEMBER_REMOVE, async guildMember => {
   if (guildMember.guild.id !== DTT.guild.id) return;
 
   try {
@@ -89,12 +94,12 @@ DTT.on("guildMemberRemove", async guildMember => {
   }
 });
 
-DTT.on("guildMemberUpdate", (oldGuildmember, newGuildmember) => {
+DTT.on(Constants.Events.GUILD_MEMBER_UPDATE, (oldGuildmember, newGuildmember) => {
   if (oldGuildmember.guild.id !== DTT.guild.id) return;
   if (oldGuildmember.pending === true && newGuildmember.pending === false) DTT.Verification.sendVerification(newGuildmember);
 });
 
-DTT.on("interactionCreate", interaction => {
+DTT.on(Constants.Events.INTERACTION_CREATE, interaction => {
   if (interaction.guildId !== DTT.guild.id) return;
 
   if (interaction.isCommand()) {
@@ -237,9 +242,9 @@ DTT.on("interactionCreate", interaction => {
   }
 });
 
-DTT.on("inviteDelete", invite => DTT.invites.find(({ code }) => code === invite.code)?.remove());
+DTT.on(Constants.Events.INVITE_DELETE, invite => DTT.invites.find(({ code }) => code === invite.code)?.remove());
 
-DTT.on("messageCreate", message => {
+DTT.on(Constants.Events.MESSAGE_CREATE, message => {
   if (message.author.bot) return;
   const bugmailQueue = DTT.kanal("bugmail-queue");
   if (bugmailQueue === null || message.channel.type === "DM") return;
@@ -250,7 +255,7 @@ DTT.on("messageCreate", message => {
   }
 });
 
-DTT.on("messageDelete", message => {
+DTT.on(Constants.Events.MESSAGE_DELETE, message => {
   if (message.guild!.id !== DTT.guild.id) return; // eslint-disable-line @typescript-eslint/no-non-null-assertion
 
   for (const FreeBugMail of DTT.freeBugMails.values()) {
@@ -261,11 +266,6 @@ DTT.on("messageDelete", message => {
       return;
     }
   }
-});
-
-DTT.on("ready", () => {
-  DTT.log("Selflessly slaving away.");
-  Maria();
 });
 
 DTT.login(process.env.DISCORD_TOKEN);
