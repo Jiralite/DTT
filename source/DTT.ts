@@ -1,16 +1,16 @@
-import { Constants, DiscordAPIError, FreeBugMailData, GuildMember, InviteData, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
+import { Constants, DiscordAPIError, FreeBugMailData, GuildMember, Intents, InviteData, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import { MysqlError } from "mysql";
 import Client from "./Client/Client.js";
 
 const DTT = new Client({
   partials: [
-    "MESSAGE"
+    Constants.PartialTypes.MESSAGE
   ],
   intents: [
-    "GUILDS",
-    "GUILD_MEMBERS",
-    "GUILD_MESSAGES",
-    "GUILD_INVITES"
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_INVITES
   ]
 });
 
