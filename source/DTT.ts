@@ -256,7 +256,7 @@ DTT.on(Constants.Events.MESSAGE_CREATE, message => {
 });
 
 DTT.on(Constants.Events.MESSAGE_DELETE, message => {
-  if (message.guild!.id !== DTT.guild.id) return; // eslint-disable-line @typescript-eslint/no-non-null-assertion
+  if (message.guild?.id !== DTT.guild.id) return;
 
   for (const FreeBugMail of DTT.freeBugMails.values()) {
     if (FreeBugMail.messageId === message.id && FreeBugMail.state !== "RESOLVED") return FreeBugMail.remove();
