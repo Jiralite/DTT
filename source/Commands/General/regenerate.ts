@@ -2,14 +2,9 @@ import { CategoryChannel, CommandInteraction, CommandStructure, Constants, Guild
 import DTT from "../../Client/Client";
 
 export default class implements RegenerateCommand {
-  private readonly DTT: DTT;
   readonly name = "regenerate";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
   messageIds: Snowflake[] = [];
-
-  constructor(DTT: DTT) {
-    this.DTT = DTT;
-  }
 
   async handle(interaction: CommandInteraction): Promise<void> {
     return await this.execute(interaction);
@@ -17,7 +12,7 @@ export default class implements RegenerateCommand {
 
   async execute(interaction: CommandInteraction): Promise<void> {
     if (interaction.guild === null) {
-      this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
+      DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
       interaction.reply({
         content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to take by myself?",
@@ -69,33 +64,33 @@ export default class implements RegenerateCommand {
 
       message.delete().catch(() => null);
     } catch (error) {
-      this.DTT.log(`Error regenerating "${text}".`, error);
+      DTT.log(`Error regenerating "${text}".`, error);
       channel.bulkDelete(this.messageIds);
       interaction.editReply("There was an error regenerating content.");
     }
   }
 
   async readMe(channel: TextChannel | NewsChannel): Promise<void> {
-    const moderator = this.DTT.role("Moderator");
-    const Information = this.DTT.kanal("Information") as CategoryChannel;
-    const announcements = this.DTT.kanal("announcements");
-    const General = this.DTT.kanal("General") as CategoryChannel;
-    const general = this.DTT.kanal("general");
-    const botCommands = this.DTT.kanal("bot-commands");
-    const Feedback = this.DTT.kanal("Feedback") as CategoryChannel;
-    const DTGeneral = this.DTT.kanal("DT General") as CategoryChannel;
-    const a11y = this.DTT.kanal("a11y");
-    const resources = this.DTT.kanal("resources");
-    const bugmailQueue = this.DTT.kanal("bugmail-queue");
-    const bugmailDiscussion = this.DTT.kanal("bugmail-discussion");
-    const DiscordUpdates = this.DTT.kanal("Discord Updates") as CategoryChannel;
+    const moderator = DTT.role("Moderator");
+    const Information = DTT.kanal("Information") as CategoryChannel;
+    const announcements = DTT.kanal("announcements");
+    const General = DTT.kanal("General") as CategoryChannel;
+    const general = DTT.kanal("general");
+    const botCommands = DTT.kanal("bot-commands");
+    const Feedback = DTT.kanal("Feedback") as CategoryChannel;
+    const DTGeneral = DTT.kanal("DT General") as CategoryChannel;
+    const a11y = DTT.kanal("a11y");
+    const resources = DTT.kanal("resources");
+    const bugmailQueue = DTT.kanal("bugmail-queue");
+    const bugmailDiscussion = DTT.kanal("bugmail-discussion");
+    const DiscordUpdates = DTT.kanal("Discord Updates") as CategoryChannel;
 
     if ([moderator, Information, announcements, General, general, Feedback, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
       throw new ReferenceError("Unknown references detected.");
     }
 
     const message1 = await channel.send({
-      content: `Welcome to **${this.DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${moderator}s' instructions.\n\nRead below for an explanation of categories!`,
+      content: `Welcome to **${DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${moderator}s' instructions.\n\nRead below for an explanation of categories!`,
       allowedMentions: {
         parse: []
       }
@@ -107,11 +102,11 @@ export default class implements RegenerateCommand {
   }
 
   async bugmailQueue(channel: TextChannel | NewsChannel): Promise<void> {
-    if (!channel.permissionsFor(this.DTT.guild.me as GuildMember).has("MANAGE_MESSAGES")) throw new Error("Missing permissions");
-    const freeBugMail = this.DTT.role("Free BugMail");
-    const typing = this.DTT.emodzhi("typing");
-    const bugmailedReports = this.DTT.kanal("bugmailed-reports");
-    const bugmailedDiscussion = this.DTT.kanal("bugmail-discussion");
+    if (!channel.permissionsFor(DTT.guild.me as GuildMember).has("MANAGE_MESSAGES")) throw new Error("Missing permissions");
+    const freeBugMail = DTT.role("Free BugMail");
+    const typing = DTT.emodzhi("typing");
+    const bugmailedReports = DTT.kanal("bugmailed-reports");
+    const bugmailedDiscussion = DTT.kanal("bugmail-discussion");
 
     if ([freeBugMail, typing, bugmailedReports, bugmailedDiscussion].some(variable => variable === null)) {
       throw new ReferenceError("Unknown references detected.");
@@ -148,7 +143,7 @@ export default class implements RegenerateCommand {
   }
 
   get commandData(): CommandStructure {
-    const admin = this.DTT.role("Admin");
+    const admin = DTT.role("Admin");
     if (admin === null) throw new ReferenceError("Could not find the Admin role.");
 
     return {

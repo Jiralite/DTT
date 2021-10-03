@@ -3,7 +3,6 @@ import { OkPacket } from "mysql";
 import DTT from "./Client.js";
 
 export default class Invite {
-  private readonly DTT: DTT;
   No: number | null;
   id: Snowflake;
   createdTimestamp: number | null;
@@ -12,8 +11,7 @@ export default class Invite {
   code: string | null;
   timeout: NodeJS.Timeout | null;
 
-  constructor(DTT: DTT, invite: InviteData) {
-    this.DTT = DTT;
+  constructor(invite: InviteData) {
     this.No = invite.No;
     this.id = invite.ID;
     this.createdTimestamp = invite["Created Timestamp"] === null ? null : +invite["Created Timestamp"];
@@ -29,7 +27,7 @@ export default class Invite {
       maxUses: 1,
       unique: true
     }).then(invite => {
-      this.DTT.Maria.query("INSERT INTO `Invites` SET ?;", {
+      DTT.Maria.query("INSERT INTO `Invites` SET ?;", {
         ID: interaction.user.id,
         "Created Timestamp": invite.createdTimestamp,
         "Expired Timestamp": invite.expiresTimestamp,
@@ -37,7 +35,7 @@ export default class Invite {
         Code: invite.code
       }, (E, { insertId }: OkPacket) => {
         if (E) {
-          this.DTT.log("Error during Invite#create().", E);
+          DTT.log("Error during Invite#create().", E);
 
           interaction.reply({
             content: "There was an error creating the invite.",
@@ -52,7 +50,7 @@ export default class Invite {
         this.expiredTimestamp = invite.expiresTimestamp;
         this.expired = false;
         this.code = invite.code;
-        this.DTT.invites.set(this.No, this);
+        DTT.invites.set(this.No, this);
         this.expireTimeout();
 
         interaction.reply({
@@ -68,7 +66,7 @@ export default class Invite {
         });
       });
     }).catch(error => {
-      this.DTT.log("Error creating invite.", error);
+      DTT.log("Error creating invite.", error);
 
       interaction.reply({
         content: "There was an error creating the invite.",
@@ -82,11 +80,11 @@ export default class Invite {
   }
 
   remove(): void {
-    this.DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
+    DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
       true,
       this.No
     ], E => {
-      if (E) return this.DTT.log("Error during Invite#remove().", E);
+      if (E) return DTT.log("Error during Invite#remove().", E);
       this.expired = true;
       if (this.timeout !== null) clearTimeout(this.timeout);
 
@@ -100,10 +98,10 @@ export default class Invite {
   }
 
   get verification(): TextChannel {
-    return this.DTT.kanal("verification") as TextChannel;
+    return DTT.kanal("verification") as TextChannel;
   }
 
   get inviteLogs(): TextChannel {
-    return this.DTT.kanal("invite-logs") as TextChannel;
+    return DTT.kanal("invite-logs") as TextChannel;
   }
 }

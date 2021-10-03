@@ -2,13 +2,8 @@ import { CommandInteraction, CommandStructure, Constants, RememberCommand } from
 import DTT from "../../Client/Client";
 
 export default class implements RememberCommand {
-  private readonly DTT: DTT;
   readonly name = "remember";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
-
-  constructor(DTT: DTT) {
-    this.DTT = DTT;
-  }
 
   async handle(interaction: CommandInteraction): Promise<void> {
     return await this.execute(interaction);
@@ -16,7 +11,7 @@ export default class implements RememberCommand {
 
   async execute(interaction: CommandInteraction): Promise<void> {
     if (interaction.guild === null) {
-      this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
+      DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
       interaction.reply({
         content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to take by myself?",
@@ -29,7 +24,7 @@ export default class implements RememberCommand {
     const moment = interaction.options.getString("moment", true);
 
     if (moment === "Opinion") {
-      const Opinion = this.DTT.images.get(moment);
+      const Opinion = DTT.images.get(moment);
       if (!Opinion) throw new ReferenceError("Unknown heading");
 
       return await interaction.reply({
@@ -41,7 +36,7 @@ export default class implements RememberCommand {
   }
 
   get commandData(): CommandStructure {
-    const tester = this.DTT.role("Tester");
+    const tester = DTT.role("Tester");
     if (tester === null) throw new ReferenceError("Could not find the Tester role.");
 
     return {

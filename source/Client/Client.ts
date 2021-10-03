@@ -1,7 +1,7 @@
 import { readdirSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { Client, ClientOptions, Collection, Command, CommandName, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Collection, Command, CommandName, Constants, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, Intents, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -19,7 +19,7 @@ const Maria = createPool({
   charset: process.env.MARIA_CHARSET
 });
 
-export default class DTT extends Client {
+class DTT <T extends boolean> extends Client<T> {
   readonly Maria: Pool;
   readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
@@ -37,7 +37,7 @@ export default class DTT extends Client {
     this.Verification = Verification;
 
     this.commands = commands.reduce((_commands, command) => {
-      const _command = new command(this);
+      const _command = new command();
       _commands[_command.name] = _command;
       return _commands;
     }, {} as Record<CommandName, Command>);
@@ -94,7 +94,7 @@ export default class DTT extends Client {
       const applicationCommandsPermissions = await this.guild.commands.permissions.set({
         fullPermissions: applicationCommands.map(({ id, name }) => ({
           id,
-          permissions: this.commands[name as CommandName].commandData.permissions // eslint-disable-line @typescript-eslint/no-non-null-assertion
+          permissions: this.commands[name as CommandName].commandData.permissions
         }))
       });
 
@@ -251,3 +251,15 @@ export default class DTT extends Client {
     ];
   }
 }
+
+export default new DTT<true>({
+  partials: [
+    Constants.PartialTypes.MESSAGE
+  ],
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_INVITES
+  ]
+});

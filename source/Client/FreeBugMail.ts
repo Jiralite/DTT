@@ -3,7 +3,6 @@ import { OkPacket } from "mysql";
 import DTT from "./Client.js";
 
 export default class FreeBugMail {
-  private readonly DTT: DTT;
   No: number | null;
   timestamp: number;
   weeklyTimestamp: number;
@@ -17,8 +16,7 @@ export default class FreeBugMail {
   reminderTimeout: NodeJS.Timeout | null;
   pendingDeletion: boolean;
 
-  constructor(DTT: DTT, freeBugMail: FreeBugMailData) {
-    this.DTT = DTT;
+  constructor(freeBugMail: FreeBugMailData) {
     this.No = freeBugMail.No;
     this.timestamp = +freeBugMail.Timestamp;
     this.weeklyTimestamp = +freeBugMail["Weekly Timestamp"];
@@ -34,7 +32,7 @@ export default class FreeBugMail {
   }
 
   create(interaction: CommandInteraction, text: string): void {
-    this.DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
+    DTT.Maria.query("INSERT INTO `Free BugMails` SET ?;", {
       Timestamp: this.timestamp,
       ["Weekly Timestamp"]: this.weeklyTimestamp,
       ["Message ID"]: this.messageId,
@@ -43,7 +41,7 @@ export default class FreeBugMail {
       State: this.state
     }, (E, { insertId }: OkPacket) => {
       if (E) {
-        this.DTT.log("Error during FreeBugMail#create().", E);
+        DTT.log("Error during FreeBugMail#create().", E);
         interaction.editReply("There was an error during Free BugMail creation.");
         return;
       }
@@ -52,7 +50,7 @@ export default class FreeBugMail {
       this.mentioned = false;
       this.state = "OPEN";
       this.mentionedTimeout();
-      this.DTT.freeBugMails.set(this.No, this);
+      DTT.freeBugMails.set(this.No, this);
 
       interaction.editReply({
         embeds: [
@@ -85,8 +83,8 @@ export default class FreeBugMail {
             ]
           }
         ]
-      }).then(() => this.DTT.freeBugMailLog(`${interaction.user} created Free BugMail request #${this.No}.\n\n${text}`)).catch(error => {
-        this.DTT.log("Error during FreeBugMail#create().", error);
+      }).then(() => DTT.freeBugMailLog(`${interaction.user} created Free BugMail request #${this.No}.\n\n${text}`)).catch(error => {
+        DTT.log("Error during FreeBugMail#create().", error);
         interaction.editReply("here was an error during Free BugMail creation.");
       });
     });
@@ -103,7 +101,7 @@ export default class FreeBugMail {
           "roles"
         ]
       }
-    }).then(() => this.DTT.Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [
+    }).then(() => DTT.Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [
       true,
       this.No
     ])), 3600000 - (Date.now() - this.timestamp));
@@ -138,14 +136,14 @@ export default class FreeBugMail {
   }
 
   resumePendingTimeout(interaction: ButtonInteraction): void {
-    this.DTT.freeBugMailLog(`${interaction.user} has stated Free BugMail request #${this.No} is still ongoing after a week.`);
+    DTT.freeBugMailLog(`${interaction.user} has stated Free BugMail request #${this.No} is still ongoing after a week.`);
 
-    this.DTT.Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
+    DTT.Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
       Date.now(),
       this.No
     ], E => {
       if (E) {
-        this.DTT.log("Error during FreeBugMail#resumePendingTimeout().", E);
+        DTT.log("Error during FreeBugMail#resumePendingTimeout().", E);
 
         interaction.reply({
           content: "There was an error during Free BugMail resume.",
@@ -167,7 +165,7 @@ export default class FreeBugMail {
   }
 
   resolvePendingTimeout(interaction: ButtonInteraction): void {
-    this.DTT.freeBugMailLog(`${interaction.user} stated has stated Free BugMail request #${this.No} has been completed after a weekly reminder.`);
+    DTT.freeBugMailLog(`${interaction.user} stated has stated Free BugMail request #${this.No} has been completed after a weekly reminder.`);
 
     interaction.update({
       content: `You've stated that Free BugMail request #${this.No} has been completed, <@${this.claimedById}>. Completed it be!`,
@@ -180,10 +178,10 @@ export default class FreeBugMail {
   preClaim(interaction: ButtonInteraction): void {
     const interactionMessage = interaction.message as Message;
     const interactionComponent = interaction.component as MessageButton;
-    const pendingBugMail = this.DTT.freeBugMails.find(({ claimedById, state }) => claimedById === interaction.user.id && state === "PENDING");
+    const pendingBugMail = DTT.freeBugMails.find(({ claimedById, state }) => claimedById === interaction.user.id && state === "PENDING");
 
     if (pendingBugMail) {
-      this.DTT.freeBugMailLog(`${interaction.user} attempted to claim Free BugMail request #${this.No} but already has a pending BugMail (#${pendingBugMail.No}).`);
+      DTT.freeBugMailLog(`${interaction.user} attempted to claim Free BugMail request #${this.No} but already has a pending BugMail (#${pendingBugMail.No}).`);
 
       interaction.reply({
         content: `You seem to already have claimed a pending Free BugMail request for <@${pendingBugMail.userId}>: [#${pendingBugMail.No}](${pendingBugMail.messageLink})`,
@@ -204,7 +202,7 @@ export default class FreeBugMail {
       ]
     });
 
-    this.DTT.freeBugMailLog(`${interaction.user} is attempting to claim Free BugMail request #${this.No} and is being asked to double check before fully claiming.`);
+    DTT.freeBugMailLog(`${interaction.user} is attempting to claim Free BugMail request #${this.No} and is being asked to double check before fully claiming.`);
 
     interaction.reply({
       content: "⚠️ Have you searched in Discord Testers (specifically <#733499719267123200>) to ensure that this isn't already BugMailed?",
@@ -230,7 +228,7 @@ export default class FreeBugMail {
       ]
     }).then(() => setTimeout(() => {
       if (this.state !== "OPEN" || this.pendingDeletion) return;
-      this.DTT.freeBugMailLog(`${interaction.user} did not fully claim Free BugMail request #${this.No}.`);
+      DTT.freeBugMailLog(`${interaction.user} did not fully claim Free BugMail request #${this.No}.`);
 
       interactionMessage.edit({
         components: [
@@ -251,7 +249,7 @@ export default class FreeBugMail {
   }
 
   claim(interaction: ButtonInteraction): void {
-    this.DTT.Maria.query("UPDATE `Free BugMails` SET ? WHERE `No` = ?;", [
+    DTT.Maria.query("UPDATE `Free BugMails` SET ? WHERE `No` = ?;", [
       {
         ["Claimed By ID"]: interaction.user.id,
         State: "PENDING"
@@ -259,7 +257,7 @@ export default class FreeBugMail {
       this.No
     ], async E => {
       if (E) {
-        this.DTT.log("Error during FreeBugMail#claim().", E);
+        DTT.log("Error during FreeBugMail#claim().", E);
 
         interaction.reply({
           content: "There was an error during claiming this Free BugMail request.",
@@ -284,14 +282,14 @@ export default class FreeBugMail {
         components: []
       });
 
-      const typing = this.DTT.emodzhi("typing");
-      typing !== null ? message.react(typing) : this.DTT.freeBugMailLog(`Couldn't find the "typing" emoji to react with for Free BugMail request #${this.No}.`);
+      const typing = DTT.emodzhi("typing");
+      typing !== null ? message.react(typing) : DTT.freeBugMailLog(`Couldn't find the "typing" emoji to react with for Free BugMail request #${this.No}.`);
       const guildMember = interaction.member as GuildMember;
       if (guildMember.roles.cache.has(this.freeBugMail.id)) guildMember.roles.remove(this.freeBugMail);
-      this.DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
+      DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
 
       this.bugmailDiscussion.send({
-        content: `${interaction.user} has just claimed the Free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${this.DTT.kanal("bugmailed-reports")} for clarity!`,
+        content: `${interaction.user} has just claimed the Free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${DTT.kanal("bugmailed-reports")} for clarity!`,
         embeds: message.embeds
       });
 
@@ -314,7 +312,7 @@ export default class FreeBugMail {
         message.embeds[0].setDescription(text)
       ]
     }).then(() => {
-      this.DTT.freeBugMailLog(`${interaction.user} edited Free BugMail request #${this.No}.\n\n${text}`);
+      DTT.freeBugMailLog(`${interaction.user} edited Free BugMail request #${this.No}.\n\n${text}`);
 
       interaction.reply({
         content: `Successfully edited Free BugMail request #${this.No}!`,
@@ -324,12 +322,12 @@ export default class FreeBugMail {
   }
 
   resolve(interaction: ButtonInteraction | CommandInteraction, fromTimeout: boolean): void {
-    this.DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+    DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
     ], async E => {
       if (E) {
-        this.DTT.log("Error during FreeBugMail#resolve().", E);
+        DTT.log("Error during FreeBugMail#resolve().", E);
 
         interaction.reply({
           content: "There was an error completing this Free BugMail request.",
@@ -365,7 +363,7 @@ export default class FreeBugMail {
       });
 
       message?.delete();
-      this.DTT.freeBugMailLog(`${interaction.user} has completed Free BugMail request #${this.No}!`);
+      DTT.freeBugMailLog(`${interaction.user} has completed Free BugMail request #${this.No}!`);
     });
   }
 
@@ -374,13 +372,13 @@ export default class FreeBugMail {
     if (this.reminderTimeout !== null) clearTimeout(this.reminderTimeout);
     this.hourTimeout = null;
     this.reminderTimeout = null;
-    this.DTT.freeBugMailLog(`Free BugMail request #${this.No} has been manually deleted and ergo automatically resolved.`);
+    DTT.freeBugMailLog(`Free BugMail request #${this.No} has been manually deleted and ergo automatically resolved.`);
 
-    this.DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+    DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
     ], E => {
-      if (E) this.DTT.freeBugMailLog("Error removing Free BugMail request.", E);
+      if (E) DTT.freeBugMailLog("Error removing Free BugMail request.", E);
       this.state = "RESOLVED";
 
       if (this.disabledMessageId) {
@@ -413,12 +411,12 @@ export default class FreeBugMail {
         ]
       });
 
-      this.DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+      DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
         "DISABLED",
         this.No
       ], E => {
         if (E) {
-          this.DTT.log("Error during FreeBugMail#alreadyBugMailed().", E);
+          DTT.log("Error during FreeBugMail#alreadyBugMailed().", E);
 
           interaction.reply({
             content: "There was an error during disabling this Free BugMail request.",
@@ -430,7 +428,7 @@ export default class FreeBugMail {
 
         this.state = "DISABLED";
         this.pendingDeletion = true;
-        this.DTT.freeBugMailLog(`${interaction.user} has specified Free BugMail request #${this.No} as already claimed.`);
+        DTT.freeBugMailLog(`${interaction.user} has specified Free BugMail request #${this.No} as already claimed.`);
 
         this.bugmailDiscussion.send({
           content: `Free BugMail request #${this.No} has been specified as already BugMailed. It is now pending deletion.`,
@@ -463,10 +461,10 @@ export default class FreeBugMail {
   restore(interaction: ButtonInteraction): void {
     const guildMember = interaction.member as GuildMember;
     const interactionMessage = interaction.message as Message;
-    const modRoles = this.DTT.modRoles;
+    const modRoles = DTT.modRoles;
 
     if (modRoles.some(modRole => modRole === null)) {
-      this.DTT.freeBugMailLog("Could not locate the moderators. One or more roles could not be found.");
+      DTT.freeBugMailLog("Could not locate the moderators. One or more roles could not be found.");
 
       interaction.reply({
         content: "Couldn't locate the moderators. Is this server civil?",
@@ -477,7 +475,7 @@ export default class FreeBugMail {
     }
 
     if (!guildMember.roles.cache.hasAny(...modRoles.map(modRole => (modRole as Role).id))) {
-      this.DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
+      DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
 
       interaction.reply({
         content: "You do not have permission to perform this interaction.",
@@ -488,12 +486,12 @@ export default class FreeBugMail {
     }
 
     this.fetchMessage().then(message => {
-      this.DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+      DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
         "OPEN",
         this.No
       ], E => {
         if (E) {
-          this.DTT.log("Error during FreeBugMail#restore().", E);
+          DTT.log("Error during FreeBugMail#restore().", E);
 
           interaction.reply({
             content: "There was an error restoring this Free BugMail request.",
@@ -530,7 +528,7 @@ export default class FreeBugMail {
           ]
         });
 
-        this.DTT.freeBugMailLog(`${interaction.user} restored Free BugMail request #${this.No}!`);
+        DTT.freeBugMailLog(`${interaction.user} restored Free BugMail request #${this.No}!`);
         interaction.reply(`Free BugMail request [#${this.No}](${this.messageLink}) has been restored.`);
       });
     }).catch(error => {
@@ -539,7 +537,7 @@ export default class FreeBugMail {
           components: []
         });
 
-        this.DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but the Free BugMail request was not found. The button has now been removed.`);
+        DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but the Free BugMail request was not found. The button has now been removed.`);
 
         return interaction.reply({
           content: `Apparently, Free BugMail request #${this.No} no longer exists. The button has now been removed.`,
@@ -547,7 +545,7 @@ export default class FreeBugMail {
         });
       }
 
-      this.DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but encountered an error.`, error);
+      DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but encountered an error.`, error);
 
       interaction.reply({
         content: "There was an error restoring this Free BugMail request.",
@@ -561,24 +559,23 @@ export default class FreeBugMail {
   }
 
   get bugmailQueue(): TextChannel {
-    return this.DTT.kanal("bugmail-queue") as TextChannel;
+    return DTT.kanal("bugmail-queue") as TextChannel;
   }
 
   get bugmailDiscussion(): TextChannel {
-    return this.DTT.kanal("bugmail-discussion") as TextChannel;
+    return DTT.kanal("bugmail-discussion") as TextChannel;
   }
 
   get freeBugMail(): Role {
-    return this.DTT.role("Free BugMail") as Role;
+    return DTT.role("Free BugMail") as Role;
   }
 
   get messageLink(): string {
-    return `https://discord.com/channels/${this.DTT.guild.id}/${this.bugmailQueue.id}/${this.messageId}`;
+    return `https://discord.com/channels/${DTT.guild.id}/${this.bugmailQueue.id}/${this.messageId}`;
   }
 
   static addRole(interaction: ButtonInteraction): void {
     const logText = `${interaction.user} interacted with the "Opt in" button.`;
-    const DTT = interaction.client as DTT;
     const guildMember = interaction.member as GuildMember;
     const freeBugMail = DTT.role("Free BugMail");
 
@@ -618,7 +615,6 @@ export default class FreeBugMail {
 
   static removeRole(interaction: ButtonInteraction): void {
     const logText = `${interaction.user} interacted with the "Opt out" button.`;
-    const DTT = interaction.client as DTT;
     const guildMember = interaction.member as GuildMember;
     const freeBugMail = DTT.role("Free BugMail");
 

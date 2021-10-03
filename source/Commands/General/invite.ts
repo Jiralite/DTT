@@ -2,13 +2,8 @@ import { CommandInteraction, CommandStructure, Constants, GuildMember, InviteCom
 import DTT from "../../Client/Client";
 
 export default class implements InviteCommand {
-  private readonly DTT: DTT;
   readonly name = "invite";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
-
-  constructor(DTT: DTT) {
-    this.DTT = DTT;
-  }
 
   async handle(interaction: CommandInteraction): Promise<void> {
     return await Promise.resolve(this.execute(interaction));
@@ -16,7 +11,7 @@ export default class implements InviteCommand {
 
   execute(interaction: CommandInteraction): void {
     if (interaction.guild === null) {
-      this.DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
+      DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
       interaction.reply({
         content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to take by myself?",
@@ -26,10 +21,10 @@ export default class implements InviteCommand {
       return;
     }
 
-    const verification = this.DTT.kanal("verification");
+    const verification = DTT.kanal("verification");
 
     if (verification === null) {
-      this.DTT.log("Apparently, the verification channel cannot be found.");
+      DTT.log("Apparently, the verification channel cannot be found.");
 
       interaction.reply({
         content: "Error, cannot find the verification channel.",
@@ -45,11 +40,11 @@ export default class implements InviteCommand {
         ephemeral: true
       });
 
-      this.DTT.log(`${interaction.user} attempted to create an invite but I lacked invite permissions for ${verification}.`);
+      DTT.log(`${interaction.user} attempted to create an invite but I lacked invite permissions for ${verification}.`);
       return;
     }
 
-    const Invites = this.DTT.invites.filter(({ id, expired }) => id === interaction.user.id && !expired);
+    const Invites = DTT.invites.filter(({ id, expired }) => id === interaction.user.id && !expired);
 
     if (Invites.size > 0) {
       interaction.reply({
@@ -60,7 +55,7 @@ export default class implements InviteCommand {
       return;
     }
 
-    const Invite = new this.DTT.Invite(this.DTT, {
+    const Invite = new DTT.Invite({
       No: null,
       ID: interaction.user.id,
       "Created Timestamp": null,
@@ -73,7 +68,7 @@ export default class implements InviteCommand {
   }
 
   get commandData(): CommandStructure {
-    const tester = this.DTT.role("Tester");
+    const tester = DTT.role("Tester");
     if (tester === null) throw new ReferenceError("Could not find the Tester role.");
 
     return {

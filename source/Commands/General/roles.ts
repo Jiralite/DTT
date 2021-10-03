@@ -2,27 +2,21 @@ import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, Gui
 import DTT from "../../Client/Client";
 
 export default class implements RolesCommand {
-  private readonly DTT: DTT;
   readonly name = "roles";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
-  readonly categories: RoleCategories[];
 
-  constructor(DTT: DTT) {
-    this.DTT = DTT;
-
-    this.categories = [
-      "macOS",
-      "Linux",
-      "Windows",
-      "Android",
-      "iOS",
-      "Chrome OS",
-      "Miscellaneous",
-      "Experiments",
-      "Discord Updates",
-      "Phabricator Updates"
-    ];
-  }
+  readonly categories: RoleCategories[] = [
+    "macOS",
+    "Linux",
+    "Windows",
+    "Android",
+    "iOS",
+    "Chrome OS",
+    "Miscellaneous",
+    "Experiments",
+    "Discord Updates",
+    "Phabricator Updates"
+  ];
 
   async handle(interaction: ButtonInteraction | CommandInteraction): Promise<void> {
     return await Promise.resolve(this.execute(interaction));
@@ -345,118 +339,118 @@ export default class implements RolesCommand {
 
   get macOSVersionRoles(): Role[] {
     return [
-      this.DTT.role("macOS El Capitan"),
-      this.DTT.role("macOS Sierra"),
-      this.DTT.role("macOS High Sierra"),
-      this.DTT.role("macOS Mojave"),
-      this.DTT.role("macOS Catalina"),
-      this.DTT.role("macOS Big Sur"),
-      this.DTT.role("macOS Monterey")
+      DTT.role("macOS El Capitan"),
+      DTT.role("macOS Sierra"),
+      DTT.role("macOS High Sierra"),
+      DTT.role("macOS Mojave"),
+      DTT.role("macOS Catalina"),
+      DTT.role("macOS Big Sur"),
+      DTT.role("macOS Monterey")
     ] as Role[];
   }
 
   get linux(): Role {
-    return this.DTT.role("Linux") as Role;
+    return DTT.role("Linux") as Role;
   }
 
   get windowsVersionRoles(): Role[] {
     return [
-      this.DTT.role("Windows 7"),
-      this.DTT.role("Windows 8"),
-      this.DTT.role("Windows 10"),
-      this.DTT.role("Windows 11")
+      DTT.role("Windows 7"),
+      DTT.role("Windows 8"),
+      DTT.role("Windows 10"),
+      DTT.role("Windows 11")
     ] as Role[];
   }
 
   get androidDeviceRoles(): Role[] {
     return [
-      this.DTT.role("Pixel"),
-      this.DTT.role("Samsung Galaxy")
+      DTT.role("Pixel"),
+      DTT.role("Samsung Galaxy")
     ] as Role[];
   }
 
   get androidVersionRoles(): Role[] {
     return [
-      this.DTT.role("Android 5"),
-      this.DTT.role("Android 6"),
-      this.DTT.role("Android 7"),
-      this.DTT.role("Android 8"),
-      this.DTT.role("Android 9"),
-      this.DTT.role("Android 10"),
-      this.DTT.role("Android 11"),
-      this.DTT.role("Android 12")
+      DTT.role("Android 5"),
+      DTT.role("Android 6"),
+      DTT.role("Android 7"),
+      DTT.role("Android 8"),
+      DTT.role("Android 9"),
+      DTT.role("Android 10"),
+      DTT.role("Android 11"),
+      DTT.role("Android 12")
     ] as Role[];
   }
 
   get iOSDeviceRoles(): Role[] {
     return [
-      this.DTT.role("iPhone"),
-      this.DTT.role("iPod"),
-      this.DTT.role("iPad")
+      DTT.role("iPhone"),
+      DTT.role("iPod"),
+      DTT.role("iPad")
     ] as Role[];
   }
 
   get iOSVersionRoles(): Role[] {
     return [
-      this.DTT.role("iOS 10"),
-      this.DTT.role("iOS 11"),
-      this.DTT.role("iOS 12"),
-      this.DTT.role("iOS 13"),
-      this.DTT.role("iOS 14"),
-      this.DTT.role("iOS 15")
+      DTT.role("iOS 10"),
+      DTT.role("iOS 11"),
+      DTT.role("iOS 12"),
+      DTT.role("iOS 13"),
+      DTT.role("iOS 14"),
+      DTT.role("iOS 15")
     ] as Role[];
   }
 
   get iOSMiscellaneousRoles(): Role[] {
     return [
-      this.DTT.role("Face ID"),
-      this.DTT.role("4-inch"),
-      this.DTT.role("Hardware Keyboard"),
-      this.DTT.role("Apple Pencil"),
-      this.DTT.role("Apple Watch")
+      DTT.role("Face ID"),
+      DTT.role("4-inch"),
+      DTT.role("Hardware Keyboard"),
+      DTT.role("Apple Pencil"),
+      DTT.role("Apple Watch")
     ] as Role[];
   }
 
   get chromebook(): Role {
-    return this.DTT.role("Chromebook") as Role;
+    return DTT.role("Chromebook") as Role;
   }
 
   get miscellaneousRoles(): Role[] {
     return [
-      this.DTT.role("Touchscreen PC"),
-      this.DTT.role("GDPR")
+      DTT.role("Touchscreen PC"),
+      DTT.role("GDPR")
     ] as Role[];
   }
 
   get experimentRoles(): Role[] {
     return [
-      this.DTT.role("Per-server Avatar"),
-      this.DTT.role("Student")
+      DTT.role("Per-server Avatar"),
+      DTT.role("Student")
     ] as Role[];
   }
 
   get discordUpdatesRoles(): Role[] {
     return [
-      this.DTT.role("Status Updates"),
-      this.DTT.role("Canary Updates"),
-      this.DTT.role("PTB Updates"),
-      this.DTT.role("Stable Updates")
+      DTT.role("Status Updates"),
+      DTT.role("Canary Updates"),
+      DTT.role("PTB Updates"),
+      DTT.role("Stable Updates")
     ] as Role[];
   }
 
   get phabricatorUpdatesRoles(): Role[] {
     return [
-      this.DTT.role("Desktop"),
-      this.DTT.role("Android"),
-      this.DTT.role("iOS"),
-      this.DTT.role("DBug"),
-      this.DTT.role("Boardless"),
-      this.DTT.role("P0")
+      DTT.role("Desktop"),
+      DTT.role("Android"),
+      DTT.role("iOS"),
+      DTT.role("DBug"),
+      DTT.role("Boardless"),
+      DTT.role("P0")
     ] as Role[];
   }
 
   get commandData(): CommandStructure {
-    const tester = this.DTT.role("Tester");
+    const tester = DTT.role("Tester");
     if (tester === null) throw new ReferenceError("Could not find the Tester role.");
 
     return {

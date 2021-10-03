@@ -3,7 +3,6 @@ import DTT from "./Client";
 
 export default class Verification {
   static sendVerification(guildMember: GuildMember): void {
-    const DTT = guildMember.client as DTT;
 
     (DTT.kanal("verification") as TextChannel).send({
       content: `Welcome to **${guildMember.guild.name}**, ${guildMember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to <@873604718893617203>!`,
@@ -36,7 +35,6 @@ export default class Verification {
   }
 
   static async authorise(interaction: ButtonInteraction, authentication: VerificationType, guildMemberId: Snowflake): Promise<void> {
-    const DTT = interaction.client as DTT;
     const modRoles = DTT.modRoles;
 
     if (modRoles.some(modRole => modRole === null)) {
@@ -93,7 +91,6 @@ export default class Verification {
   }
 
   static authoriseTester(interaction: ButtonInteraction, guildMember: GuildMember): void {
-    const DTT = interaction.client as DTT;
     const tester = DTT.role("Tester");
 
     if (tester === null) {
@@ -123,7 +120,6 @@ export default class Verification {
   }
 
   static authoriseAlt(interaction: ButtonInteraction, guildMember: GuildMember): void {
-    const DTT = interaction.client as DTT;
     const altAccount = DTT.role("Alt Account");
 
     if (altAccount === null) {
@@ -152,7 +148,6 @@ export default class Verification {
   }
 
   static authoriseKick(interaction: ButtonInteraction, guildMember: GuildMember): void {
-    const DTT = interaction.client as DTT;
 
     guildMember.kick().then(() => {
       DTT.log(`${interaction.user} has removed ${guildMember} from this guild - failed verification.`);

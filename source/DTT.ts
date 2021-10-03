@@ -1,18 +1,6 @@
-import { CommandName, Constants, DiscordAPIError, FreeBugMailData, GuildMember, Intents, InviteData, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
+import DTT from "./Client/Client.js";
+import { CommandName, Constants, DiscordAPIError, FreeBugMailData, GuildMember, InviteData, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import { MysqlError } from "mysql";
-import Client from "./Client/Client.js";
-
-const DTT = new Client({
-  partials: [
-    Constants.PartialTypes.MESSAGE
-  ],
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_INVITES
-  ]
-});
 
 function Maria() {
   DTT.Maria.getConnection(error => {
@@ -29,7 +17,7 @@ function Maria() {
 
 function collectFreeBugMails() {
   DTT.Maria.query("SELECT * FROM `Free BugMails`", (_E: MysqlError, R: FreeBugMailData[]) => R.forEach(freeBugMail => {
-    const FreeBugMail = new DTT.FreeBugMail(DTT, freeBugMail);
+    const FreeBugMail = new DTT.FreeBugMail(freeBugMail);
     DTT.freeBugMails.set(FreeBugMail.No as number, FreeBugMail);
     FreeBugMail.timeout();
     FreeBugMail.mentionedTimeout();
@@ -38,7 +26,7 @@ function collectFreeBugMails() {
 
 function collectInvites() {
   DTT.Maria.query("SELECT * FROM `Invites`", (_E: MysqlError, R: InviteData[]) => R.forEach(invite => {
-    const Invite = new DTT.Invite(DTT, invite);
+    const Invite = new DTT.Invite(invite);
     DTT.invites.set(Invite.No as number, Invite);
     Invite.expireTimeout();
   }));
@@ -252,7 +240,7 @@ DTT.on(Constants.Events.MESSAGE_CREATE, message => {
   const guildMember = message.member!;
 
   if (message.channel.id === bugmailQueue.id) {
-    if (!message.channel.permissionsFor(guildMember).has("MANAGE_MESSAGES") && message.author.id !== DTT.user!.id) message.delete();
+    if (!message.channel.permissionsFor(guildMember).has("MANAGE_MESSAGES") && message.author.id !== DTT.user.id) message.delete();
   }
 });
 

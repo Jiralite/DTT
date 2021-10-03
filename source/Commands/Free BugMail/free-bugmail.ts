@@ -2,13 +2,8 @@ import { CommandInteraction, CommandStructure, Constants, FreeBugMailCommand } f
 import DTT from "../../Client/Client";
 
 export default class implements FreeBugMailCommand {
-  private readonly DTT: DTT;
   readonly name = "free-bugmail";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
-
-  constructor(DTT: DTT) {
-    this.DTT = DTT;
-  }
 
   async handle(interaction: CommandInteraction, subcommand: string): Promise<void> {
     switch (subcommand) {
@@ -23,10 +18,10 @@ export default class implements FreeBugMailCommand {
 
   async submit(interaction: CommandInteraction): Promise<void> {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
-    const bugmailQueue = this.DTT.kanal("bugmail-queue");
+    const bugmailQueue = DTT.kanal("bugmail-queue");
 
     if (bugmailQueue === null) {
-      this.DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
+      DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
 
       interaction.reply({
         content: "Error, cannot find the BugMail Queue channel.",
@@ -37,7 +32,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (interaction.channelId !== bugmailQueue.id) {
-      this.DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
+      DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
       interaction.reply({
         content: `Please use this command in ${bugmailQueue}.`,
@@ -50,7 +45,7 @@ export default class implements FreeBugMailCommand {
     const text = interaction.options.getString("text");
 
     if (text === null) {
-      this.DTT.freeBugMailLog(`${logText} Required parameter \`text\` was not supplied.`);
+      DTT.freeBugMailLog(`${logText} Required parameter \`text\` was not supplied.`);
 
       return await interaction.reply({
         content: "Error: required parameter did not have an argument.",
@@ -59,7 +54,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (text.length >= 1500) {
-      this.DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
+      DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
 
       interaction.reply({
         content: "That's way too long. Shorten it down and keep it concise!",
@@ -73,7 +68,7 @@ export default class implements FreeBugMailCommand {
       fetchReply: true
     });
 
-    const FreeBugMail = new this.DTT.FreeBugMail(this.DTT, {
+    const FreeBugMail = new DTT.FreeBugMail({
       No: null,
       Timestamp: interaction.createdTimestamp,
       "Weekly Timestamp": interaction.createdTimestamp,
@@ -89,10 +84,10 @@ export default class implements FreeBugMailCommand {
 
   edit(interaction: CommandInteraction): void {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
-    const bugmailQueue = this.DTT.kanal("bugmail-queue");
+    const bugmailQueue = DTT.kanal("bugmail-queue");
 
     if (bugmailQueue === null) {
-      this.DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
+      DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
 
       interaction.reply({
         content: "Error, cannot find the BugMail Queue channel.",
@@ -103,7 +98,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (interaction.channelId !== bugmailQueue.id) {
-      this.DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
+      DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
       interaction.reply({
         content: `Please use this command in ${bugmailQueue}.`,
@@ -117,7 +112,7 @@ export default class implements FreeBugMailCommand {
     const text = interaction.options.getString("text");
 
     if (number === null || text === null) {
-      this.DTT.freeBugMailLog(`${logText} Required parameters \`number\` and \`text\` both not supplied.`);
+      DTT.freeBugMailLog(`${logText} Required parameters \`number\` and \`text\` both not supplied.`);
 
       interaction.reply({
         content: "Error: required parameters did not have arguments.",
@@ -127,10 +122,10 @@ export default class implements FreeBugMailCommand {
       return;
     }
 
-    const FreeBugMail = this.DTT.freeBugMails.get(number);
+    const FreeBugMail = DTT.freeBugMails.get(number);
 
     if (!FreeBugMail) {
-      this.DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
+      DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
 
       interaction.reply({
         content: "Cannot find the free BugMail request.",
@@ -141,7 +136,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (FreeBugMail.userId !== interaction.user.id) {
-      this.DTT.freeBugMailLog(`${logText} Attempted to edit #${FreeBugMail.No} which the account is not the author of.`);
+      DTT.freeBugMailLog(`${logText} Attempted to edit #${FreeBugMail.No} which the account is not the author of.`);
 
       interaction.reply({
         content: "This Free BugMail request cannot be edited by you.",
@@ -152,7 +147,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (FreeBugMail.state !== "OPEN") {
-      this.DTT.freeBugMailLog(`${logText} Attempted to edit Free BugMail request #${FreeBugMail.No} which was not open.`);
+      DTT.freeBugMailLog(`${logText} Attempted to edit Free BugMail request #${FreeBugMail.No} which was not open.`);
 
       interaction.reply({
         content: "This Free BugMail request is not open.",
@@ -163,7 +158,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (text.length >= 1500) {
-      this.DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
+      DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
 
       interaction.reply({
         content: "That's way too long. Shorten it down and keep it concise!",
@@ -178,10 +173,10 @@ export default class implements FreeBugMailCommand {
 
   complete(interaction: CommandInteraction): void {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
-    const bugmailQueue = this.DTT.kanal("bugmail-queue");
+    const bugmailQueue = DTT.kanal("bugmail-queue");
 
     if (bugmailQueue === null) {
-      this.DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
+      DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
 
       interaction.reply({
         content: "Error, cannot find the BugMail Queue channel.",
@@ -192,7 +187,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (interaction.channelId !== bugmailQueue.id) {
-      this.DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
+      DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
       interaction.reply({
         content: `Please use this command in ${bugmailQueue}.`,
@@ -205,7 +200,7 @@ export default class implements FreeBugMailCommand {
     const number = interaction.options.getInteger("number");
 
     if (number === null) {
-      this.DTT.freeBugMailLog(`${logText} Required parameter \`number\` was not supplied.`);
+      DTT.freeBugMailLog(`${logText} Required parameter \`number\` was not supplied.`);
 
       interaction.reply({
         content: "Error: required parameter did not have an argument.",
@@ -216,10 +211,10 @@ export default class implements FreeBugMailCommand {
     }
 
 
-    const FreeBugMail = this.DTT.freeBugMails.get(number);
+    const FreeBugMail = DTT.freeBugMails.get(number);
 
     if (!FreeBugMail) {
-      this.DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
+      DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
 
       interaction.reply({
         content: "Cannot find the Free BugMail request.",
@@ -230,7 +225,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if (FreeBugMail.state === "DISABLED") {
-      this.DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which has been disabled.`);
+      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which has been disabled.`);
 
       interaction.reply({
         content: "This Free BugMail request is disabled.",
@@ -241,7 +236,7 @@ export default class implements FreeBugMailCommand {
     }
 
     if ((FreeBugMail.userId !== interaction.user.id && FreeBugMail.claimedById !== interaction.user.id) || FreeBugMail.state !== "PENDING") {
-      this.DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which the account is not the author of or the claimer of.`);
+      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which the account is not the author of or the claimer of.`);
 
       interaction.reply({
         content: "This Free BugMail request cannot be completed.",
@@ -255,7 +250,7 @@ export default class implements FreeBugMailCommand {
   }
 
   get commandData(): CommandStructure {
-    const tester = this.DTT.role("Tester");
+    const tester = DTT.role("Tester");
     if (tester === null) throw new ReferenceError("Could not find the Tester role.");
 
     return {
