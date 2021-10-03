@@ -1,7 +1,7 @@
 import { readdirSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { Client, ClientOptions, Collection, Command, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Collection, Command, CommandName, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -24,7 +24,7 @@ export default class DTT extends Client {
   readonly FreeBugMail: typeof FreeBugMail;
   readonly Invite: typeof Invite;
   readonly Verification: typeof Verification;
-  readonly commands: Collection<string, Command>;
+  readonly commands: Record<CommandName, Command>;
   readonly freeBugMails: Collection<number, FreeBugMail>;
   readonly images: Map<string, MessageAttachment>;
   readonly invites: Collection<number, Invite>;
@@ -36,10 +36,11 @@ export default class DTT extends Client {
     this.Invite = Invite;
     this.Verification = Verification;
 
-    this.commands = commands.reduce((commandsCollection, command) => {
+    this.commands = commands.reduce((_commands, command) => {
       const _command = new command(this);
-      return commandsCollection.set(_command.name, _command);
-    }, new Collection<string, Command>());
+      _commands[_command.name] = _command;
+      return _commands;
+    }, {} as Record<CommandName, Command>);
 
     this.freeBugMails = new Collection();
 
@@ -87,13 +88,13 @@ export default class DTT extends Client {
 
   async applyCommands(): Promise<void> {
     try {
-      const applicationCommands = await this.guild.commands.set(this.commands.map(({ commandData: { applicationCommandData } }) => applicationCommandData));
+      const applicationCommands = await this.guild.commands.set(Object.values(this.commands).map(({ commandData: { applicationCommandData } }) => applicationCommandData));
       this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as a Slash Command.`).join("\n"));
 
       const applicationCommandsPermissions = await this.guild.commands.permissions.set({
         fullPermissions: applicationCommands.map(({ id, name }) => ({
           id,
-          permissions: this.commands.get(name)!.commandData.permissions // eslint-disable-line @typescript-eslint/no-non-null-assertion
+          permissions: this.commands[name as CommandName].commandData.permissions // eslint-disable-line @typescript-eslint/no-non-null-assertion
         }))
       });
 

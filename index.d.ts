@@ -6,8 +6,10 @@ declare module "discord.js" {
   type RoleCategories = "macOS" | "Linux" | "Windows" | "Android" | "iOS" | "Chrome OS" | "Miscellaneous" | "Experiments" | "Discord Updates" | "Phabricator Updates";
   type SubRoleCategories = "macOSVersionRoles" | "windowsVersionRoles" | "androidDeviceRoles" | "androidVersionRoles" | "iOSDeviceRoles" | "iOSVersionRoles" | "iOSMiscellaneousRoles" | "miscellaneousRoles" | "experimentRoles" | "discordUpdatesRoles" | "phabricatorUpdatesRoles";
 
+  type CommandName = "free-bugmail" | "invite" | "regenerate" | "remember" | "roles";
+
   interface Command {
-    name: string;
+    name: CommandName;
     type: number;
     handle(interaction: ButtonInteraction | CommandInteraction | ContextMenuInteraction, subcommand?: string | null): Promise<void>;
     get commandData(): CommandStructure;
