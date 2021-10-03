@@ -1,4 +1,4 @@
-import { ButtonInteraction, GuildMember, Message, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
+import { ButtonInteraction, Constants, DiscordAPIError, GuildMember, Message, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
 import DTT from "./Client";
 
 export default class Verification {
@@ -69,16 +69,18 @@ export default class Verification {
           return DTT.Verification.authoriseKick(interaction, affectedGuildMember);
       }
     } catch (error) {
-      if (error.code === 10007 && error.httpStatus === 404) {
-        const guildMemberManualMention = `<@${guildMemberId}>`;
-        DTT.log(`Error during verification: ${guildMemberManualMention} no longer in server.`);
+      if (error instanceof DiscordAPIError) {
+        if (error.code === Constants.APIErrors.UNKNOWN_MEMBER) {
+          const guildMemberManualMention = `<@${guildMemberId}>`;
+          DTT.log(`Error during verification: ${guildMemberManualMention} no longer in server.`);
 
-        interaction.update({
-          content: `${guildMemberManualMention} no longer appears to be in the server.`,
-          components: []
-        }).then(() => setTimeout(() => (interaction.message as Message).delete().catch(() => null), 10000));
+          interaction.update({
+            content: `${guildMemberManualMention} no longer appears to be in the server.`,
+            components: []
+          }).then(() => setTimeout(() => (interaction.message as Message).delete().catch(() => null), 10000));
 
-        return;
+          return;
+        }
       }
 
       DTT.log("Error fetching guild member.");
