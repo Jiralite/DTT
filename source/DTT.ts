@@ -248,10 +248,11 @@ DTT.on(Constants.Events.MESSAGE_CREATE, message => {
   if (message.author.bot) return;
   const bugmailQueue = DTT.kanal("bugmail-queue");
   if (bugmailQueue === null || message.channel.type === "DM") return;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const guildMember = message.member!;
 
   if (message.channel.id === bugmailQueue.id) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (!message.channel.permissionsFor(message.author)?.has("MANAGE_MESSAGES") && message.author.id !== DTT.user!.id) message.delete();
+    if (!message.channel.permissionsFor(guildMember).has("MANAGE_MESSAGES") && message.author.id !== DTT.user!.id) message.delete();
   }
 });
 
