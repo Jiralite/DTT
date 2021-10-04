@@ -1,4 +1,4 @@
-import { ButtonInteraction, Constants, DiscordAPIError, GuildMember, Message, Role, Snowflake, TextChannel, VerificationType } from "discord.js";
+import { ButtonInteraction, Constants, DiscordAPIError, GuildMember, Message, Snowflake, TextChannel, VerificationType } from "discord.js";
 import DTT from "./Client";
 
 export default class Verification {
@@ -35,20 +35,7 @@ export default class Verification {
   }
 
   static async authorise(interaction: ButtonInteraction, authentication: VerificationType, guildMemberId: Snowflake): Promise<void> {
-    const modRoles = DTT.modRoles;
-
-    if (modRoles.some(modRole => modRole === null)) {
-      DTT.log("Could not locate the moderators. One or more roles could not be found.");
-
-      interaction.reply({
-        content: "Couldn't locate the moderators. Is this server civil?",
-        ephemeral: true
-      });
-
-      return;
-    }
-
-    if (!(interaction.member as GuildMember).roles.cache.hasAny(...modRoles.map((modRole => (modRole as Role).id)))) {
+    if (!(interaction.member as GuildMember).roles.cache.hasAny(...DTT.modRoles.map((modRole => modRole.id)))) {
       DTT.log(`${interaction.user} interacted with a verification button but failed authorisation checks.`);
 
       return interaction.reply({

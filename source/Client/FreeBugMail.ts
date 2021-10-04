@@ -460,20 +460,8 @@ export default class FreeBugMail {
   restore(interaction: ButtonInteraction): void {
     const guildMember = interaction.member as GuildMember;
     const interactionMessage = interaction.message as Message;
-    const modRoles = DTT.modRoles;
 
-    if (modRoles.some(modRole => modRole === null)) {
-      DTT.freeBugMailLog("Could not locate the moderators. One or more roles could not be found.");
-
-      interaction.reply({
-        content: "Couldn't locate the moderators. Is this server civil?",
-        ephemeral: true
-      });
-
-      return;
-    }
-
-    if (!guildMember.roles.cache.hasAny(...modRoles.map(modRole => (modRole as Role).id))) {
+    if (!guildMember.roles.cache.hasAny(...DTT.modRoles.map(modRole => modRole.id))) {
       DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
 
       interaction.reply({
