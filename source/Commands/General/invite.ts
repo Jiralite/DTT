@@ -23,17 +23,6 @@ export default class implements InviteCommand {
 
     const verification = DTT.channel("verification");
 
-    if (verification === null) {
-      DTT.log("Apparently, the verification channel cannot be found.");
-
-      interaction.reply({
-        content: "Error, cannot find the verification channel.",
-        ephemeral: true
-      });
-
-      return;
-    }
-
     if (!verification.permissionsFor(interaction.guild.me as GuildMember).has("CREATE_INSTANT_INVITE")) {
       interaction.reply({
         content: "Apparently, I do not have invite permissions.",
@@ -68,9 +57,6 @@ export default class implements InviteCommand {
   }
 
   get commandData(): CommandStructure {
-    const tester = DTT.role("Tester");
-    if (tester === null) throw new ReferenceError("Could not find the Tester role.");
-
     return {
       applicationCommandData: {
         name: this.name,
@@ -80,7 +66,7 @@ export default class implements InviteCommand {
       },
       permissions: [
         {
-          id: tester.id,
+          id: DTT.role("Tester").id,
           type: "ROLE",
           permission: true
         }

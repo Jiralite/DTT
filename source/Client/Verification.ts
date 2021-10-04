@@ -95,12 +95,6 @@ export default class Verification {
   static authoriseTester(interaction: ButtonInteraction, guildMember: GuildMember): void {
     const tester = DTT.role("Tester");
 
-    if (tester === null) {
-      DTT.log(`Error adding role to ${guildMember}. Apparently, the Tester role cannot be found.`);
-      interaction.reply(`There was an error authorising ${guildMember}`);
-      return;
-    }
-
     guildMember.roles.add(tester).then(() => {
       DTT.log(`${interaction.user} has verified ${guildMember} as a ${tester}.`);
 
@@ -123,12 +117,6 @@ export default class Verification {
 
   static authoriseAlt(interaction: ButtonInteraction, guildMember: GuildMember): void {
     const altAccount = DTT.role("Alt Account");
-
-    if (altAccount === null) {
-      DTT.log(`Error adding role to ${guildMember}. Apparently, the Alt Account role cannot be found.`);
-      interaction.reply(`There was an error authorising ${guildMember}`);
-      return;
-    }
 
     guildMember.roles.add(altAccount).then(() => {
       DTT.log(`${interaction.user} has verified ${guildMember} as an ${altAccount}.`);

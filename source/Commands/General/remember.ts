@@ -36,9 +36,6 @@ export default class implements RememberCommand {
   }
 
   get commandData(): CommandStructure {
-    const tester = DTT.role("Tester");
-    if (tester === null) throw new ReferenceError("Could not find the Tester role.");
-
     return {
       applicationCommandData: {
         name: this.name,
@@ -62,7 +59,7 @@ export default class implements RememberCommand {
       },
       permissions: [
         {
-          id: tester.id,
+          id: DTT.role("Tester").id,
           type: "ROLE",
           permission: true
         }

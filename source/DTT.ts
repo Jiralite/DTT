@@ -42,7 +42,6 @@ DTT.on(Constants.Events.GUILD_MEMBER_ADD, async guildMember => {
 
   try {
     const tester = DTT.role("Tester");
-    if (tester === null) throw new ReferenceError("Couldn't find the tester role.");
     const DTTGuildMember = await DTT.guild.members.fetch(guildMember);
     const role = guildMember.guild.roles.resolve("816059251045695558") as Role; // Access role in the Bug Bombing Area guild
     if (DTTGuildMember.roles.cache.has(tester.id)) await guildMember.roles.add(role);
@@ -156,7 +155,7 @@ DTT.on(Constants.Events.INTERACTION_CREATE, interaction => {
     if (interaction.customId === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
     const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED|RESTORE)/.exec(interaction.customId);
 
-    if (claimRequest && (interaction.channelId === DTT.channel("bugmail-queue")?.id || interaction.channelId === DTT.channel("bugmail-discussion")?.id)) {
+    if (claimRequest && (interaction.channelId === DTT.channel("bugmail-queue").id || interaction.channelId === DTT.channel("bugmail-discussion").id)) {
       if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1])?.preClaim(interaction);
       if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1])?.claim(interaction);
       if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1])?.alreadyBugMailed(interaction);
@@ -233,13 +232,11 @@ DTT.on(Constants.Events.INTERACTION_CREATE, interaction => {
 DTT.on(Constants.Events.INVITE_DELETE, invite => DTT.invites.find(({ code }) => code === invite.code)?.remove());
 
 DTT.on(Constants.Events.MESSAGE_CREATE, message => {
-  if (message.author.bot) return;
-  const bugmailQueue = DTT.channel("bugmail-queue");
-  if (bugmailQueue === null || message.channel.type === "DM") return;
+  if (message.author.bot || message.channel.type === "DM") return;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const guildMember = message.member!;
 
-  if (message.channel.id === bugmailQueue.id) {
+  if (message.channel.id === DTT.channel("bugmail-queue").id) {
     if (!message.channel.permissionsFor(guildMember).has("MANAGE_MESSAGES") && message.author.id !== DTT.user.id) message.delete();
   }
 });

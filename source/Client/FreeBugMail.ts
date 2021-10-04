@@ -282,8 +282,7 @@ export default class FreeBugMail {
         components: []
       });
 
-      const typing = DTT.emoji("typing");
-      typing !== null ? message.react(typing) : DTT.freeBugMailLog(`Couldn't find the "typing" emoji to react with for Free BugMail request #${this.No}.`);
+      message.react(DTT.emoji("typing"));
       const guildMember = interaction.member as GuildMember;
       if (guildMember.roles.cache.has(this.freeBugMail.id)) guildMember.roles.remove(this.freeBugMail);
       DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
@@ -567,7 +566,7 @@ export default class FreeBugMail {
   }
 
   get freeBugMail(): Role {
-    return DTT.role("Free BugMail") as Role;
+    return DTT.role("Free BugMail");
   }
 
   get messageLink(): string {
@@ -578,12 +577,6 @@ export default class FreeBugMail {
     const logText = `${interaction.user} interacted with the "Opt in" button.`;
     const guildMember = interaction.member as GuildMember;
     const freeBugMail = DTT.role("Free BugMail");
-
-    if (freeBugMail === null) {
-      DTT.freeBugMailLog(`${logText} Apparently, the Free BugMail role cannot be found.`);
-      interaction.reply("There was an error opting in.");
-      return;
-    }
 
     if (guildMember.roles.cache.has(freeBugMail.id)) {
       DTT.freeBugMailLog(`${logText} ${freeBugMail} already exists on account.`);
@@ -617,12 +610,6 @@ export default class FreeBugMail {
     const logText = `${interaction.user} interacted with the "Opt out" button.`;
     const guildMember = interaction.member as GuildMember;
     const freeBugMail = DTT.role("Free BugMail");
-
-    if (freeBugMail === null) {
-      DTT.freeBugMailLog(`${logText} Apparently, the Free BugMail role cannot be found.`);
-      interaction.reply("There was an error opting out.");
-      return;
-    }
 
     if (!guildMember.roles.cache.has(freeBugMail.id)) {
       DTT.freeBugMailLog(`${logText} ${freeBugMail} does not already exist on account.`);

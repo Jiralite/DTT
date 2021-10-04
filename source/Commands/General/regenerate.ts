@@ -1,4 +1,4 @@
-import { CategoryChannel, CommandInteraction, CommandStructure, Constants, GuildMember, Message, NewsChannel, RegenerateCommand, Snowflake, TextChannel } from "discord.js";
+import { CommandInteraction, CommandStructure, Constants, GuildMember, Message, NewsChannel, RegenerateCommand, Snowflake, TextChannel } from "discord.js";
 import DTT from "../../Client/Client";
 
 export default class implements RegenerateCommand {
@@ -72,22 +72,18 @@ export default class implements RegenerateCommand {
 
   async readMe(channel: TextChannel | NewsChannel): Promise<void> {
     const moderator = DTT.role("Moderator");
-    const Information = DTT.channel("Information") as CategoryChannel;
+    const Information = DTT.channel("Information");
     const announcements = DTT.channel("announcements");
-    const General = DTT.channel("General") as CategoryChannel;
+    const General = DTT.channel("General");
     const general = DTT.channel("general");
     const botCommands = DTT.channel("bot-commands");
-    const Feedback = DTT.channel("Feedback") as CategoryChannel;
-    const DTGeneral = DTT.channel("DT General") as CategoryChannel;
+    const Feedback = DTT.channel("Feedback");
+    const DTGeneral = DTT.channel("DT General");
     const a11y = DTT.channel("a11y");
     const resources = DTT.channel("resources");
     const bugmailQueue = DTT.channel("bugmail-queue");
     const bugmailDiscussion = DTT.channel("bugmail-discussion");
-    const DiscordUpdates = DTT.channel("Discord Updates") as CategoryChannel;
-
-    if ([moderator, Information, announcements, General, general, Feedback, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
-      throw new ReferenceError("Unknown references detected.");
-    }
+    const DiscordUpdates = DTT.channel("Discord Updates");
 
     const message1 = await channel.send({
       content: `Welcome to **${DTT.guild.name}**!\n\nThe purpose of this server is to bring T2+ people together to test Discord! As such, this server is open to those who are currently at least T2 on Discord Testers. Those who fall below this requirement whilst a member will be removed.\n\n**__Rules__**\n1) This server is not endorsed by Discord Testers. Therefore, please do not advertise it on Discord Testers.\n2) Reserved.\n3) Follow Discord's Terms of Service (https://dis.gd/ToS) and Community Guidelines (https://dis.gd/guidelines)\n4) This is not a comprehensive list of rules; anything prohibited in Discord Testers is probably prohibited here. Follow the ${moderator}s' instructions.\n\nRead below for an explanation of categories!`,
@@ -107,10 +103,6 @@ export default class implements RegenerateCommand {
     const typing = DTT.emoji("typing");
     const bugmailedReports = DTT.channel("bugmailed-reports");
     const bugmailedDiscussion = DTT.channel("bugmail-discussion");
-
-    if ([freeBugMail, typing, bugmailedReports, bugmailedDiscussion].some(variable => variable === null)) {
-      throw new ReferenceError("Unknown references detected.");
-    }
 
     const message1 = await channel.send({
       content: `Oh no! Do you need to BugMail something, but your BugMail isn't free? There's still hope!\n\nYou can drop your question in here via the \`/free-bugmail submit\` Application Command and wait for someone to claim your question! Those with a ${freeBugMail} can claim a request by then clicking on the "Claim" button. This lets others know that the query has been BugMailed via the ${typing} reaction.\n\n⚠️ **Important**: Make sure you do background checks in <#733499719267123200> and ${bugmailedReports} etc. to ensure that the query isn't already BugMailed. Once you are sure it isn't in BugMail, claim first _then_ BugMail.\n\nOnce claimed, make sure to follow up with the BugMail responses in ${bugmailedDiscussion}!\n\n📝 If a request has not been claimed for an hour, the ${freeBugMail} role will be mentioned!\n\nFinally, once the request is complete, you can use the \`/free-bugmail complete\` Application Command to complete it!\n\nAlso, this is an opt-in feature, so here's 2 buttons to opt in & opt out for the ${freeBugMail} role!`,
@@ -143,9 +135,6 @@ export default class implements RegenerateCommand {
   }
 
   get commandData(): CommandStructure {
-    const admin = DTT.role("Admin");
-    if (admin === null) throw new ReferenceError("Could not find the Admin role.");
-
     return {
       applicationCommandData: {
         name: this.name,
@@ -177,7 +166,7 @@ export default class implements RegenerateCommand {
       },
       permissions: [
         {
-          id: admin.id,
+          id: DTT.role("Admin").id,
           type: "ROLE",
           permission: true
         }

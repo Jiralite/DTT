@@ -346,11 +346,11 @@ export default class implements RolesCommand {
       DTT.role("macOS Catalina"),
       DTT.role("macOS Big Sur"),
       DTT.role("macOS Monterey")
-    ] as Role[];
+    ];
   }
 
   get linux(): Role {
-    return DTT.role("Linux") as Role;
+    return DTT.role("Linux");
   }
 
   get windowsVersionRoles(): Role[] {
@@ -359,14 +359,14 @@ export default class implements RolesCommand {
       DTT.role("Windows 8"),
       DTT.role("Windows 10"),
       DTT.role("Windows 11")
-    ] as Role[];
+    ];
   }
 
   get androidDeviceRoles(): Role[] {
     return [
       DTT.role("Pixel"),
       DTT.role("Samsung Galaxy")
-    ] as Role[];
+    ];
   }
 
   get androidVersionRoles(): Role[] {
@@ -379,7 +379,7 @@ export default class implements RolesCommand {
       DTT.role("Android 10"),
       DTT.role("Android 11"),
       DTT.role("Android 12")
-    ] as Role[];
+    ];
   }
 
   get iOSDeviceRoles(): Role[] {
@@ -387,7 +387,7 @@ export default class implements RolesCommand {
       DTT.role("iPhone"),
       DTT.role("iPod"),
       DTT.role("iPad")
-    ] as Role[];
+    ];
   }
 
   get iOSVersionRoles(): Role[] {
@@ -398,7 +398,7 @@ export default class implements RolesCommand {
       DTT.role("iOS 13"),
       DTT.role("iOS 14"),
       DTT.role("iOS 15")
-    ] as Role[];
+    ];
   }
 
   get iOSMiscellaneousRoles(): Role[] {
@@ -408,25 +408,25 @@ export default class implements RolesCommand {
       DTT.role("Hardware Keyboard"),
       DTT.role("Apple Pencil"),
       DTT.role("Apple Watch")
-    ] as Role[];
+    ];
   }
 
   get chromebook(): Role {
-    return DTT.role("Chromebook") as Role;
+    return DTT.role("Chromebook");
   }
 
   get miscellaneousRoles(): Role[] {
     return [
       DTT.role("Touchscreen PC"),
       DTT.role("GDPR")
-    ] as Role[];
+    ];
   }
 
   get experimentRoles(): Role[] {
     return [
       DTT.role("Per-server Avatar"),
       DTT.role("Student")
-    ] as Role[];
+    ];
   }
 
   get discordUpdatesRoles(): Role[] {
@@ -435,7 +435,7 @@ export default class implements RolesCommand {
       DTT.role("Canary Updates"),
       DTT.role("PTB Updates"),
       DTT.role("Stable Updates")
-    ] as Role[];
+    ];
   }
 
   get phabricatorUpdatesRoles(): Role[] {
@@ -446,13 +446,10 @@ export default class implements RolesCommand {
       DTT.role("DBug"),
       DTT.role("Boardless"),
       DTT.role("P0")
-    ] as Role[];
+    ];
   }
 
   get commandData(): CommandStructure {
-    const tester = DTT.role("Tester");
-    if (tester === null) throw new ReferenceError("Could not find the Tester role.");
-
     return {
       applicationCommandData: {
         name: this.name,
@@ -462,7 +459,7 @@ export default class implements RolesCommand {
       },
       permissions: [
         {
-          id: tester.id,
+          id: DTT.role("Tester").id,
           type: "ROLE",
           permission: true
         }

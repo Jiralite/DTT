@@ -20,17 +20,6 @@ export default class implements FreeBugMailCommand {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
-    if (bugmailQueue === null) {
-      DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
-
-      interaction.reply({
-        content: "Error, cannot find the BugMail Queue channel.",
-        ephemeral: true
-      });
-
-      return;
-    }
-
     if (interaction.channelId !== bugmailQueue.id) {
       DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
@@ -85,17 +74,6 @@ export default class implements FreeBugMailCommand {
   edit(interaction: CommandInteraction): void {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
-
-    if (bugmailQueue === null) {
-      DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
-
-      interaction.reply({
-        content: "Error, cannot find the BugMail Queue channel.",
-        ephemeral: true
-      });
-
-      return;
-    }
 
     if (interaction.channelId !== bugmailQueue.id) {
       DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
@@ -175,17 +153,6 @@ export default class implements FreeBugMailCommand {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
-    if (bugmailQueue === null) {
-      DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
-
-      interaction.reply({
-        content: "Error, cannot find the BugMail Queue channel.",
-        ephemeral: true
-      });
-
-      return;
-    }
-
     if (interaction.channelId !== bugmailQueue.id) {
       DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
@@ -250,9 +217,6 @@ export default class implements FreeBugMailCommand {
   }
 
   get commandData(): CommandStructure {
-    const tester = DTT.role("Tester");
-    if (tester === null) throw new ReferenceError("Could not find the Tester role.");
-
     return {
       applicationCommandData: {
         name: this.name,
@@ -311,7 +275,7 @@ export default class implements FreeBugMailCommand {
       },
       permissions: [
         {
-          id: tester.id,
+          id: DTT.role("Tester").id,
           type: "ROLE",
           permission: true
         }
