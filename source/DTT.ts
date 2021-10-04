@@ -1,6 +1,7 @@
 import DTT from "./Client/Client.js";
 import { CommandName, Constants, DiscordAPIError, Formatters, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import { getLastCommit } from "git-last-commit";
+import gitRemoteOriginUrl from "git-remote-origin-url";
 
 async function Maria(): Promise<void> {
   try {
@@ -34,15 +35,18 @@ DTT.once(Constants.Events.CLIENT_READY, async (): Promise<void> => {
   await Maria();
 
   getLastCommit(async (error, {shortHash, subject, author: { name }, branch }) => {
-    if (error) {
-      DTT.consoleLog(error);
+    const url = gitRemoteOriginUrl().then(repositoryURL => repositoryURL.slice(0, -4)).catch(() => null);
+
+    if (error || url === null) {
+      if (error) DTT.consoleLog(error);
+      if (url) DTT.consoleLog(url);
       process.exit(1);
     }
 
-    DTT.logChannel.send({
+    await DTT.logChannel.send({
       embeds: [
         {
-          description: `Running [\`${shortHash}\`](https://github.com/discord-testers-testers/DTT/commit/${shortHash}) on [\`${branch}\`](https://github.com/discord-testers-testers/DTT/tree/${branch}) at ${Formatters.time(Math.floor(Date.now() / 1000), Formatters.TimestampStyles.LongDateTime)}.\n${subject} - [${name}](https://github.com/${name})`,
+          description: `Running [\`${shortHash}\`](${url}/commit/${shortHash}) on [\`${branch}\`](${url}/tree/${branch}) at ${Formatters.time(Math.floor(Date.now() / 1000), Formatters.TimestampStyles.LongDateTime)}.\n${subject} - [${name}](https://github.com/${name})`,
           timestamp: Date.now(),
           color: (await DTT.guild.members.fetch(DTT.user.id)).displayColor
         }
