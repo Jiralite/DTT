@@ -17,7 +17,7 @@ export default class implements FreeBugMailCommand {
   }
 
   async submit(interaction: CommandInteraction): Promise<void> {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
+    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (interaction.channelId !== bugmailQueue.id) {
@@ -59,7 +59,7 @@ export default class implements FreeBugMailCommand {
   }
 
   async edit(interaction: CommandInteraction): Promise<void> {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
+    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (interaction.channelId !== bugmailQueue.id) {
@@ -115,7 +115,7 @@ export default class implements FreeBugMailCommand {
   }
 
   async complete(interaction: CommandInteraction): Promise<void> {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
+    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (interaction.channelId !== bugmailQueue.id) {
