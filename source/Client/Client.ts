@@ -2,7 +2,7 @@ import { readdirSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Client, ClientOptions, Collection, Command, CommandName, Constants, Guild, GuildChannel, GuildEmoji, ImageName, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
-import { createPool, Pool } from "mysql";
+import { createPool } from "mysql";
 import { BBAGuildId, channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -22,10 +22,10 @@ const Maria = createPool({
 });
 
 class DTT <T extends boolean> extends Client<T> {
-  readonly Maria: Pool;
-  readonly FreeBugMail: typeof FreeBugMail;
-  readonly Invite: typeof Invite;
-  readonly Verification: typeof Verification;
+  readonly Maria = Maria;
+  readonly FreeBugMail = FreeBugMail;
+  readonly Invite = Invite;
+  readonly Verification = Verification;
   readonly commands: Record<CommandName, Command>;
   readonly freeBugMails: Collection<number, FreeBugMail>;
   readonly images: Record<ImageName, string>;
@@ -33,10 +33,6 @@ class DTT <T extends boolean> extends Client<T> {
 
   constructor(options: ClientOptions) {
     super(options);
-    this.Maria = Maria;
-    this.FreeBugMail = FreeBugMail;
-    this.Invite = Invite;
-    this.Verification = Verification;
 
     this.commands = commands.reduce((_commands, command) => {
       const _command = new command();
