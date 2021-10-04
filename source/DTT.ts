@@ -35,7 +35,7 @@ DTT.once(Constants.Events.CLIENT_READY, async (): Promise<void> => {
   await Maria();
 
   getLastCommit(async (error, {shortHash, subject, author: { name }, branch }) => {
-    const url = gitRemoteOriginUrl().then(repositoryURL => repositoryURL.slice(0, -4)).catch(() => null);
+    const url = await gitRemoteOriginUrl().then(repositoryURL => repositoryURL.slice(0, -4)).catch(() => null);
 
     if (error || url === null) {
       if (error) DTT.consoleLog(error);
