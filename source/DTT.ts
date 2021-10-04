@@ -66,7 +66,7 @@ DTT.on(Constants.Events.GUILD_MEMBER_REMOVE, async guildMember => {
   if (guildMember.guild.id !== DTT.guild.id) return;
 
   try {
-    await DTT.BBAGuild.members.fetch(guildMember as GuildMember).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
+    await DTT.BBAGuild.members.fetch(guildMember.id).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
   } catch (error) {
     if (error instanceof DiscordAPIError) {
       if (error.code === Constants.APIErrors.UNKNOWN_MEMBER) return;
