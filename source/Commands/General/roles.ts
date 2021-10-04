@@ -19,10 +19,10 @@ export default class implements RolesCommand {
   ];
 
   async handle(interaction: ButtonInteraction | CommandInteraction): Promise<void> {
-    return await Promise.resolve(this.execute(interaction));
+    return await this.execute(interaction);
   }
 
-  execute(interaction: ButtonInteraction | CommandInteraction): void {
+  async execute(interaction: ButtonInteraction | CommandInteraction): Promise<void> {
     const content = "Choose a category to self-assign roles from!";
 
     const components: MessageActionRowOptions[] = [
@@ -47,12 +47,12 @@ export default class implements RolesCommand {
     ];
 
     if (interaction instanceof ButtonInteraction) {
-      interaction.update({
+      await interaction.update({
         content,
         components
       });
     } else {
-      interaction.reply({
+      await interaction.reply({
         content,
         components,
         ephemeral: true
@@ -60,10 +60,10 @@ export default class implements RolesCommand {
     }
   }
 
-  categoryInteraction(interaction: SelectMenuInteraction, category: RoleCategories): void {
+  async categoryInteraction(interaction: SelectMenuInteraction, category: RoleCategories): Promise<void> {
     const components = this.category(interaction.member as GuildMember, category);
 
-    interaction.update({
+    await interaction.update({
       content: "Self-assign roles, or go back!",
       components: [
         ...components,

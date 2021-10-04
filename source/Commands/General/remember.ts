@@ -13,12 +13,10 @@ export default class implements RememberCommand {
     if (interaction.guild === null) {
       DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
-      interaction.reply({
+      return await interaction.reply({
         content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to take by myself?",
         ephemeral: true
       });
-
-      return;
     }
 
     const moment = interaction.options.getString("moment", true);

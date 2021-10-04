@@ -14,38 +14,32 @@ export default class implements RegenerateCommand {
     if (interaction.guild === null) {
       DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
 
-      interaction.reply({
+      return await interaction.reply({
         content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to take by myself?",
         ephemeral: true
       });
-
-      return;
     }
 
     const channel = interaction.channel;
 
     if (!(channel instanceof TextChannel || channel instanceof NewsChannel)) {
-      interaction.reply({
+      return await interaction.reply({
         content: "This cannot be used in this channel.",
         ephemeral: true
       });
-
-      return;
     }
 
     if (!channel.permissionsFor(interaction.guild.me as GuildMember).has([
       "VIEW_CHANNEL",
       "SEND_MESSAGES"
     ])) {
-      interaction.reply({
+      return await interaction.reply({
         content: "`VIEW_CHANNEL` & `SEND_MESSAGES` are required to execute this command here.",
         ephemeral: true
       });
-
-      return;
     }
 
-    const text = interaction.options.getString("channel_name");
+    const text = interaction.options.getString("channel_name", true);
     this.messageIds = [];
 
     const message = await interaction.deferReply({
@@ -65,8 +59,9 @@ export default class implements RegenerateCommand {
       message.delete().catch(() => null);
     } catch (error) {
       DTT.log(`Error regenerating "${text}".`, error);
-      channel.bulkDelete(this.messageIds);
-      interaction.editReply("There was an error regenerating content.");
+      await channel.bulkDelete(this.messageIds);
+      await interaction.editReply("There was an error regenerating content.");
+      return;
     }
   }
 
@@ -92,9 +87,10 @@ export default class implements RegenerateCommand {
       }
     });
 
+    this.messageIds.push(message1.id);
     await message1.suppressEmbeds();
     const message2 = await channel.send(`**__${Information.name}__**\nYou are here! This category contains an introduction to the server as well as ${announcements} which you can view once admitted to the server.\n\n**__${General.name}__**\nHome to ${general} (off-topic chat) and ${botCommands} and other channels which may show up from time to time.\n\n**__${Feedback.name}__**\nSelf-explanatory - this category contains feedback channels.\n\n**__${DTGeneral.name}__**\nChannels in this category relate specifically to Discord Testers, such as:\n• ${a11y}\n• ${resources}\n• ${bugmailQueue}\n• ${bugmailDiscussion}\n\n**__Testing Categories__**\nThe purpose of these categories are to test bugs specific to the respective platform. These categories also include information related to the platform from Phabricator. Each category also includes a discussion channel, as well as a channel for known issues. Phabricator channels that aren't specific to a testing category fit into ${DTGeneral.name}.\n\n**__${DiscordUpdates.name}__**\nUpdates are sent when there is a new Stable, PTB or Canary build (or host) available and also for when there is a new status issue recorded on https://dis.gd/status.\n\n**__Roles__**\nThe \`/roles\` slash command can be used to self-assign roles. Please self-assign roles to help identify testers!\n\n**__Invite__**\nThe \`/invite\` slash command can be used to generate a one-time invite to this server. Wait a day before inviting a new T2 please.`);
-    this.messageIds.push(message1.id, message2.id);
+    this.messageIds.push(message2.id);
   }
 
   async bugmailQueue(channel: TextChannel | NewsChannel): Promise<void> {

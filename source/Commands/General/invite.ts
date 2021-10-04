@@ -6,31 +6,28 @@ export default class implements InviteCommand {
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
   async handle(interaction: CommandInteraction): Promise<void> {
-    return await Promise.resolve(this.execute(interaction));
+    return await this.execute(interaction);
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
     const verification = DTT.channel("verification");
 
     if (!verification.permissionsFor(await DTT.guild.members.fetch(DTT.user.id)).has("CREATE_INSTANT_INVITE")) {
-      interaction.reply({
+      DTT.log(`${interaction.user} attempted to create an invite but I lacked invite permissions for ${verification}.`);
+
+      return await interaction.reply({
         content: "Apparently, I do not have invite permissions.",
         ephemeral: true
       });
-
-      DTT.log(`${interaction.user} attempted to create an invite but I lacked invite permissions for ${verification}.`);
-      return;
     }
 
     const Invites = DTT.invites.filter(({ id, expired }) => id === interaction.user.id && !expired);
 
     if (Invites.size > 0) {
-      interaction.reply({
+      return await interaction.reply({
         content: `You possess non-expired invites already:\n${Invites.map(Invite => `• \`${Invite.code}\``).join("\n")}`,
         ephemeral: true
       });
-
-      return;
     }
 
     const Invite = new DTT.Invite({
@@ -42,7 +39,7 @@ export default class implements InviteCommand {
       Code: null
     });
 
-    Invite.create(interaction);
+    return await Invite.create(interaction);
   }
 
   get commandData(): CommandStructure {
