@@ -15,6 +15,8 @@ declare module "discord.js" {
     get commandData(): CommandStructure;
   }
 
+  type ImageName = "Opinion";
+
   interface FreeBugMailCommand extends Command {
     submit(interaction: CommandInteraction): void;
     edit(interaction: CommandInteraction): void;

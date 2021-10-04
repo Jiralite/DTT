@@ -24,7 +24,7 @@ export default class implements RememberCommand {
     const moment = interaction.options.getString("moment", true);
 
     if (moment === "Opinion") {
-      const Opinion = DTT.images.get(moment);
+      const Opinion = DTT.images[moment];
       if (!Opinion) throw new ReferenceError("Unknown heading");
 
       return await interaction.reply({

@@ -1,7 +1,7 @@
 import { readdirSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { Client, ClientOptions, Collection, Command, CommandName, Constants, Guild, GuildChannel, GuildEmoji, Intents, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Collection, Command, CommandName, Constants, Guild, GuildChannel, GuildEmoji, ImageName, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
 import { BBAGuildId, channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
@@ -10,7 +10,8 @@ import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 import commands from "../Commands/index.js";
 
-const headingsPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
+const imagesPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
+const images = readdirSync(imagesPath).filter(heading => heading.endsWith(".png"));
 
 const Maria = createPool({
   host: process.env.MARIA_HOST,
@@ -27,7 +28,7 @@ class DTT <T extends boolean> extends Client<T> {
   readonly Verification: typeof Verification;
   readonly commands: Record<CommandName, Command>;
   readonly freeBugMails: Collection<number, FreeBugMail>;
-  readonly images: Map<string, MessageAttachment>;
+  readonly images: Record<ImageName, string>;
   readonly invites: Collection<number, Invite>;
 
   constructor(options: ClientOptions) {
@@ -45,9 +46,10 @@ class DTT <T extends boolean> extends Client<T> {
 
     this.freeBugMails = new Collection();
 
-    this.images = readdirSync(headingsPath).filter(heading => heading.endsWith(".png")).reduce((headingsMap, heading) => {
-      return headingsMap.set(heading.slice(0, heading.indexOf(".")), new MessageAttachment(`${headingsPath}/${heading}`));
-    }, new Map<string, MessageAttachment>());
+    this.images = images.reduce((_images, image) => {
+      _images[image.slice(0, image.indexOf(".")) as ImageName] = imagesPath + image;
+      return _images;
+    }, {} as Record<ImageName, string>);
 
     this.invites = new Collection();
   }
