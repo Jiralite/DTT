@@ -1,40 +1,37 @@
 import DTT from "./Client/Client.js";
-import { CommandName, Constants, DiscordAPIError, FreeBugMailData, GuildMember, InviteData, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
-import { MysqlError } from "mysql";
+import { CommandName, Constants, DiscordAPIError, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 
-function Maria() {
-  DTT.Maria.getConnection(error => {
-    if (!error) {
-      collectFreeBugMails();
-      collectInvites();
-      DTT.log("Maria established.");
-    } else {
-      DTT.log("Maria connection error: Retrying in 1 minute.", error);
-      setTimeout(Maria, 60000);
-    }
-  });
+async function Maria(): Promise<void> {
+  try {
+    await DTT.Maria.getConnection();
+    await collectFreeBugMails();
+    await collectInvites();
+  } catch (error) {
+    DTT.consoleLog(error);
+    process.exit(1);
+  }
 }
 
-function collectFreeBugMails() {
-  DTT.Maria.query("SELECT * FROM `Free BugMails`", (_E: MysqlError, R: FreeBugMailData[]) => R.forEach(freeBugMail => {
-    const FreeBugMail = new DTT.FreeBugMail(freeBugMail);
+async function collectFreeBugMails(): Promise<void> {
+  for (const FreeBugMailPacket of await DTT.Maria.query("SELECT * FROM `Free BugMails`;")) {
+    const FreeBugMail = new DTT.FreeBugMail(FreeBugMailPacket);
     DTT.freeBugMails.set(FreeBugMail.No as number, FreeBugMail);
     FreeBugMail.timeout();
     FreeBugMail.mentionedTimeout();
-  }));
+  }
 }
 
-function collectInvites() {
-  DTT.Maria.query("SELECT * FROM `Invites`", (_E: MysqlError, R: InviteData[]) => R.forEach(invite => {
-    const Invite = new DTT.Invite(invite);
+async function collectInvites(): Promise<void> {
+  for (const invitePacket of await DTT.Maria.query("SELECT * FROM `Invites`;")) {
+    const Invite = new DTT.Invite(invitePacket);
     DTT.invites.set(Invite.No as number, Invite);
     Invite.expireTimeout();
-  }));
+  }
 }
 
-DTT.on(Constants.Events.CLIENT_READY, () => {
+DTT.once(Constants.Events.CLIENT_READY, async (): Promise<void> => {
+  await Maria();
   DTT.log("Selflessly slaving away.");
-  Maria();
 });
 
 DTT.on(Constants.Events.GUILD_MEMBER_ADD, async guildMember => {

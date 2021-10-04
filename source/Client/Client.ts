@@ -2,7 +2,7 @@ import { readdirSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Client, ClientOptions, Collection, Command, CommandName, Constants, Guild, GuildChannel, GuildEmoji, ImageName, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
-import { createPool } from "mysql";
+import { createPool } from "mariadb";
 import { BBAGuildId, channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 import FreeBugMail from "./FreeBugMail.js";
@@ -13,16 +13,16 @@ import commands from "../Commands/index.js";
 const imagesPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
 const images = readdirSync(imagesPath).filter(heading => heading.endsWith(".png"));
 
-const Maria = createPool({
-  host: process.env.MARIA_HOST,
+const pool = createPool({
   user: process.env.MARIA_USER,
   password: process.env.MARIA_PASSWORD,
+  host: process.env.MARIA_HOST,
   database: process.env.MARIA_DATABASE,
-  charset: process.env.MARIA_CHARSET
+  collation: process.env.MARIA_COLLATION
 });
 
 class DTT <T extends boolean> extends Client<T> {
-  readonly Maria = Maria;
+  readonly Maria = pool;
   readonly FreeBugMail = FreeBugMail;
   readonly Invite = Invite;
   readonly Verification = Verification;

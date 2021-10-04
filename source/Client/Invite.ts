@@ -1,5 +1,4 @@
 import { CommandInteraction, InviteData, Snowflake, TextChannel } from "discord.js";
-import { OkPacket } from "mysql";
 import DTT from "./Client.js";
 
 export default class Invite {
@@ -21,57 +20,39 @@ export default class Invite {
     this.timeout = null;
   }
 
-  create(interaction: CommandInteraction): void {
-    this.verification.createInvite({
+  async create(interaction: CommandInteraction): Promise<void> {
+    const invite = await this.verification.createInvite({
       maxAge: 86400, // 1 day
       maxUses: 1,
       unique: true
-    }).then(invite => {
-      DTT.Maria.query("INSERT INTO `Invites` SET ?;", {
-        ID: interaction.user.id,
-        "Created Timestamp": invite.createdTimestamp,
-        "Expired Timestamp": invite.expiresTimestamp,
-        Expired: false,
-        Code: invite.code
-      }, (E, { insertId }: OkPacket) => {
-        if (E) {
-          DTT.log("Error during Invite#create().", E);
+    });
 
-          interaction.reply({
-            content: "There was an error creating the invite.",
-            ephemeral: true
-          });
+    const { insertId } = await DTT.Maria.query("INSERT INTO `Invites` SET `ID` = ?, `Created Timestamp` = ?, `Expired Timestamp` = ?, `Expired` = ?, `Code` = ?;", [
+      interaction.user.id,
+      invite.createdTimestamp,
+      invite.expiresTimestamp,
+      false,
+      invite.code
+    ]);
 
-          return;
-        }
+    this.No = insertId;
+    this.createdTimestamp = invite.createdTimestamp;
+    this.expiredTimestamp = invite.expiresTimestamp;
+    this.expired = false;
+    this.code = invite.code;
+    DTT.invites.set(insertId, this);
+    this.expireTimeout();
 
-        this.No = insertId;
-        this.createdTimestamp = invite.createdTimestamp;
-        this.expiredTimestamp = invite.expiresTimestamp;
-        this.expired = false;
-        this.code = invite.code;
-        DTT.invites.set(this.No, this);
-        this.expireTimeout();
+    await interaction.reply({
+      content: `Your invite code: \`${this.code}\``,
+      ephemeral: true
+    });
 
-        interaction.reply({
-          content: `Your invite code: \`${this.code}\``,
-          ephemeral: true
-        });
-
-        this.inviteLogs.send({
-          content: `${interaction.user} generated a one-time invite code: \`${this.code}\``,
-          allowedMentions: {
-            parse: []
-          }
-        });
-      });
-    }).catch(error => {
-      DTT.log("Error creating invite.", error);
-
-      interaction.reply({
-        content: "There was an error creating the invite.",
-        ephemeral: true
-      });
+    await this.inviteLogs.send({
+      content: `${interaction.user} generated a one-time invite code: \`${this.code}\``,
+      allowedMentions: {
+        parse: []
+      }
     });
   }
 
@@ -79,21 +60,20 @@ export default class Invite {
     if (!this.expired && this.expiredTimestamp !== null) this.timeout = setTimeout(() => this.remove(), this.expiredTimestamp - Date.now());
   }
 
-  remove(): void {
-    DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
+  async remove(): Promise<void> {
+    await DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
       true,
       this.No
-    ], E => {
-      if (E) return DTT.log("Error during Invite#remove().", E);
-      this.expired = true;
-      if (this.timeout !== null) clearTimeout(this.timeout);
+    ]);
 
-      this.inviteLogs.send({
-        content: `Invite code \`${this.code}\` has just expired. <@${this.id}> generated this invite code.`,
-        allowedMentions: {
-          parse: []
-        }
-      });
+    this.expired = true;
+    if (this.timeout !== null) clearTimeout(this.timeout);
+
+    await this.inviteLogs.send({
+      content: `Invite code \`${this.code}\` has just expired. <@${this.id}> generated this invite code.`,
+      allowedMentions: {
+        parse: []
+      }
     });
   }
 
