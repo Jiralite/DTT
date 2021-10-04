@@ -1,4 +1,4 @@
-import { CommandInteraction, CommandStructure, Constants, GuildMember, InviteCommand } from "discord.js";
+import { CommandInteraction, CommandStructure, Constants, InviteCommand } from "discord.js";
 import DTT from "../../Client/Client";
 
 export default class implements InviteCommand {
@@ -9,21 +9,10 @@ export default class implements InviteCommand {
     return await Promise.resolve(this.execute(interaction));
   }
 
-  execute(interaction: CommandInteraction): void {
-    if (interaction.guild === null) {
-      DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
-
-      interaction.reply({
-        content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to take by myself?",
-        ephemeral: true
-      });
-
-      return;
-    }
-
+  async execute(interaction: CommandInteraction): Promise<void> {
     const verification = DTT.channel("verification");
 
-    if (!verification.permissionsFor(interaction.guild.me as GuildMember).has("CREATE_INSTANT_INVITE")) {
+    if (!verification.permissionsFor(await DTT.guild.members.fetch(DTT.user.id)).has("CREATE_INSTANT_INVITE")) {
       interaction.reply({
         content: "Apparently, I do not have invite permissions.",
         ephemeral: true

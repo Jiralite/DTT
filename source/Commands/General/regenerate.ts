@@ -98,7 +98,7 @@ export default class implements RegenerateCommand {
   }
 
   async bugmailQueue(channel: TextChannel | NewsChannel): Promise<void> {
-    if (!channel.permissionsFor(DTT.guild.me as GuildMember).has("MANAGE_MESSAGES")) throw new Error("Missing permissions");
+    if (!channel.permissionsFor(await DTT.guild.members.fetch(DTT.user.id)).has("MANAGE_MESSAGES")) throw new Error("Missing permissions");
     const freeBugMail = DTT.role("Free BugMail");
     const typing = DTT.emoji("typing");
     const bugmailedReports = DTT.channel("bugmailed-reports");
