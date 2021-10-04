@@ -8,6 +8,7 @@
   "dependencies": {
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",
+    "git-last-commit": "^1.0.1",
     "mariadb": "^2.5.4"
   },
   "devDependencies": {
