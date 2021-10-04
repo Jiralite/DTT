@@ -41,20 +41,25 @@ declare module "discord.js" {
     execute(interaction: ButtonInteraction | CommandInteraction): void;
     categoryInteraction(interaction: SelectMenuInteraction | NewsChannel, category: RoleCategories): void;
     category(guildMember: GuildMember, category: RoleCategories): MessageActionRowOptions[];
-    resolveSelectMenuCategoryRoles(categoryRoleName: SubRoleCategories): Role[];
-    get macOSVersionRoles(): Role[];
-    get linux(): Role;
-    get windowsVersionRoles(): Role[];
-    get androidDeviceRoles(): Role[];
-    get androidVersionRoles(): Role[];
-    get iOSDeviceRoles(): Role[];
-    get iOSVersionRoles(): Role[];
-    get iOSMiscellaneousRoles(): Role[];
-    get chromebook(): Role;
-    get miscellaneousRoles(): Role[];
-    get experimentRoles(): Role[];
-    get discordUpdatesRoles(): Role[];
-    get phabricatorUpdatesRoles(): Role[];
+    resolveSelectMenuCategoryRoles(categoryRoleName: SubRoleCategories): RoleStructure[];
+    get macOSVersionRoles(): RoleStructure[];
+    get linux(): RoleStructure;
+    get windowsVersionRoles(): RoleStructure[];
+    get androidDeviceRoles(): RoleStructure[];
+    get androidVersionRoles(): RoleStructure[];
+    get iOSDeviceRoles(): RoleStructure[];
+    get iOSVersionRoles(): RoleStructure[];
+    get iOSMiscellaneousRoles(): RoleStructure[];
+    get chromebook(): RoleStructure;
+    get miscellaneousRoles(): RoleStructure[];
+    get experimentRoles(): RoleStructure[];
+    get discordUpdatesRoles(): RoleStructure[];
+    get phabricatorUpdatesRoles(): RoleStructure[];
+  }
+
+  interface RoleStructure {
+    role: Role;
+    emoji: GuildEmoji | string;
   }
 
   interface CommandStructure {

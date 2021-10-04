@@ -1,4 +1,4 @@
-import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, GuildMember, MessageActionRowOptions, MessageSelectOptionData, Role, RoleCategories, RolesCommand, SelectMenuInteraction, SubRoleCategories } from "discord.js";
+import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, GuildMember, MessageActionRowOptions, MessageSelectOptionData, RoleCategories, RolesCommand, RoleStructure, SelectMenuInteraction, SubRoleCategories } from "discord.js";
 import DTT from "../../Client/Client.js";
 
 export default class implements RolesCommand {
@@ -84,10 +84,11 @@ export default class implements RolesCommand {
   }
 
   category(guildMember: GuildMember, category: RoleCategories): MessageActionRowOptions[] {
-    const options = (componentOptions: Role[]): MessageSelectOptionData[] => componentOptions.map(({ id, name }) => ({
-      label: name,
-      value: id,
-      default: guildMember.roles.cache.has(id)
+    const options = (componentOptions: RoleStructure[]): MessageSelectOptionData[] => componentOptions.map(({ role, emoji }) => ({
+      label: role.name,
+      value: role.id,
+      emoji: emoji,
+      default: guildMember.roles.cache.has(role.id)
     }));
 
     if (category === "macOS") {
@@ -109,15 +110,18 @@ export default class implements RolesCommand {
     }
 
     if (category === "Linux") {
+      const emoji = this.linux.emoji;
+
       return [
         {
           type: "ACTION_ROW",
           components: [
             {
               type: "BUTTON",
-              label: this.linux.name,
-              customId: `SELFROLE-${this.linux.id}`,
-              style: "PRIMARY"
+              label: this.linux.role.name,
+              customId: `SELFROLE-${this.linux.role.id}`,
+              style: "PRIMARY",
+              emoji: typeof emoji === "string" ? emoji : emoji.id
             }
           ]
         }
@@ -218,15 +222,18 @@ export default class implements RolesCommand {
     }
 
     if (category === "Chrome OS") {
+      const emoji = this.chromebook.emoji;
+
       return [
         {
           type: "ACTION_ROW",
           components: [
             {
               type: "BUTTON",
-              label: this.chromebook.name,
-              customId: `SELFROLE-${this.chromebook.id}`,
-              style: "PRIMARY"
+              label: this.chromebook.role.name,
+              customId: `SELFROLE-${this.chromebook.role.id}`,
+              style: "PRIMARY",
+              emoji: typeof emoji === "string" ? emoji : emoji.id
             }
           ]
         }
@@ -308,7 +315,7 @@ export default class implements RolesCommand {
     throw new Error("Unknown category.");
   }
 
-  resolveSelectMenuCategoryRoles(categoryRoleName: SubRoleCategories): Role[] {
+  resolveSelectMenuCategoryRoles(categoryRoleName: SubRoleCategories): RoleStructure[] {
     switch (categoryRoleName) {
       case "macOSVersionRoles":
         return this.macOSVersionRoles;
@@ -337,115 +344,268 @@ export default class implements RolesCommand {
     }
   }
 
-  get macOSVersionRoles(): Role[] {
+  get macOSVersionRoles(): RoleStructure[] {
     return [
-      DTT.role("macOS El Capitan"),
-      DTT.role("macOS Sierra"),
-      DTT.role("macOS High Sierra"),
-      DTT.role("macOS Mojave"),
-      DTT.role("macOS Catalina"),
-      DTT.role("macOS Big Sur"),
-      DTT.role("macOS Monterey")
+      {
+        role: DTT.role("macOS El Capitan"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("macOS Sierra"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("macOS High Sierra"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("macOS Mojave"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("macOS Catalina"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("macOS Big Sur"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("macOS Monterey"),
+        emoji: DTT.emoji("apple")
+      }
     ];
   }
 
-  get linux(): Role {
-    return DTT.role("Linux");
+  get linux(): RoleStructure {
+    return {
+      role: DTT.role("Linux"),
+      emoji: DTT.emoji("linux")
+    };
   }
 
-  get windowsVersionRoles(): Role[] {
+  get windowsVersionRoles(): RoleStructure[] {
     return [
-      DTT.role("Windows 7"),
-      DTT.role("Windows 8"),
-      DTT.role("Windows 10"),
-      DTT.role("Windows 11")
+      {
+        role: DTT.role("Windows 7"),
+        emoji: DTT.emoji("windows7")
+      },
+      {
+        role: DTT.role("Windows 8"),
+        emoji: DTT.emoji("windows8")
+      },
+      {
+        role: DTT.role("Windows 10"),
+        emoji: DTT.emoji("windows10")
+      },
+      {
+        role: DTT.role("Windows 11"),
+        emoji: DTT.emoji("windows11")
+      }
     ];
   }
 
-  get androidDeviceRoles(): Role[] {
+  get androidDeviceRoles(): RoleStructure[] {
     return [
-      DTT.role("Pixel"),
-      DTT.role("Samsung Galaxy")
+      {
+        role: DTT.role("Pixel"),
+        emoji: DTT.emoji("android")
+      },
+      {
+        role: DTT.role("Samsung Galaxy"),
+        emoji: DTT.emoji("android")
+      }
     ];
   }
 
-  get androidVersionRoles(): Role[] {
+  get androidVersionRoles(): RoleStructure[] {
     return [
-      DTT.role("Android 5"),
-      DTT.role("Android 6"),
-      DTT.role("Android 7"),
-      DTT.role("Android 8"),
-      DTT.role("Android 9"),
-      DTT.role("Android 10"),
-      DTT.role("Android 11"),
-      DTT.role("Android 12")
+      {
+        role: DTT.role("Android 5"),
+        emoji: DTT.emoji("android5")
+      },
+      {
+        role: DTT.role("Android 6"),
+        emoji: DTT.emoji("android6")
+      },
+      {
+        role: DTT.role("Android 7"),
+        emoji: DTT.emoji("android7")
+      },
+      {
+        role: DTT.role("Android 8"),
+        emoji: DTT.emoji("android8")
+      },
+      {
+        role: DTT.role("Android 9"),
+        emoji: DTT.emoji("android9")
+      },
+      {
+        role: DTT.role("Android 10"),
+        emoji: DTT.emoji("android10")
+      },
+      {
+        role: DTT.role("Android 11"),
+        emoji: DTT.emoji("android11")
+      },
+      {
+        role: DTT.role("Android 12"),
+        emoji: DTT.emoji("android12")
+      }
     ];
   }
 
-  get iOSDeviceRoles(): Role[] {
+  get iOSDeviceRoles(): RoleStructure[] {
     return [
-      DTT.role("iPhone"),
-      DTT.role("iPod"),
-      DTT.role("iPad")
+      {
+        role: DTT.role("iPhone"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("iPod"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("iPad"),
+        emoji: DTT.emoji("apple")
+      }
     ];
   }
 
-  get iOSVersionRoles(): Role[] {
+  get iOSVersionRoles(): RoleStructure[] {
     return [
-      DTT.role("iOS 10"),
-      DTT.role("iOS 11"),
-      DTT.role("iOS 12"),
-      DTT.role("iOS 13"),
-      DTT.role("iOS 14"),
-      DTT.role("iOS 15")
+      {
+        role: DTT.role("iOS 10"),
+        emoji: DTT.emoji("iOS10")
+      },
+      {
+        role: DTT.role("iOS 11"),
+        emoji: DTT.emoji("iOS11")
+      },
+      {
+        role: DTT.role("iOS 12"),
+        emoji: DTT.emoji("iOS12")
+      },
+      {
+        role: DTT.role("iOS 13"),
+        emoji: DTT.emoji("iOS13")
+      },
+      {
+        role: DTT.role("iOS 14"),
+        emoji: DTT.emoji("iOS14")
+      },
+      {
+        role: DTT.role("iOS 15"),
+        emoji: DTT.emoji("iOS15")
+      }
     ];
   }
 
-  get iOSMiscellaneousRoles(): Role[] {
+  get iOSMiscellaneousRoles(): RoleStructure[] {
     return [
-      DTT.role("Face ID"),
-      DTT.role("4-inch"),
-      DTT.role("Hardware Keyboard"),
-      DTT.role("Apple Pencil"),
-      DTT.role("Apple Watch")
+      {
+        role: DTT.role("Face ID"),
+        emoji: DTT.emoji("faceId")
+      },
+      {
+        role: DTT.role("4-inch"),
+        emoji: DTT.emoji("touchId")
+      },
+      {
+        role: DTT.role("Hardware Keyboard"),
+        emoji: DTT.emoji("hardwareKeyboard")
+      },
+      {
+        role: DTT.role("Apple Pencil"),
+        emoji: DTT.emoji("applePencil")
+      },
+      {
+        role: DTT.role("Apple Watch"),
+        emoji: DTT.emoji("appleWatch")
+      }
     ];
   }
 
-  get chromebook(): Role {
-    return DTT.role("Chromebook");
+  get chromebook(): RoleStructure {
+    return {
+      role: DTT.role("Chromebook"),
+      emoji: DTT.emoji("googleChrome")
+    };
   }
 
-  get miscellaneousRoles(): Role[] {
+  get miscellaneousRoles(): RoleStructure[] {
     return [
-      DTT.role("Touchscreen PC"),
-      DTT.role("GDPR")
+      {
+        role: DTT.role("Touchscreen PC"),
+        emoji: "🖥️"
+      },
+      {
+        role: DTT.role("GDPR"),
+        emoji: "🔒"
+      }
     ];
   }
 
-  get experimentRoles(): Role[] {
+  get experimentRoles(): RoleStructure[] {
     return [
-      DTT.role("Per-server Avatar"),
-      DTT.role("Student")
+      {
+        role: DTT.role("Per-server Avatar"),
+        emoji: DTT.emoji("discord")
+      },
+      {
+        role: DTT.role("Student"),
+        emoji: DTT.emoji("discord")
+      }
     ];
   }
 
-  get discordUpdatesRoles(): Role[] {
+  get discordUpdatesRoles(): RoleStructure[] {
     return [
-      DTT.role("Status Updates"),
-      DTT.role("Canary Updates"),
-      DTT.role("PTB Updates"),
-      DTT.role("Stable Updates")
+      {
+        role: DTT.role("Status Updates"),
+        emoji: DTT.emoji("discord")
+      },
+      {
+        role: DTT.role("Canary Updates"),
+        emoji: DTT.emoji("canary")
+      },
+      {
+        role: DTT.role("PTB Updates"),
+        emoji: DTT.emoji("ptb")
+      },
+      {
+        role: DTT.role("Stable Updates"),
+        emoji: DTT.emoji("stable")
+      }
     ];
   }
 
-  get phabricatorUpdatesRoles(): Role[] {
+  get phabricatorUpdatesRoles(): RoleStructure[] {
     return [
-      DTT.role("Desktop"),
-      DTT.role("Android"),
-      DTT.role("iOS"),
-      DTT.role("DBug"),
-      DTT.role("Boardless"),
-      DTT.role("P0")
+      {
+        role: DTT.role("Desktop"),
+        emoji: "🖥️"
+      },
+      {
+        role: DTT.role("Android"),
+        emoji: DTT.emoji("android")
+      },
+      {
+        role: DTT.role("iOS"),
+        emoji: DTT.emoji("apple")
+      },
+      {
+        role: DTT.role("DBug"),
+        emoji: "🐛"
+      },
+      {
+        role: DTT.role("Boardless"),
+        emoji: "❓"
+      },
+      {
+        role: DTT.role("P0"),
+        emoji: "⚠️"
+      }
     ];
   }
 

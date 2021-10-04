@@ -222,7 +222,7 @@ DTT.on(Constants.Events.INTERACTION_CREATE, async interaction => {
       }
     }
 
-    for (const role of (DTT.commands.roles as RolesCommand).resolveSelectMenuCategoryRoles(interaction.customId.slice(9) as SubRoleCategories).filter((role: Role) => !roles.some(({ id }) => id === role.id))) {
+    for (const { role } of (DTT.commands.roles as RolesCommand).resolveSelectMenuCategoryRoles(interaction.customId.slice(9) as SubRoleCategories).filter(({ role }) => !roles.some(({ id }) => id === role.id))) {
       if (rolesToSet.has(role.id)) {
         rolesToSet.delete(role.id);
         rolesRemoved.push(role);
