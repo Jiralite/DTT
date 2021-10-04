@@ -38,7 +38,7 @@ DTT.on(Constants.Events.CLIENT_READY, () => {
 });
 
 DTT.on(Constants.Events.GUILD_MEMBER_ADD, async guildMember => {
-  if (guildMember.guild.id !== DTT.bbaGuild.id) return;
+  if (guildMember.guild.id !== DTT.BBAGuild.id) return;
 
   try {
     const tester = DTT.role("Tester");
@@ -67,18 +67,18 @@ DTT.on(Constants.Events.GUILD_MEMBER_REMOVE, async guildMember => {
   if (guildMember.guild.id !== DTT.guild.id) return;
 
   try {
-    await DTT.bbaGuild.members.fetch(guildMember as GuildMember).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
+    await DTT.BBAGuild.members.fetch(guildMember as GuildMember).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
   } catch (error) {
     if (error instanceof DiscordAPIError) {
       if (error.code === Constants.APIErrors.UNKNOWN_MEMBER) return;
 
       if (error.code === Constants.APIErrors.MISSING_PERMISSIONS) {
-        DTT.log(`${guildMember} left ${guildMember.guild.name} but lacked permissions to remove them from ${DTT.bbaGuild.name}.`, error);
+        DTT.log(`${guildMember} left ${guildMember.guild.name} but lacked permissions to remove them from ${DTT.BBAGuild.name}.`, error);
         return;
       }
     }
 
-    DTT.log(`An error occured whilst removing ${guildMember} from ${DTT.bbaGuild.name}.`, error);
+    DTT.log(`An error occured whilst removing ${guildMember} from ${DTT.BBAGuild.name}.`, error);
   }
 });
 
@@ -156,7 +156,7 @@ DTT.on(Constants.Events.INTERACTION_CREATE, interaction => {
     if (interaction.customId === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
     const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED|RESTORE)/.exec(interaction.customId);
 
-    if (claimRequest && (interaction.channelId === DTT.kanal("bugmail-queue")?.id || interaction.channelId === DTT.kanal("bugmail-discussion")?.id)) {
+    if (claimRequest && (interaction.channelId === DTT.channel("bugmail-queue")?.id || interaction.channelId === DTT.channel("bugmail-discussion")?.id)) {
       if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1])?.preClaim(interaction);
       if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1])?.claim(interaction);
       if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1])?.alreadyBugMailed(interaction);
@@ -234,7 +234,7 @@ DTT.on(Constants.Events.INVITE_DELETE, invite => DTT.invites.find(({ code }) => 
 
 DTT.on(Constants.Events.MESSAGE_CREATE, message => {
   if (message.author.bot) return;
-  const bugmailQueue = DTT.kanal("bugmail-queue");
+  const bugmailQueue = DTT.channel("bugmail-queue");
   if (bugmailQueue === null || message.channel.type === "DM") return;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const guildMember = message.member!;

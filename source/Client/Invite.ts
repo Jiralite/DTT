@@ -98,10 +98,10 @@ export default class Invite {
   }
 
   get verification(): TextChannel {
-    return DTT.kanal("verification") as TextChannel;
+    return DTT.channel("verification") as TextChannel;
   }
 
   get inviteLogs(): TextChannel {
-    return DTT.kanal("invite-logs") as TextChannel;
+    return DTT.channel("invite-logs") as TextChannel;
   }
 }

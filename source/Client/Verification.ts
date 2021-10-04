@@ -4,8 +4,8 @@ import DTT from "./Client";
 export default class Verification {
   static sendVerification(guildMember: GuildMember): void {
 
-    (DTT.kanal("verification") as TextChannel).send({
-      content: `Welcome to **${guildMember.guild.name}**, ${guildMember}! Please review the ${DTT.kanal("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to <@873604718893617203>!`,
+    (DTT.channel("verification") as TextChannel).send({
+      content: `Welcome to **${guildMember.guild.name}**, ${guildMember}! Please review the ${DTT.channel("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to <@873604718893617203>!`,
       components: [
         {
           type: "ACTION_ROW",
@@ -110,7 +110,7 @@ export default class Verification {
       });
 
       (interaction.message as Message).delete().catch(() => null);
-      (DTT.kanal("general") as TextChannel).send(`Welcome to **${DTT.guild.name}**, ${guildMember}! Be sure to check out the channels in this server!`);
+      (DTT.channel("general") as TextChannel).send(`Welcome to **${DTT.guild.name}**, ${guildMember}! Be sure to check out the channels in this server!`);
     }).catch(error => {
       DTT.log(`Error adding role to ${guildMember}.`, error);
 

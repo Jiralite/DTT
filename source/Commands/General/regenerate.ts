@@ -72,18 +72,18 @@ export default class implements RegenerateCommand {
 
   async readMe(channel: TextChannel | NewsChannel): Promise<void> {
     const moderator = DTT.role("Moderator");
-    const Information = DTT.kanal("Information") as CategoryChannel;
-    const announcements = DTT.kanal("announcements");
-    const General = DTT.kanal("General") as CategoryChannel;
-    const general = DTT.kanal("general");
-    const botCommands = DTT.kanal("bot-commands");
-    const Feedback = DTT.kanal("Feedback") as CategoryChannel;
-    const DTGeneral = DTT.kanal("DT General") as CategoryChannel;
-    const a11y = DTT.kanal("a11y");
-    const resources = DTT.kanal("resources");
-    const bugmailQueue = DTT.kanal("bugmail-queue");
-    const bugmailDiscussion = DTT.kanal("bugmail-discussion");
-    const DiscordUpdates = DTT.kanal("Discord Updates") as CategoryChannel;
+    const Information = DTT.channel("Information") as CategoryChannel;
+    const announcements = DTT.channel("announcements");
+    const General = DTT.channel("General") as CategoryChannel;
+    const general = DTT.channel("general");
+    const botCommands = DTT.channel("bot-commands");
+    const Feedback = DTT.channel("Feedback") as CategoryChannel;
+    const DTGeneral = DTT.channel("DT General") as CategoryChannel;
+    const a11y = DTT.channel("a11y");
+    const resources = DTT.channel("resources");
+    const bugmailQueue = DTT.channel("bugmail-queue");
+    const bugmailDiscussion = DTT.channel("bugmail-discussion");
+    const DiscordUpdates = DTT.channel("Discord Updates") as CategoryChannel;
 
     if ([moderator, Information, announcements, General, general, Feedback, botCommands, DTGeneral, a11y, resources, bugmailQueue, bugmailDiscussion, DiscordUpdates].some(variable => variable === null)) {
       throw new ReferenceError("Unknown references detected.");
@@ -104,9 +104,9 @@ export default class implements RegenerateCommand {
   async bugmailQueue(channel: TextChannel | NewsChannel): Promise<void> {
     if (!channel.permissionsFor(DTT.guild.me as GuildMember).has("MANAGE_MESSAGES")) throw new Error("Missing permissions");
     const freeBugMail = DTT.role("Free BugMail");
-    const typing = DTT.emodzhi("typing");
-    const bugmailedReports = DTT.kanal("bugmailed-reports");
-    const bugmailedDiscussion = DTT.kanal("bugmail-discussion");
+    const typing = DTT.emoji("typing");
+    const bugmailedReports = DTT.channel("bugmailed-reports");
+    const bugmailedDiscussion = DTT.channel("bugmail-discussion");
 
     if ([freeBugMail, typing, bugmailedReports, bugmailedDiscussion].some(variable => variable === null)) {
       throw new ReferenceError("Unknown references detected.");

@@ -282,14 +282,14 @@ export default class FreeBugMail {
         components: []
       });
 
-      const typing = DTT.emodzhi("typing");
+      const typing = DTT.emoji("typing");
       typing !== null ? message.react(typing) : DTT.freeBugMailLog(`Couldn't find the "typing" emoji to react with for Free BugMail request #${this.No}.`);
       const guildMember = interaction.member as GuildMember;
       if (guildMember.roles.cache.has(this.freeBugMail.id)) guildMember.roles.remove(this.freeBugMail);
       DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
 
       this.bugmailDiscussion.send({
-        content: `${interaction.user} has just claimed the Free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${DTT.kanal("bugmailed-reports")} for clarity!`,
+        content: `${interaction.user} has just claimed the Free BugMail request of <@${this.userId}>.\nBe sure to post in <#733499719267123200> and ${DTT.channel("bugmailed-reports")} for clarity!`,
         embeds: message.embeds
       });
 
@@ -559,11 +559,11 @@ export default class FreeBugMail {
   }
 
   get bugmailQueue(): TextChannel {
-    return DTT.kanal("bugmail-queue") as TextChannel;
+    return DTT.channel("bugmail-queue") as TextChannel;
   }
 
   get bugmailDiscussion(): TextChannel {
-    return DTT.kanal("bugmail-discussion") as TextChannel;
+    return DTT.channel("bugmail-discussion") as TextChannel;
   }
 
   get freeBugMail(): Role {

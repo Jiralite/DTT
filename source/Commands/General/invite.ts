@@ -21,7 +21,7 @@ export default class implements InviteCommand {
       return;
     }
 
-    const verification = DTT.kanal("verification");
+    const verification = DTT.channel("verification");
 
     if (verification === null) {
       DTT.log("Apparently, the verification channel cannot be found.");

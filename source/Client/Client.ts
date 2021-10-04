@@ -1,14 +1,15 @@
 import { readdirSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { Client, ClientOptions, Collection, Command, CommandName, Constants, DTTChannels, DTTEmojis, DTTRoles, Guild, GuildChannel, GuildEmoji, Intents, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Collection, Command, CommandName, Constants, Guild, GuildChannel, GuildEmoji, Intents, MessageAttachment, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool, Pool } from "mysql";
+import { BBAGuildId, channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
 import Verification from "./Verification.js";
-
 import commands from "../Commands/index.js";
+
 const headingsPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
 
 const Maria = createPool({
@@ -106,143 +107,46 @@ class DTT <T extends boolean> extends Client<T> {
     }
   }
 
-  emodzhi(emoji: keyof DTTEmojis): GuildEmoji | null {
-    return this.guild.emojis.resolve(this._emodzhi[emoji]);
+  channel(c: keyof typeof channels): GuildChannel {
+    const _channel = this.guild.channels.resolve(channels[c]);
+    if (_channel === null) throw new ReferenceError(`Channel "${c}" cannot be found.`);
+    if (_channel instanceof ThreadChannel) throw new TypeError(`Channel "${_channel.name}" is a thread. Threads cannot be used here.`);
+    return _channel;
   }
 
-  kanal(channel: keyof DTTChannels): GuildChannel | ThreadChannel | null {
-    return this.guild.channels.resolve(this.kanaly[channel]);
+  emoji(e: keyof typeof emojis): GuildEmoji {
+    const _emoji = this.emojis.resolve(emojis[e]);
+    if (_emoji === null) throw new ReferenceError(`Emoji "${e}" cannot be found.`);
+    return _emoji;
   }
 
-  role(role: keyof DTTRoles): Role | null {
-    return this.guild.roles.resolve(this.roles[role]);
+  role(r: keyof typeof roles): Role {
+    const _role = this.guild.roles.resolve(roles[r]);
+    if (_role === null) throw new ReferenceError(`Role "${r}" cannot be found.`);
+    return _role;
   }
 
   get guild(): Guild {
-    return this.guilds.resolve("765611756441436160") as Guild;
+    const _guild = this.guilds.resolve(guildId);
+    if (_guild === null) throw new ReferenceError("DTT guild cannot be found.");
+    return _guild;
   }
 
-  get bbaGuild(): Guild {
-    return this.guilds.resolve("391356859518287895") as Guild;
+  get BBAGuild(): Guild {
+    const _guild = this.guilds.resolve(BBAGuildId);
+    if (_guild === null) throw new ReferenceError("BBA guild cannot be found.");
+    return _guild;
   }
 
   get logChannel(): TextChannel {
-    return this.kanal("dtt-bot-log") as TextChannel;
+    return this.channel("dtt-bot-log") as TextChannel;
   }
 
   get freeBugMailLogChannel(): TextChannel {
-    return this.kanal("dtt-bugmail-logs") as TextChannel;
+    return this.channel("dtt-bugmail-logs") as TextChannel;
   }
 
-  get _emodzhi(): DTTEmojis {
-    return {
-      typing: "852637406334156800"
-    };
-  }
-
-  get kanaly(): DTTChannels {
-    return {
-      Information: "765620075737776218",
-      "read-me": "765620328511963176",
-      verification: "765621889682374656",
-      announcements: "765620353191903303",
-      General: "765620128356106271",
-      general: "765720809519316992",
-      "bot-commands": "765623545631735858",
-      starboard: "801239097058263061",
-      voice: "847280182997286932",
-      Feedback: "859648069176131584",
-      feedback: "875152317878505513",
-      "DT General": "803249681391026266",
-      a11y: "861691101563846707",
-      resources: "773631998970822657",
-      "bugmail-queue": "852581876030898176",
-      "bugmail-discussion": "852592316438020136",
-      "bugmailed-reports": "785830225665458227",
-      "Discord Updates": "765633727937380402",
-      "dtt-bot-log": "853235554375434270",
-      "dtt-bugmail-logs": "853243608828346409",
-      "invite-logs": "765676229478711366"
-    };
-  }
-
-  get roles(): DTTRoles {
-    return {
-      Admin: "765611993532334120",
-      "DTT Bot": "765730622302847037",
-      bargebot: "765675911432896574",
-      "Build Bot": "765633436554625045",
-      DUpdate: "765616358019825737",
-      starbot: "801238697672048691",
-      "DT Mod or BA": "832393264975970306",
-      "DT Staff": "776828300450201600",
-      Moderator: "815329929838198824",
-      DJ: "851574177198899200",
-      Muted: "815340396808503367",
-      "1st Place": "780624959059132426",
-      "2nd Place": "780624987332542465",
-      "3rd Place": "780625011605372928",
-      Tester: "765638424618074122",
-      "Alt Account": "799502317430767647",
-      "BW Contributor": "791022460454567947",
-      Bot: "765618889316892682",
-      "Free BugMail": "852589448070692947",
-      Android: "765617891415556106",
-      Desktop: "765617904665362472",
-      iOS: "765617920134742067",
-      DBug: "803250701168934913",
-      Boardless: "803327819001364500",
-      P0: "868094217958858752",
-      "Status Updates": "819294185206972416",
-      "Canary Updates": "765633934813823008",
-      "PTB Updates": "765633896544206848",
-      "Stable Updates": "765619042403745844",
-      "macOS El Capitan": "852473203623591936",
-      "macOS Sierra": "852473381974048819",
-      "macOS High Sierra": "852473425179049985",
-      "macOS Mojave": "852473455957114910",
-      "macOS Catalina": "852473484956401694",
-      "macOS Big Sur": "852473513552904202",
-      "macOS Monterey": "852473541956861952",
-      Linux: "766339902396301322",
-      "Windows 7": "852472935163625493",
-      "Windows 8": "852472977105747980",
-      "Windows 10": "852473007753527346",
-      "Windows 11": "858435618861875212",
-      iPhone: "766338561405485106",
-      iPod: "766338590337794080",
-      iPad: "766338608624828426",
-      "iOS 10": "852472437509455904",
-      "iOS 11": "852472612344823838",
-      "iOS 12": "852472632921292820",
-      "iOS 13": "852472643386343434",
-      "iOS 14": "852472652333711370",
-      "iOS 15": "852472663288578049",
-      "4-inch": "862457510920323105",
-      "Face ID": "862457464241520640",
-      "Apple Watch": "766338782273732649",
-      "Hardware Keyboard": "766338637368524820",
-      "Apple Pencil": "766337433712197642",
-      Pixel: "862456544293814302",
-      "Samsung Galaxy": "862456615323566090",
-      "Android 5": "852469985163214858",
-      "Android 6": "852471384738365480",
-      "Android 7": "852471462584385566",
-      "Android 8": "852471480495243265",
-      "Android 9": "852471492657938442",
-      "Android 10": "852471502418083840",
-      "Android 11": "852471514904920075",
-      "Android 12": "852471524829036544",
-      Chromebook: "806742949756796948",
-      "Touchscreen PC": "766339616944816179",
-      GDPR: "818960617972957195",
-      "Per-server Avatar": "874820745824452608",
-      Student: "862457751703519252",
-      Booster: "789692216880660561"
-    };
-  }
-
-  get modRoles(): (Role | null)[] {
+  get modRoles(): Role[] {
     return [
       this.role("Admin"),
       this.role("Moderator"),

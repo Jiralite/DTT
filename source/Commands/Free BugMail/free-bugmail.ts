@@ -18,7 +18,7 @@ export default class implements FreeBugMailCommand {
 
   async submit(interaction: CommandInteraction): Promise<void> {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
-    const bugmailQueue = DTT.kanal("bugmail-queue");
+    const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (bugmailQueue === null) {
       DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
@@ -84,7 +84,7 @@ export default class implements FreeBugMailCommand {
 
   edit(interaction: CommandInteraction): void {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
-    const bugmailQueue = DTT.kanal("bugmail-queue");
+    const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (bugmailQueue === null) {
       DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
@@ -173,7 +173,7 @@ export default class implements FreeBugMailCommand {
 
   complete(interaction: CommandInteraction): void {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` Slash Command.`;
-    const bugmailQueue = DTT.kanal("bugmail-queue");
+    const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (bugmailQueue === null) {
       DTT.freeBugMailLog(`${logText} Apparently, the bugmail-queue channel cannot be found.`);
