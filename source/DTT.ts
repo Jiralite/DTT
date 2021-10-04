@@ -86,11 +86,12 @@ DTT.on(Constants.Events.GUILD_MEMBER_UPDATE, (oldGuildmember, newGuildmember) =>
   if (oldGuildmember.pending === true && newGuildmember.pending === false) DTT.Verification.sendVerification(newGuildmember);
 });
 
-DTT.on(Constants.Events.INTERACTION_CREATE, interaction => {
+DTT.on(Constants.Events.INTERACTION_CREATE, async interaction => {
   if (interaction.guildId !== DTT.guild.id) return;
 
   if (interaction.isCommand()) {
-    const command = DTT.commands[interaction.commandName as CommandName];
+    const commandName = interaction.commandName;
+    const command = DTT.commands[commandName as CommandName];
 
     if (!command) {
       interaction.reply({
@@ -101,7 +102,25 @@ DTT.on(Constants.Events.INTERACTION_CREATE, interaction => {
       return;
     }
 
-    command.handle(interaction, interaction.options.getSubcommand(false));
+    try {
+      await command.handle(interaction, interaction.options.getSubcommand(false));
+    } catch (error) {
+      DTT.log(`Error running command "${commandName}".`, error);
+      const errorMessage = "An error was encountered. It's being tracked.";
+
+      if (interaction.deferred || interaction.replied) {
+        interaction.followUp({
+          content: errorMessage,
+          ephemeral: true
+        });
+      } else {
+        interaction.reply({
+          content: errorMessage,
+          ephemeral: true
+        });
+      }
+    }
+
     return;
   }
 
