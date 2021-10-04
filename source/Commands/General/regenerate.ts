@@ -1,5 +1,5 @@
 import { CommandInteraction, CommandStructure, Constants, GuildMember, Message, NewsChannel, RegenerateCommand, Snowflake, TextChannel } from "discord.js";
-import DTT from "../../Client/Client";
+import DTT from "../../Client/Client.js";
 
 export default class implements RegenerateCommand {
   readonly name = "regenerate";

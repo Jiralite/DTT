@@ -1,5 +1,5 @@
 import { ButtonInteraction, Constants, DiscordAPIError, GuildMember, Message, Snowflake, TextChannel, VerificationType } from "discord.js";
-import DTT from "./Client";
+import DTT from "./Client.js";
 
 export default class Verification {
   static sendVerification(guildMember: GuildMember): void {

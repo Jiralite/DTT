@@ -1,5 +1,5 @@
 import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, GuildMember, MessageActionRowOptions, MessageSelectOptionData, Role, RoleCategories, RolesCommand, SelectMenuInteraction, SubRoleCategories } from "discord.js";
-import DTT from "../../Client/Client";
+import DTT from "../../Client/Client.js";
 
 export default class implements RolesCommand {
   readonly name = "roles";

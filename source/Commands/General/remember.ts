@@ -1,5 +1,5 @@
 import { CommandInteraction, CommandStructure, Constants, RememberCommand } from "discord.js";
-import DTT from "../../Client/Client";
+import DTT from "../../Client/Client.js";
 
 export default class implements RememberCommand {
   readonly name = "remember";
