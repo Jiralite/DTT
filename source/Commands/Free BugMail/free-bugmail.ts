@@ -8,11 +8,11 @@ export default class implements FreeBugMailCommand {
   async handle(interaction: CommandInteraction, subcommand: string): Promise<void> {
     switch (subcommand) {
       case "submit":
-        return this.submit(interaction);
+        return await this.submit(interaction);
       case "edit":
-        return await Promise.resolve(this.edit(interaction));
+        return await this.edit(interaction);
       case "complete":
-        return await Promise.resolve(this.complete(interaction));
+        return await this.complete(interaction);
     }
   }
 
@@ -23,12 +23,10 @@ export default class implements FreeBugMailCommand {
     if (interaction.channelId !== bugmailQueue.id) {
       DTT.freeBugMailLog(`${logText} Wrong channel: ${interaction.channel}`);
 
-      interaction.reply({
+      return await interaction.reply({
         content: `Please use this command in ${bugmailQueue}.`,
         ephemeral: true
       });
-
-      return;
     }
 
     const text = interaction.options.getString("text");
@@ -45,12 +43,10 @@ export default class implements FreeBugMailCommand {
     if (text.length >= 1500) {
       DTT.freeBugMailLog(`${logText} Text too long (>= 1500 characters):\n\n${text}`);
 
-      interaction.reply({
+      return await interaction.reply({
         content: "That's way too long. Shorten it down and keep it concise!",
         ephemeral: true
       });
-
-      return;
     }
 
     const message = await interaction.deferReply({
