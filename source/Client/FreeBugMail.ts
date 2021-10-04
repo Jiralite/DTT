@@ -45,13 +45,14 @@ export default class FreeBugMail {
     this.state = "OPEN";
     this.mentionedTimeout();
     DTT.freeBugMails.set(insertId, this);
+    const me = await DTT.guild.members.fetch(DTT.user.id);
 
     await interaction.editReply({
       embeds: [
         {
           description: text,
           timestamp: Date.now(),
-          color: interaction.guild?.me?.displayColor ?? 0,
+          color: me.displayColor,
           footer: {
             text: `#${this.No}`
           },

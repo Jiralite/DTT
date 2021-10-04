@@ -1,4 +1,4 @@
-import { CommandInteraction, CommandStructure, Constants, GuildMember, Message, NewsChannel, RegenerateCommand, Snowflake, TextChannel } from "discord.js";
+import { CommandInteraction, CommandStructure, Constants, Message, NewsChannel, RegenerateCommand, Snowflake, TextChannel } from "discord.js";
 import DTT from "../../Client/Client.js";
 
 export default class implements RegenerateCommand {
@@ -11,15 +11,6 @@ export default class implements RegenerateCommand {
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
-    if (interaction.guild === null) {
-      DTT.log(`Somehow, the \`/${this.name}\` slash command was used in a non-guild environment?`, interaction);
-
-      return await interaction.reply({
-        content: "Where am I? Who am I? ...Who are you?\nDo you know who I am? Can you help me find my path? Is this a journey I have to take by myself?",
-        ephemeral: true
-      });
-    }
-
     const channel = interaction.channel;
 
     if (!(channel instanceof TextChannel || channel instanceof NewsChannel)) {
@@ -29,7 +20,9 @@ export default class implements RegenerateCommand {
       });
     }
 
-    if (!channel.permissionsFor(interaction.guild.me as GuildMember).has([
+    const me = await DTT.guild.members.fetch(DTT.user.id);
+
+    if (!channel.permissionsFor(me).has([
       "VIEW_CHANNEL",
       "SEND_MESSAGES"
     ])) {
