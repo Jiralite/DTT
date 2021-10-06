@@ -3,7 +3,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Client, ClientOptions, Collection, Command, CommandName, Constants, Guild, GuildChannel, GuildEmoji, ImageName, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool } from "mariadb";
-import { BBAGuildId, channels, emojis, guildId, roles } from "../Utility/Constants.js";
+import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 import FreeBugMail from "./FreeBugMail.js";
 import Invite from "./Invite.js";
@@ -127,12 +127,6 @@ class DTT <T extends boolean> extends Client<T> {
   get guild(): Guild {
     const _guild = this.guilds.resolve(guildId);
     if (_guild === null) throw new ReferenceError("DTT guild cannot be found.");
-    return _guild;
-  }
-
-  get BBAGuild(): Guild {
-    const _guild = this.guilds.resolve(BBAGuildId);
-    if (_guild === null) throw new ReferenceError("BBA guild cannot be found.");
     return _guild;
   }
 

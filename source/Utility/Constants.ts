@@ -1,5 +1,4 @@
 export const guildId = "765611756441436160";
-export const BBAGuildId = "391356859518287895";
 
 export const channels = {
   Information: "765620075737776218",

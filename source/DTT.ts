@@ -1,5 +1,5 @@
 import DTT from "./Client/Client.js";
-import { CommandName, Constants, DiscordAPIError, Formatters, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
+import { CommandName, Constants, Formatters, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import { getLastCommit } from "git-last-commit";
 import gitRemoteOriginUrl from "git-remote-origin-url";
 
@@ -56,50 +56,6 @@ DTT.once(Constants.Events.CLIENT_READY, async (): Promise<void> => {
       ]
     });
   });
-});
-
-DTT.on(Constants.Events.GUILD_MEMBER_ADD, async guildMember => {
-  if (guildMember.guild.id !== DTT.BBAGuild.id) return;
-
-  try {
-    const tester = DTT.role("Tester");
-    const DTTGuildMember = await DTT.guild.members.fetch(guildMember);
-    const role = guildMember.guild.roles.resolve("816059251045695558") as Role; // Access role in the Bug Bombing Area guild
-    if (DTTGuildMember.roles.cache.has(tester.id)) await guildMember.roles.add(role);
-  } catch (error) {
-    if (error instanceof DiscordAPIError) {
-      if (error.code === Constants.APIErrors.UNKNOWN_MEMBER) {
-        DTT.log(`${guildMember} joined ${guildMember.guild.name} but was not found in this server.`, error);
-        return;
-      }
-
-      if (error.code === Constants.APIErrors.MISSING_PERMISSIONS) {
-        DTT.log(`${guildMember} joined ${guildMember.guild.name} but lacked permissions to authorise them.`, error);
-        return;
-      }
-    }
-
-    DTT.log(`An error occured whilst authorising ${guildMember} in ${guildMember.guild.name}.`, error);
-  }
-});
-
-DTT.on(Constants.Events.GUILD_MEMBER_REMOVE, async guildMember => {
-  if (guildMember.guild.id !== DTT.guild.id) return;
-
-  try {
-    await DTT.BBAGuild.members.fetch(guildMember.id).then(BBAGuildMember => BBAGuildMember.kick(`No longer in ${DTT.guild.name}.`));
-  } catch (error) {
-    if (error instanceof DiscordAPIError) {
-      if (error.code === Constants.APIErrors.UNKNOWN_MEMBER) return;
-
-      if (error.code === Constants.APIErrors.MISSING_PERMISSIONS) {
-        DTT.log(`${guildMember} left ${guildMember.guild.name} but lacked permissions to remove them from ${DTT.BBAGuild.name}.`, error);
-        return;
-      }
-    }
-
-    DTT.log(`An error occured whilst removing ${guildMember} from ${DTT.BBAGuild.name}.`, error);
-  }
 });
 
 DTT.on(Constants.Events.GUILD_MEMBER_UPDATE, (oldGuildmember, newGuildmember) => {
