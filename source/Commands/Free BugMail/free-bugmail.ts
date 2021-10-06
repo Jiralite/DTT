@@ -168,12 +168,12 @@ export default class implements FreeBugMailCommand {
         type: this.type,
         options: [
           {
-            type: "SUB_COMMAND",
+            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
             name: "complete",
             description: "Completes a Free BugMail request.",
             options: [
               {
-                type: "INTEGER",
+                type: Constants.ApplicationCommandOptionTypes.INTEGER,
                 name: "number",
                 description: "The Free BugMail request # to complete.",
                 required: true,
@@ -182,18 +182,18 @@ export default class implements FreeBugMailCommand {
             ]
           },
           {
-            type: "SUB_COMMAND",
+            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
             name: "edit",
             description: "Edits a Free BugMail request.",
             options: [
               {
-                type: "INTEGER",
+                type: Constants.ApplicationCommandOptionTypes.INTEGER,
                 name: "number",
                 description: "The Free BugMail request # to edit.",
                 required: true
               },
               {
-                type: "STRING",
+                type: Constants.ApplicationCommandOptionTypes.STRING,
                 name: "text",
                 description: "The new content of the Free BugMail request.",
                 required: true
@@ -201,12 +201,12 @@ export default class implements FreeBugMailCommand {
             ]
           },
           {
-            type: "SUB_COMMAND",
+            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
             name: "submit",
             description: "Submits a Free BugMail request.",
             options: [
               {
-                type: "STRING",
+                type: Constants.ApplicationCommandOptionTypes.STRING,
                 name: "text",
                 description: "The text to submit.",
                 required: true,
@@ -220,7 +220,7 @@ export default class implements FreeBugMailCommand {
       permissions: [
         {
           id: DTT.role("Tester").id,
-          type: "ROLE",
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
           permission: true
         }
       ]

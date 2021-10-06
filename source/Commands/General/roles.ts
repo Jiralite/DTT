@@ -620,7 +620,7 @@ export default class implements RolesCommand {
       permissions: [
         {
           id: DTT.role("Tester").id,
-          type: "ROLE",
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
           permission: true
         }
       ]

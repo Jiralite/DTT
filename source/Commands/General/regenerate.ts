@@ -131,7 +131,7 @@ export default class implements RegenerateCommand {
         type: this.type,
         options: [
           {
-            type: "STRING",
+            type: Constants.ApplicationCommandOptionTypes.STRING,
             name: "channel_name",
             description: "Name of the channel to regenerate.",
             required: true,
@@ -156,7 +156,7 @@ export default class implements RegenerateCommand {
       permissions: [
         {
           id: DTT.role("Admin").id,
-          type: "ROLE",
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
           permission: true
         }
       ]

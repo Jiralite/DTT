@@ -53,7 +53,7 @@ export default class implements InviteCommand {
       permissions: [
         {
           id: DTT.role("Tester").id,
-          type: "ROLE",
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
           permission: true
         }
       ]
