@@ -34,7 +34,7 @@ async function collectInvites(): Promise<void> {
 DTT.once(Constants.Events.CLIENT_READY, async (): Promise<void> => {
   await Maria();
 
-  getLastCommit(async (error, {shortHash, subject, author: { name }, branch }) => {
+  getLastCommit(async (error, { shortHash, subject, author: { name }, branch }) => {
     const url = await gitRemoteOriginUrl().then(repositoryURL => {
       if (repositoryURL.startsWith("git@github.com:")) repositoryURL = repositoryURL.replace("git@github.com:", "https://github.com/");
       return repositoryURL.slice(0, -4);
