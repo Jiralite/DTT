@@ -412,12 +412,10 @@ export default class FreeBugMail {
     if (!guildMember.roles.cache.hasAny(...DTT.modRoles.map(modRole => modRole.id))) {
       DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
 
-      interaction.reply({
+      return await interaction.reply({
         content: "You do not have permission to perform this interaction.",
         ephemeral: true
       });
-
-      return;
     }
 
     try {
