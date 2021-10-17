@@ -1,4 +1,4 @@
-import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, GuildMember, MessageActionRowOptions, MessageSelectOptionData, RoleCategories, RolesCommand, RoleStructure, SelectMenuInteraction, SubRoleCategories } from "discord.js";
+import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, GuildMember, MessageActionRow, MessageButton, MessageSelectMenu, MessageSelectOptionData, RoleCategories, RolesCommand, RoleStructure, SelectMenuInteraction, SubRoleCategories } from "discord.js";
 import DTT from "../../Client/Client.js";
 
 export default class implements RolesCommand {
@@ -24,37 +24,34 @@ export default class implements RolesCommand {
 
   async execute(interaction: ButtonInteraction | CommandInteraction): Promise<void> {
     const content = "Choose a category to self-assign roles from!";
+    const actionRow = new MessageActionRow();
+    const selectMenu = new MessageSelectMenu();
 
-    const components: MessageActionRowOptions[] = [
-      {
-        type: "ACTION_ROW",
-        components: [
-          {
-            type: "SELECT_MENU",
-            customId: "SELFROLE_CATEGORY",
-            placeholder: "Choose a category!",
-            minValues: 1,
-            maxValues: 1,
-            options: this.categories.map(category => ({
-              label: category,
-              value: category,
-              default: false
-            })),
-            disabled: false
-          }
-        ]
-      }
-    ];
+    selectMenu.setOptions(this.categories.map(category => ({
+      label: category,
+      value: category,
+      default: false
+    })));
+
+    selectMenu.setCustomId("SELFROLE_CATEGORY");
+    selectMenu.setMaxValues(1);
+    selectMenu.setMinValues(1);
+    selectMenu.setPlaceholder("Choose a category!");
+    actionRow.addComponents(selectMenu);
 
     if (interaction instanceof ButtonInteraction) {
       await interaction.update({
         content,
-        components
+        components: [
+          actionRow
+        ]
       });
     } else {
       await interaction.reply({
         content,
-        components,
+        components: [
+          actionRow
+        ],
         ephemeral: true
       });
     }
@@ -62,28 +59,23 @@ export default class implements RolesCommand {
 
   async categoryInteraction(interaction: SelectMenuInteraction, category: RoleCategories): Promise<void> {
     const components = this.category(interaction.member as GuildMember, category);
+    const actionRow = new MessageActionRow();
+    const button = new MessageButton();
+    button.setCustomId("SELFROLE_BACK");
+    button.setLabel("Back");
+    button.setStyle(Constants.MessageButtonStyles.PRIMARY);
+    actionRow.addComponents(button);
 
     await interaction.update({
       content: "Self-assign roles, or go back!",
       components: [
         ...components,
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: "Back",
-              customId: "SELFROLE_BACK",
-              style: "PRIMARY",
-              disabled: false
-            }
-          ]
-        }
+        actionRow
       ]
     });
   }
 
-  category(guildMember: GuildMember, category: RoleCategories): MessageActionRowOptions[] {
+  category(guildMember: GuildMember, category: RoleCategories): MessageActionRow[] {
     const options = (componentOptions: RoleStructure[]): MessageSelectOptionData[] => componentOptions.map(({ role, emoji }) => ({
       label: role.name,
       value: role.id,
@@ -92,223 +84,180 @@ export default class implements RolesCommand {
     }));
 
     if (category === "macOS") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.macOSVersionRoles));
+      selectMenu.setCustomId("SELFROLE-macOSVersionRoles");
+      selectMenu.setMaxValues(this.macOSVersionRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign macOS version roles!");
+      actionRow.addComponents(selectMenu);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-macOSVersionRoles",
-              placeholder: "Assign macOS version roles!",
-              minValues: 0,
-              maxValues: this.macOSVersionRoles.length,
-              options: options(this.macOSVersionRoles)
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
     if (category === "Linux") {
-      const emoji = this.linux.emoji;
+      const actionRow = new MessageActionRow();
+      const button = new MessageButton();
+      button.setCustomId(`SELFROLE-${this.linux.role.id}`);
+      button.setEmoji(this.linux.emoji);
+      button.setLabel(this.linux.role.name);
+      button.setStyle(Constants.MessageButtonStyles.PRIMARY);
+      actionRow.addComponents(button);
 
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: this.linux.role.name,
-              customId: `SELFROLE-${this.linux.role.id}`,
-              style: "PRIMARY",
-              emoji: typeof emoji === "string" ? emoji : emoji.id
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
     if (category === "Windows") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.windowsVersionRoles));
+      selectMenu.setCustomId("SELFROLE-windowsVersionRoles");
+      selectMenu.setMaxValues(this.windowsVersionRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign Windows version roles!");
+      actionRow.addComponents(selectMenu);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-windowsVersionRoles",
-              placeholder: "Assign Windows version roles!",
-              minValues: 0,
-              maxValues: this.windowsVersionRoles.length,
-              options: options(this.windowsVersionRoles)
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
     if (category === "Android") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.androidDeviceRoles));
+      selectMenu.setCustomId("SELFROLE-androidDeviceRoles");
+      selectMenu.setMaxValues(this.androidDeviceRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign Android device roles!");
+      actionRow.addComponents(selectMenu);
+
+      const actionRow2 = new MessageActionRow();
+      const selectMenu2 = new MessageSelectMenu();
+      selectMenu2.addOptions(options(this.androidVersionRoles));
+      selectMenu2.setCustomId("SELFROLE-androidVersionRoles");
+      selectMenu2.setMaxValues(this.androidVersionRoles.length);
+      selectMenu2.setMinValues(0);
+      selectMenu2.setPlaceholder("Assign Android version roles!");
+      actionRow2.addComponents(selectMenu2);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-androidDeviceRoles",
-              placeholder: "Assign Android device roles!",
-              minValues: 0,
-              maxValues: this.androidDeviceRoles.length,
-              options: options(this.androidDeviceRoles)
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-androidVersionRoles",
-              placeholder: "Assign Android version roles!",
-              minValues: 0,
-              maxValues: this.androidVersionRoles.length,
-              options: options(this.androidVersionRoles)
-            }
-          ]
-        }
+        actionRow,
+        actionRow2
       ];
     }
 
     if (category === "iOS") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.iOSDeviceRoles));
+      selectMenu.setCustomId("SELFROLE-iOSDeviceRoles");
+      selectMenu.setMaxValues(this.iOSDeviceRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign iOS device roles!");
+      actionRow.addComponents(selectMenu);
+
+      const actionRow2 = new MessageActionRow();
+      const selectMenu2 = new MessageSelectMenu();
+      selectMenu2.addOptions(options(this.iOSVersionRoles));
+      selectMenu2.setCustomId("SELFROLE-iOSVersionRoles");
+      selectMenu2.setMaxValues(this.iOSVersionRoles.length);
+      selectMenu2.setMinValues(0);
+      selectMenu2.setPlaceholder("Assign iOS version roles!");
+      actionRow2.addComponents(selectMenu2);
+
+      const actionRow3 = new MessageActionRow();
+      const selectMenu3 = new MessageSelectMenu();
+      selectMenu3.addOptions(options(this.iOSMiscellaneousRoles));
+      selectMenu3.setCustomId("SELFROLE-iOSMiscellaneousRoles");
+      selectMenu3.setMaxValues(this.iOSMiscellaneousRoles.length);
+      selectMenu3.setMinValues(0);
+      selectMenu3.setPlaceholder("Assign miscellanous iOS info!");
+      actionRow3.addComponents(selectMenu3);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-iOSDeviceRoles",
-              placeholder: "Assign iOS device roles!",
-              minValues: 0,
-              maxValues: this.iOSDeviceRoles.length,
-              options: options(this.iOSDeviceRoles)
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-iOSVersionRoles",
-              placeholder: "Assign iOS version roles!",
-              minValues: 0,
-              maxValues: this.iOSVersionRoles.length,
-              options: options(this.iOSVersionRoles)
-            }
-          ]
-        },
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-iOSMiscellaneousRoles",
-              placeholder: "Assign miscellanous iOS info!",
-              minValues: 0,
-              maxValues: this.iOSMiscellaneousRoles.length,
-              options: options(this.iOSMiscellaneousRoles)
-            }
-          ]
-        }
+        actionRow,
+        actionRow2,
+        actionRow3
       ];
     }
 
     if (category === "Chrome OS") {
-      const emoji = this.chromebook.emoji;
+      const actionRow = new MessageActionRow();
+      const button = new MessageButton();
+      button.setCustomId(`SELFROLE-${this.chromebook.role.id}`);
+      button.setEmoji(this.chromebook.emoji);
+      button.setLabel(this.chromebook.role.name);
+      button.setStyle(Constants.MessageButtonStyles.PRIMARY);
+      actionRow.addComponents(button);
 
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "BUTTON",
-              label: this.chromebook.role.name,
-              customId: `SELFROLE-${this.chromebook.role.id}`,
-              style: "PRIMARY",
-              emoji: typeof emoji === "string" ? emoji : emoji.id
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
     if (category === "Miscellaneous") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.miscellaneousRoles));
+      selectMenu.setCustomId("SELFROLE-miscellaneousRoles");
+      selectMenu.setMaxValues(this.miscellaneousRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign miscellanous roles!");
+      actionRow.addComponents(selectMenu);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-miscellaneousRoles",
-              placeholder: "Assign miscellanous roles!",
-              minValues: 0,
-              maxValues: this.miscellaneousRoles.length,
-              options: options(this.miscellaneousRoles)
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
     if (category === "Experiments") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.experimentRoles));
+      selectMenu.setCustomId("SELFROLE-experimentRoles");
+      selectMenu.setMaxValues(this.experimentRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign experiment roles!");
+      actionRow.addComponents(selectMenu);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-experimentRoles",
-              placeholder: "Assign Experiment roles!",
-              minValues: 0,
-              maxValues: this.experimentRoles.length,
-              options: options(this.experimentRoles)
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
     if (category === "Discord Updates") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.discordUpdatesRoles));
+      selectMenu.setCustomId("SELFROLE-discordUpdatesRoles");
+      selectMenu.setMaxValues(this.discordUpdatesRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign Discord updates roles!");
+      actionRow.addComponents(selectMenu);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-discordUpdatesRoles",
-              placeholder: "Assign Discord updates roles!",
-              minValues: 0,
-              maxValues: this.discordUpdatesRoles.length,
-              options: options(this.discordUpdatesRoles)
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
     if (category === "Phabricator Updates") {
+      const actionRow = new MessageActionRow();
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.phabricatorUpdatesRoles));
+      selectMenu.setCustomId("SELFROLE-phabricatorUpdatesRoles");
+      selectMenu.setMaxValues(this.phabricatorUpdatesRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign Phabricator roles!");
+      actionRow.addComponents(selectMenu);
+
       return [
-        {
-          type: "ACTION_ROW",
-          components: [
-            {
-              type: "SELECT_MENU",
-              customId: "SELFROLE-phabricatorUpdatesRoles",
-              placeholder: "Assign Phabricator roles!",
-              minValues: 0,
-              maxValues: this.phabricatorUpdatesRoles.length,
-              options: options(this.phabricatorUpdatesRoles)
-            }
-          ]
-        }
+        actionRow
       ];
     }
 
