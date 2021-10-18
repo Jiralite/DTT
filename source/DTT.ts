@@ -1,7 +1,5 @@
 import DTT from "./Client/Client.js";
 import { CommandName, Constants, Formatters, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
-import { getLastCommit } from "git-last-commit";
-import gitRemoteOriginUrl from "git-remote-origin-url";
 
 async function Maria(): Promise<void> {
   try {
@@ -33,28 +31,31 @@ async function collectInvites(): Promise<void> {
 
 DTT.once(Constants.Events.CLIENT_READY, async (): Promise<void> => {
   await Maria();
+  const commitInformation = process.env.COMMIT_INFORMATION;
+  const defaultReturnText = "Selflessly slaving away.";
+  if (!commitInformation) return DTT.log(defaultReturnText);
+  const commitInformationSplit = commitInformation.split("\n");
+  const commitSplit = /commit ([A-Z\d]+) \([A-Z]+ -> (.+?),/i.exec(commitInformationSplit[0]);
+  if (!commitSplit) return DTT.log(defaultReturnText);
+  const baseURL = "https://github.com/";
+  const repositoryURL = `${baseURL}discord-testers-testers/DTT/`;
+  const hash = commitSplit[1];
+  const branch = commitSplit[2];
+  const smallHash = hash.slice(0, 7);
+  const author = commitInformationSplit[1].slice(8, commitInformationSplit[1].indexOf("<") - 1);
+  const message = commitInformationSplit[4].trim();
+  const authorURL = baseURL + author;
+  const branchURL = `${repositoryURL}tree/${branch}`;
+  const commitURL = `${repositoryURL}commit/${hash}`;
 
-  getLastCommit(async (error, { shortHash, subject, author: { name }, branch }) => {
-    const url = await gitRemoteOriginUrl().then(repositoryURL => {
-      if (repositoryURL.startsWith("git@github.com:")) repositoryURL = repositoryURL.replace("git@github.com:", "https://github.com/");
-      return repositoryURL.slice(0, -4);
-    }).catch(() => null);
-
-    if (error || url === null) {
-      if (error) DTT.consoleLog(error);
-      if (url) DTT.consoleLog(url);
-      process.exit(1);
-    }
-
-    await DTT.logChannel.send({
-      embeds: [
-        {
-          description: `Running [\`${shortHash}\`](${url}/commit/${shortHash}) on [\`${branch}\`](${url}/tree/${branch}) at ${Formatters.time(Math.floor(Date.now() / 1000), Formatters.TimestampStyles.LongDateTime)}.\n${subject} - [${name}](https://github.com/${name})`,
-          timestamp: Date.now(),
-          color: (await DTT.guild.members.fetch(DTT.user.id)).displayColor
-        }
-      ]
-    });
+  await DTT.logChannel.send({
+    embeds: [
+      {
+        description: `Running [\`${smallHash}\`](${commitURL}) on [\`${branch}\`](${branchURL}) at ${Formatters.time(Math.floor(Date.now() / 1000))}.\n${message} - [${author}](${authorURL})`,
+        timestamp: Date.now(),
+        color: (await DTT.guild.members.fetch(DTT.user.id)).displayColor
+      }
+    ]
   });
 });
 

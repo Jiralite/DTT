@@ -3,13 +3,11 @@
   "scripts": {
     "test": "npx eslint . && tsc",
     "prestart": "npm install && tsc",
-    "start": "node --require dotenv/config sourceJS/DTT.js"
+    "start": "COMMIT_INFORMATION=$(git log -1 --decorate) node --require dotenv/config sourceJS/DTT.js"
   },
   "dependencies": {
     "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",
-    "git-last-commit": "^1.0.1",
-    "git-remote-origin-url": "^4.0.0",
     "mariadb": "^2.5.4"
   },
   "devDependencies": {
