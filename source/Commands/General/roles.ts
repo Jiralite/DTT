@@ -13,7 +13,7 @@ export default class implements RolesCommand {
     "iOS",
     "Chrome OS",
     "Miscellaneous",
-    "Experiments",
+    // "Experiments",
     "Discord Updates",
     "Phabricator Updates"
   ];
