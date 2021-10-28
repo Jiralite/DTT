@@ -128,7 +128,7 @@ export const roles = {
   Chromebook: "806742949756796948",
   "Touchscreen PC": "766339616944816179",
   GDPR: "818960617972957195",
-  "Per-server Avatar": "874820745824452608",
-  Student: "862457751703519252",
+  "Server Boost Progress": "903315184418951228",
+  "Video Background": "903315114063704086",
   Booster: "789692216880660561"
 };

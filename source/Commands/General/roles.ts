@@ -13,7 +13,7 @@ export default class implements RolesCommand {
     "iOS",
     "Chrome OS",
     "Miscellaneous",
-    // "Experiments",
+    "Experiments",
     "Discord Updates",
     "Phabricator Updates"
   ];
@@ -498,11 +498,11 @@ export default class implements RolesCommand {
   get experimentRoles(): RoleStructure[] {
     return [
       {
-        role: DTT.role("Per-server Avatar"),
+        role: DTT.role("Server Boost Progress"),
         emoji: DTT.emoji("discord")
       },
       {
-        role: DTT.role("Student"),
+        role: DTT.role("Video Background"),
         emoji: DTT.emoji("discord")
       }
     ];
