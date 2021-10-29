@@ -14,7 +14,7 @@ export const channels = {
   feedback: "875152317878505513",
   "DT General": "803249681391026266",
   a11y: "861691101563846707",
-  resources: "773631998970822657",
+  resources: "877186480290791475",
   "bugmail-queue": "852581876030898176",
   "bugmail-discussion": "852592316438020136",
   "bugmailed-reports": "785830225665458227",
