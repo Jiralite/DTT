@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "test": "npx eslint . && tsc",
-    "prestart": "npm install && tsc",
+    "prestart": "npm ci && tsc",
     "start": "COMMIT_INFORMATION=$(git log -1 --decorate) node --require dotenv/config sourceJS/DTT.js"
   },
   "dependencies": {
