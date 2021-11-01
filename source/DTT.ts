@@ -173,14 +173,10 @@ DTT.on(Constants.Events.INTERACTION_CREATE, async interaction => {
 
 DTT.on(Constants.Events.INVITE_DELETE, invite => DTT.invites.find(({ code }) => code === invite.code)?.remove());
 
-DTT.on(Constants.Events.MESSAGE_CREATE, message => {
-  if (message.author.bot || message.channel.type === "DM") return;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const guildMember = message.member!;
-
-  if (message.channel.id === DTT.channel("bugmail-queue").id) {
-    if (!message.channel.permissionsFor(guildMember).has("MANAGE_MESSAGES") && message.author.id !== DTT.user.id) message.delete();
-  }
+DTT.on(Constants.Events.MESSAGE_CREATE, async message => {
+  if (message.author.bot || !message.inGuild()) return;
+  const guildMember = await DTT.guild.members.fetch(message.author.id);
+  if (message.channel.id === DTT.channel("bugmail-queue").id && !message.channel.permissionsFor(guildMember).has("MANAGE_MESSAGES")) message.delete();
 });
 
 DTT.on(Constants.Events.MESSAGE_DELETE, message => {
