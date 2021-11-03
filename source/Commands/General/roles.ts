@@ -504,6 +504,10 @@ export default class implements RolesCommand {
       {
         role: DTT.role("Video Background"),
         emoji: DTT.emoji("discord")
+      },
+      {
+        role: DTT.role("Multi-File Upload"),
+        emoji: DTT.emoji("discord")
       }
     ];
   }
