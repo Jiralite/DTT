@@ -1,24 +1,12 @@
 export const guildId = "765611756441436160";
 
 export const channels = {
-  Information: "765620075737776218",
   "read-me": "765620328511963176",
   verification: "765621889682374656",
-  announcements: "765620353191903303",
-  General: "765620128356106271",
   general: "765720809519316992",
-  "bot-commands": "765623545631735858",
-  starboard: "801239097058263061",
-  voice: "847280182997286932",
-  Feedback: "859648069176131584",
-  feedback: "875152317878505513",
-  "DT General": "803249681391026266",
-  a11y: "861691101563846707",
-  resources: "877186480290791475",
   "bugmail-queue": "852581876030898176",
   "bugmail-discussion": "852592316438020136",
   "bugmailed-reports": "785830225665458227",
-  "Discord Updates": "765633727937380402",
   "dtt-bot-log": "853235554375434270",
   "dtt-bugmail-logs": "853243608828346409",
   "invite-logs": "765676229478711366"
@@ -62,18 +50,10 @@ export const emojis = {
 export const roles = {
   Admin: "765611993532334120",
   "DTT Bot": "765730622302847037",
-  bargebot: "765675911432896574",
-  "Build Bot": "765633436554625045",
   DUpdate: "765616358019825737",
-  starbot: "801238697672048691",
   "DT Mod or BA": "832393264975970306",
   "DT Staff": "776828300450201600",
   Moderator: "815329929838198824",
-  DJ: "851574177198899200",
-  Muted: "815340396808503367",
-  "1st Place": "780624959059132426",
-  "2nd Place": "780624987332542465",
-  "3rd Place": "780625011605372928",
   Tester: "765638424618074122",
   "Alt Account": "799502317430767647",
   "BW Contributor": "791022460454567947",
@@ -129,6 +109,5 @@ export const roles = {
   "Touchscreen PC": "766339616944816179",
   GDPR: "818960617972957195",
   "Server Boost Progress": "903315184418951228",
-  "Video Background": "903315114063704086",
-  Booster: "789692216880660561"
+  "Video Background": "903315114063704086"
 };
