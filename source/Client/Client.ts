@@ -88,7 +88,7 @@ class DTT <T extends boolean> extends Client<T> {
   async applyCommands(): Promise<void> {
     try {
       const applicationCommands = await this.guild.commands.set(Object.values(this.commands).map(({ commandData: { applicationCommandData } }) => applicationCommandData));
-      this.consoleLog(applicationCommands.map(({ name }) => `Set ${name} as an application command.`).join("\n"));
+      this.consoleLog(applicationCommands.map(({ name, type }) => `Set ${name} as an ${type} application command.`).join("\n"));
 
       const applicationCommandsPermissions = await this.guild.commands.permissions.set({
         fullPermissions: applicationCommands.map(({ id, name }) => ({
