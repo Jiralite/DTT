@@ -1,10 +1,32 @@
-import { Formatters } from "discord.js";
+import { Formatters, MessageEmbed, TextChannel } from "discord.js";
+import fetch from "node-fetch";
 import DTT from "../Client/Client.js";
 
 const commitInformation = process.env.COMMIT_INFORMATION;
 const defaultReturnText = "Selflessly slaving away.";
 const baseURL = "https://github.com/";
 const repositoryURL = `${baseURL}discord-testers-testers/DTT/`;
+
+const allowedKeywords = [
+  "broken",
+  "bug",
+  "bugged",
+  "bugged",
+  "canary",
+  "crash",
+  "does not work",
+  "doesn't work",
+  "doesnt work",
+  "freeze",
+  "frozen",
+  "glitch",
+  "glitched",
+  "hang",
+  "macos",
+  "ptb",
+  "stable",
+  "windows"
+];
 
 async function Maria(): Promise<void> {
   try {
@@ -58,4 +80,71 @@ export default async (): Promise<void> => {
       }
     ]
   });
+
+  fetchRedditPosts();
 };
+
+interface RawRedditDataChildrenDataResponse {
+  selftext: string;
+  title: string;
+  subreddit_name_prefixed: string;
+  over_18: boolean;
+  id: string;
+  author: string;
+  created_utc: number;
+}
+
+interface RawRedditDataChildrenResponse {
+  kind: string;
+  data: RawRedditDataChildrenDataResponse;
+}
+
+interface RawRedditDataResponse {
+  after: string;
+  dist: number;
+  modhash: string;
+  geo_filter: string;
+  children: RawRedditDataChildrenResponse[];
+}
+
+interface RawRedditResponse {
+  kind: string;
+  data: RawRedditDataResponse;
+}
+
+async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)) {
+  try {
+    const json = await fetch("https://www.reddit.com/r/discordapp/new.json").then(response => response.json()) as RawRedditResponse;
+    const posts = json.data.children;
+    const displayColor = (await DTT.guild.members.fetch(DTT.user.id)).displayColor;
+
+    const data = posts.filter(({ data: { selftext, over_18, created_utc } }) => {
+      if (timestamp > created_utc || over_18) return false;
+      return allowedKeywords.some(keyword => keyword.includes(selftext.toLowerCase()));
+    }).map(({ data }) => {
+      const embed = new MessageEmbed();
+      embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
+      embed.setColor(displayColor);
+      embed.setDescription(data.selftext.length > 4096 ? `${data.selftext.slice(0, 4093)}...` : data.selftext);
+      embed.setFooter(data.subreddit_name_prefixed);
+      embed.setTimestamp(data.created_utc * 1000);
+      embed.setTitle(data.title.length > 256 ? `${data.title.slice(0, 253)}...` : data.title);
+      embed.setURL(`https://redd.it/${data.id}`);
+      return embed;
+    });
+
+    if (data.length > 0) {
+      for (let No = 0; No < data.length; No += 10) {
+        await (DTT.channel("reddit") as TextChannel).send({
+          embeds: data.slice(No, No + 10)
+        });
+      }
+
+      timestamp = posts[0].data.created_utc;
+    }
+  } catch (error) {
+    DTT.log("Error during fetchRedditPosts()", error);
+  }
+
+  setTimeout(() => fetchRedditPosts(timestamp), 600000); // 10 minutes
+}

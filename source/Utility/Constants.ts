@@ -7,6 +7,7 @@ export const channels = {
   "bugmail-queue": "852581876030898176",
   "bugmail-discussion": "852592316438020136",
   "bugmailed-reports": "785830225665458227",
+  reddit: "906261731922309170",
   "dtt-bot-log": "853235554375434270",
   "dtt-bugmail-logs": "853243608828346409",
   "invite-logs": "765676229478711366"
