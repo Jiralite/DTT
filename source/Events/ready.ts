@@ -118,9 +118,9 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)) {
     const posts = json.data.children;
     const displayColor = (await DTT.guild.members.fetch(DTT.user.id)).displayColor;
 
-    const data = posts.filter(({ data: { selftext, over_18, created_utc } }) => {
+    const data = posts.filter(({ data: { selftext, title, over_18, created_utc } }) => {
       if (timestamp > created_utc || over_18) return false;
-      return allowedKeywords.some(keyword => keyword.includes(selftext.toLowerCase()));
+      return allowedKeywords.some(keyword => keyword.includes((selftext || title).toLowerCase()));
     }).map(({ data }) => {
       const embed = new MessageEmbed();
       embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
