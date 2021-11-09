@@ -1,9 +1,10 @@
 {
+  "private": true,
   "type": "module",
   "scripts": {
-    "test": "npx eslint . && tsc",
     "prestart": "npm install && tsc",
-    "start": "COMMIT_INFORMATION=$(git log -1 --decorate) node --require dotenv/config sourceJS/DTT.js"
+    "start": "COMMIT_INFORMATION=$(git log -1 --decorate) node --require dotenv/config sourceJS/DTT.js",
+    "test": "npx eslint . && tsc"
   },
   "dependencies": {
     "discord.js": "^13.3.1",
@@ -11,10 +12,9 @@
     "mariadb": "^2.5.5"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "eslint": "^8.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "eslint": "^8.2.0",
     "typescript": "^4.4.4"
-  },
-  "private": true
+  }
 }
