@@ -27,6 +27,7 @@ const allowedKeywords = [
   "glitching",
   "hang",
   "hanging",
+  "hangs",
   "macos",
   "ptb",
   "stable",
