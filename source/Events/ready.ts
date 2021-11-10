@@ -34,6 +34,7 @@ const allowedKeywords = [
   "macos",
   "ptb",
   "stable",
+  "testflight",
   "windows"
 ];
 
