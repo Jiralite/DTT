@@ -120,7 +120,7 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)) {
 
     const data = posts.filter(({ data: { selftext, title, over_18, created_utc } }) => {
       if (timestamp > created_utc || over_18) return false;
-      return allowedKeywords.some(keyword => keyword.includes((selftext || title).toLowerCase()));
+      return allowedKeywords.some(keyword => (selftext || title).toLowerCase().includes(keyword));
     }).map(({ data }) => {
       const embed = new MessageEmbed();
       embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
