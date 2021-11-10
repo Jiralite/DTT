@@ -119,7 +119,7 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)) {
     const displayColor = (await DTT.guild.members.fetch(DTT.user.id)).displayColor;
 
     const data = posts.filter(({ data: { selftext, title, over_18, created_utc } }) => {
-      if (timestamp > created_utc || over_18) return false;
+      if (timestamp >= created_utc || over_18) return false;
       return allowedKeywords.some(keyword => (selftext || title).toLowerCase().includes(keyword));
     }).map(({ data }) => {
       const embed = new MessageEmbed();
