@@ -112,7 +112,7 @@ interface RawRedditResponse {
   data: RawRedditDataResponse;
 }
 
-async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)) {
+async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Promise<void> {
   try {
     const json = await fetch("https://www.reddit.com/r/discordapp/new.json").then(response => response.json()) as RawRedditResponse;
     const posts = json.data.children;
@@ -120,7 +120,9 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)) {
 
     const data = posts.filter(({ data: { selftext, title, over_18, created_utc } }) => {
       if (timestamp >= created_utc || over_18) return false;
-      return allowedKeywords.some(keyword => (selftext || title).toLowerCase().includes(keyword));
+      const parsedSelfText = selftext === "" ? null : selftext.toLowerCase().split(/\s+/);
+      const parsedTitle = title.toLowerCase().split(/\s+/);
+      return allowedKeywords.some(keyword => parsedSelfText?.includes(keyword) || parsedTitle.includes(keyword));
     }).map(({ data }) => {
       const embed = new MessageEmbed();
       embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
