@@ -16,16 +16,24 @@ const allowedKeywords = [
   "crash",
   "crashed",
   "crashing",
+  "does not work",
+  "doesn't work",
+  "doesnt work",
   "freeze",
+  "freezing",
   "frozen",
   "glitch",
   "glitched",
+  "glitching",
   "hang",
+  "hanging",
   "macos",
   "ptb",
   "stable",
   "windows"
 ];
+
+const keywordsRegExp = new RegExp(`(?:^|[^a-z\\d])(${allowedKeywords.join("|")})(?:[^a-z\\d]|$)`, "i");
 
 async function Maria(): Promise<void> {
   try {
@@ -119,9 +127,7 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Prom
 
     const data = posts.filter(({ data: { selftext, title, over_18, created_utc } }) => {
       if (timestamp >= created_utc || over_18) return false;
-      const parsedSelfText = selftext === "" ? null : selftext.toLowerCase().split(/\s+/);
-      const parsedTitle = title.toLowerCase().split(/\s+/);
-      return allowedKeywords.some(keyword => parsedSelfText?.includes(keyword) || parsedTitle.includes(keyword));
+      return keywordsRegExp.test(selftext) || keywordsRegExp.test(title);
     }).map(({ data }) => {
       const embed = new MessageEmbed();
       embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
