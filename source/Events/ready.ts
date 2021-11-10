@@ -8,6 +8,7 @@ const baseURL = "https://github.com/";
 const repositoryURL = `${baseURL}discord-testers-testers/DTT/`;
 
 const allowedKeywords = [
+  "alpha",
   "broke",
   "broken",
   "bug",
