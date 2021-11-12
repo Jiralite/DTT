@@ -192,4 +192,9 @@ DTT.on(Constants.Events.MESSAGE_DELETE, message => {
   }
 });
 
+DTT.on(Constants.Events.MESSAGE_UPDATE, (oldMessage, newMessage) => {
+  if (newMessage.channelId !== DTT.channel("reddit").id) return;
+  if (oldMessage.embeds.length !== newMessage.embeds.length) newMessage.edit("[Embed Suppressed]");
+});
+
 DTT.login(process.env.DISCORD_TOKEN);
