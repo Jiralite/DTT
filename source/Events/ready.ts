@@ -128,7 +128,6 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Prom
   try {
     const json = await fetch("https://www.reddit.com/r/discordapp/new.json").then(response => response.json()) as RawRedditResponse;
     const posts = json.data.children;
-    const displayColor = (await DTT.guild.members.fetch(DTT.user.id)).displayColor;
 
     const data = posts.filter(({ data: { selftext, title, over_18, created_utc } }) => {
       if (timestamp >= created_utc || over_18) return false;
@@ -136,7 +135,6 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Prom
     }).map(({ data }) => {
       const embed = new MessageEmbed();
       embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
-      embed.setColor(displayColor);
       embed.setDescription(data.selftext.length > 4096 ? `${data.selftext.slice(0, 4093)}...` : data.selftext);
       embed.setFooter(data.subreddit_name_prefixed);
       embed.setTimestamp(data.created_utc * 1000);
@@ -146,9 +144,11 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Prom
     });
 
     if (data.length > 0) {
-      for (let No = 0; No < data.length; No += 10) {
+      for (const embed of data) {
         await (DTT.channel("reddit") as TextChannel).send({
-          embeds: data.slice(No, No + 10)
+          embeds: [
+            embed.setColor((await DTT.guild.members.fetch(DTT.user.id)).displayColor)
+          ]
         });
       }
 
