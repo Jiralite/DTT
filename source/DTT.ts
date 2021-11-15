@@ -193,4 +193,4 @@ DTT.on(Constants.Events.MESSAGE_DELETE, message => {
   }
 });
 
-DTT.login(process.env.DISCORD_TOKEN);
+DTT.login();
