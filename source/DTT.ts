@@ -1,5 +1,5 @@
 import DTT from "./Client/Client.js";
-import { CommandName, Constants, GuildMember, MessageFlags, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
+import { CommandName, Constants, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import ready from "./Events/ready.js";
 
 DTT.once(Constants.Events.CLIENT_READY, ready);
@@ -191,11 +191,6 @@ DTT.on(Constants.Events.MESSAGE_DELETE, message => {
       return;
     }
   }
-});
-
-DTT.on(Constants.Events.MESSAGE_UPDATE, (oldMessage, newMessage) => {
-  if (newMessage.channelId !== DTT.channel("reddit").id) return;
-  if (!oldMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS) && newMessage.flags.has(MessageFlags.FLAGS.SUPPRESS_EMBEDS)) newMessage.edit("[Embed Suppressed]");
 });
 
 DTT.login(process.env.DISCORD_TOKEN);
