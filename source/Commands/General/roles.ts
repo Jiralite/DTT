@@ -498,10 +498,6 @@ export default class implements RolesCommand {
   get experimentRoles(): RoleStructure[] {
     return [
       {
-        role: DTT.role("Server Boost Progress"),
-        emoji: DTT.emoji("discord")
-      },
-      {
         role: DTT.role("Video Background"),
         emoji: DTT.emoji("discord")
       },
