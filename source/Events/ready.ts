@@ -81,7 +81,7 @@ export default async (): Promise<void> => {
   const author = commitInformationSplit[1].slice(8, commitInformationSplit[1].indexOf("<") - 1);
   const message = commitInformationSplit[4].trim();
   const authorURL = baseURL + author;
-  const branchURL = `${repositoryURL}tree/${branch}`;
+  const branchURL = `${repositoryURL}tree/${encodeURIComponent(branch)}`;
   const commitURL = `${repositoryURL}commit/${hash}`;
 
   await DTT.logChannel.send({
