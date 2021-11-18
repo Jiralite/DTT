@@ -1,4 +1,5 @@
 import { Formatters, MessageEmbed, TextChannel } from "discord.js";
+import { decodeHTML } from "entities";
 import fetch from "node-fetch";
 import DTT from "../Client/Client.js";
 
@@ -135,10 +136,12 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Prom
     }).map(({ data }) => {
       const embed = new MessageEmbed();
       embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
-      embed.setDescription(data.selftext.length > 4096 ? `${data.selftext.slice(0, 4093)}...` : data.selftext);
+      const selfText = decodeHTML(data.selftext);
+      embed.setDescription(selfText.length > 4096 ? `${selfText.slice(0, 4093)}...` : selfText);
       embed.setFooter(data.subreddit_name_prefixed);
       embed.setTimestamp(data.created_utc * 1000);
-      embed.setTitle(data.title.length > 256 ? `${data.title.slice(0, 253)}...` : data.title);
+      const title = decodeHTML(data.title);
+      embed.setTitle(title.length > 256 ? `${title.slice(0, 253)}...` : title);
       embed.setURL(`https://redd.it/${data.id}`);
       return embed;
     });
