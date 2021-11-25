@@ -502,7 +502,7 @@ export default class implements RolesCommand {
         emoji: DTT.emoji("discord")
       },
       {
-        role: DTT.role("Multi-File Upload"),
+        role: DTT.role("Account Switching"),
         emoji: DTT.emoji("discord")
       }
     ];
