@@ -6,7 +6,6 @@ import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 import FreeBugMail from "./FreeBugMail.js";
-import Invite from "./Invite.js";
 import Verification from "./Verification.js";
 import commands from "../Commands/index.js";
 
@@ -24,12 +23,10 @@ const pool = createPool({
 class DTT <T extends boolean> extends Client<T> {
   readonly Maria = pool;
   readonly FreeBugMail = FreeBugMail;
-  readonly Invite = Invite;
   readonly Verification = Verification;
   readonly commands: Record<CommandName, Command>;
   readonly freeBugMails: Collection<number, FreeBugMail>;
   readonly images: Record<ImageName, string>;
-  readonly invites: Collection<number, Invite>;
 
   constructor(options: ClientOptions) {
     super(options);
@@ -46,8 +43,6 @@ class DTT <T extends boolean> extends Client<T> {
       _images[image.slice(0, image.indexOf(".")) as ImageName] = imagesPath + image;
       return _images;
     }, {} as Record<ImageName, string>);
-
-    this.invites = new Collection();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

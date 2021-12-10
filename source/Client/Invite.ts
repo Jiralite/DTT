@@ -1,63 +1,86 @@
-import { CommandInteraction, InviteData, Snowflake, TextChannel } from "discord.js";
+import { Collection, CommandInteraction, Formatters, Snowflake, TextChannel, User } from "discord.js";
 import DTT from "./Client.js";
 
+interface InviteData {
+  No: number;
+  "Inviter ID": Snowflake;
+  "Invitee ID": Snowflake;
+  "Created Timestamp": number;
+  "Expires Timestamp": number;
+  Expired: boolean;
+  Code: string;
+}
+
 export default class Invite {
-  No: number | null;
-  id: Snowflake;
-  createdTimestamp: number | null;
-  expiredTimestamp: number | null;
+  static readonly cache = new Collection<number, Invite>();
+  readonly No: number;
+  readonly inviterId: Snowflake;
+  readonly inviteeId: Snowflake;
+  readonly createdTimestamp: number;
+  readonly expiresTimestamp: number;
   expired: boolean;
-  code: string | null;
-  timeout: NodeJS.Timeout | null;
+  readonly code: string;
+  timeout: NodeJS.Timeout | null = null;
 
   constructor(invite: InviteData) {
     this.No = invite.No;
-    this.id = invite.ID;
-    this.createdTimestamp = invite["Created Timestamp"] === null ? null : +invite["Created Timestamp"];
-    this.expiredTimestamp = invite["Expired Timestamp"] === null ? null : +invite["Expired Timestamp"];
+    this.inviterId = invite["Inviter ID"];
+    this.inviteeId = invite["Invitee ID"];
+    this.createdTimestamp = invite["Created Timestamp"];
+    this.expiresTimestamp = invite["Expires Timestamp"];
     this.expired = Boolean(invite.Expired);
     this.code = invite.Code;
-    this.timeout = null;
   }
 
-  async create(interaction: CommandInteraction): Promise<void> {
-    const invite = await this.verification.createInvite({
+  static async create(interaction: CommandInteraction, invitee: User): Promise<void> {
+    const verification = DTT.channel("verification") as TextChannel;
+
+    const invite = await verification.createInvite({
       maxAge: 86400, // 1 day
       maxUses: 1,
-      unique: true
+      unique: true,
+      reason: `Created with the intent to invite ${invitee.id}.`
     });
 
-    const { insertId } = await DTT.Maria.query("INSERT INTO `Invites` SET `ID` = ?, `Created Timestamp` = ?, `Expired Timestamp` = ?, `Expired` = ?, `Code` = ?;", [
+    const { insertId } = await DTT.Maria.query("INSERT INTO `Invites` SET `Inviter ID` = ?, `Invitee ID` = ?, `Created Timestamp` = ?, `Expires Timestamp` = ?, `Expired` = ?, `Code` = ?;", [
       interaction.user.id,
+      invitee.id,
       invite.createdTimestamp,
       invite.expiresTimestamp,
       false,
       invite.code
     ]);
 
-    this.No = insertId;
-    this.createdTimestamp = invite.createdTimestamp;
-    this.expiredTimestamp = invite.expiresTimestamp;
-    this.expired = false;
-    this.code = invite.code;
-    DTT.invites.set(insertId, this);
-    this.expireTimeout();
-
-    await interaction.reply({
-      content: `Your invite code: \`${this.code}\``,
-      ephemeral: true
+    const newInvite = new Invite({
+      No: insertId,
+      "Inviter ID": interaction.user.id,
+      "Invitee ID": invitee.id,
+      // The next two properties cannot be null right after creating an invite.
+      "Created Timestamp": invite.createdTimestamp!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
+      "Expires Timestamp": invite.expiresTimestamp!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
+      Expired: false,
+      Code: invite.code
     });
 
-    await this.inviteLogs.send({
-      content: `${interaction.user} generated a one-time invite code: \`${this.code}\``,
+    Invite.cache.set(newInvite.No, newInvite);
+
+    await newInvite.inviteLogs.send({
+      content: `${interaction.user} generated a one-time invite code: \`${newInvite.code}\` with the intent to invite ${invitee}.`,
       allowedMentions: {
         parse: []
       }
     });
+
+    await interaction.reply({
+      content: `Your invite code with the intent to invite ${invitee}: \`${newInvite.code}\``,
+      ephemeral: true
+    });
+
+    newInvite.expireTimeout();
   }
 
   expireTimeout(): void {
-    if (!this.expired && this.expiredTimestamp !== null) this.timeout = setTimeout(() => this.remove(), this.expiredTimestamp - Date.now());
+    this.timeout = setTimeout(() => this.remove(), this.expiresTimestamp - Date.now());
   }
 
   async remove(): Promise<void> {
@@ -67,14 +90,22 @@ export default class Invite {
     ]);
 
     this.expired = true;
-    if (this.timeout !== null) clearTimeout(this.timeout);
+
+    if (this.timeout !== null) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
 
     await this.inviteLogs.send({
-      content: `Invite code \`${this.code}\` has just expired. <@${this.id}> generated this invite code.`,
+      content: `Invite code \`${this.code}\` has just expired.\n${Formatters.userMention(this.inviterId)} generated this invite code with the intent to invite ${Formatters.userMention(this.inviteeId)}.`,
       allowedMentions: {
         parse: []
       }
     });
+  }
+
+  isExpired(): this is this & { expired: true } {
+    return !this.expired;
   }
 
   get verification(): TextChannel {

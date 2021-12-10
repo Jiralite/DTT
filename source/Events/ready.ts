@@ -2,6 +2,7 @@ import { Formatters, MessageEmbed, TextChannel } from "discord.js";
 import { decodeHTML } from "entities";
 import fetch from "node-fetch";
 import DTT from "../Client/Client.js";
+import Invite from "../Client/Invite.js";
 
 const commitInformation = process.env.COMMIT_INFORMATION;
 const defaultReturnText = "Selflessly slaving away.";
@@ -63,9 +64,9 @@ async function collectFreeBugMails(): Promise<void> {
 
 async function collectInvites(): Promise<void> {
   for (const invitePacket of await DTT.Maria.query("SELECT * FROM `Invites`;")) {
-    const Invite = new DTT.Invite(invitePacket);
-    DTT.invites.set(Invite.No as number, Invite);
-    Invite.expireTimeout();
+    const invite = new Invite(invitePacket);
+    Invite.cache.set(invite.No, invite);
+    if (!invite.isExpired()) invite.expireTimeout();
   }
 }
 

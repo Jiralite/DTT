@@ -1,6 +1,7 @@
 import DTT from "./Client/Client.js";
 import { CommandName, Constants, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import ready from "./Events/ready.js";
+import Invite from "./Client/Invite.js";
 
 DTT.once(Constants.Events.CLIENT_READY, ready);
 
@@ -171,7 +172,7 @@ DTT.on(Constants.Events.INTERACTION_CREATE, async interaction => {
   }
 });
 
-DTT.on(Constants.Events.INVITE_DELETE, invite => DTT.invites.find(({ code }) => code === invite.code)?.remove());
+DTT.on(Constants.Events.INVITE_DELETE, invite => Invite.cache.find(({ code }) => code === invite.code)?.remove());
 
 DTT.on(Constants.Events.MESSAGE_CREATE, async message => {
   if (message.author.bot || !message.inGuild()) return;

@@ -77,13 +77,4 @@ declare module "discord.js" {
     Mentioned: boolean | null;
     State: FreeBugMailState | null;
   }
-
-  interface InviteData {
-    No: number | null;
-    ID: Snowflake;
-    "Created Timestamp": number | null;
-    "Expired Timestamp": number | null;
-    Expired: boolean | null;
-    Code: string | null;
-  }
 }

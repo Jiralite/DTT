@@ -1,5 +1,6 @@
-import { CommandInteraction, CommandStructure, Constants, InviteCommand } from "discord.js";
+import { CommandInteraction, CommandStructure, Constants, GuildMember, InviteCommand, Permissions } from "discord.js";
 import DTT from "../../Client/Client.js";
+import Invite from "../../Client/Invite.js";
 
 export default class implements InviteCommand {
   readonly name = "invite";
@@ -10,10 +11,14 @@ export default class implements InviteCommand {
   }
 
   async execute(interaction: CommandInteraction): Promise<void> {
-    const verification = DTT.channel("verification");
+    const permissionCheck = (await DTT.guild.members.fetch(DTT.user.id)).permissions.missing([
+      Permissions.FLAGS.BAN_MEMBERS,
+      Permissions.FLAGS.CREATE_INSTANT_INVITE
+    ]).map(permission => `\`${permission}\``);
 
-    if (!verification.permissionsFor(await DTT.guild.members.fetch(DTT.user.id)).has("CREATE_INSTANT_INVITE")) {
-      DTT.log(`${interaction.user} attempted to create an invite but I lacked invite permissions for ${verification}.`);
+    if (permissionCheck.length > 0) {
+      const permissionText = permissionCheck.join(" & ");
+      DTT.log(`${interaction.user} attempted to create an invite but lacked permissions:\n${permissionText}`);
 
       return await interaction.reply({
         content: "Apparently, I do not have invite permissions.",
@@ -21,25 +26,39 @@ export default class implements InviteCommand {
       });
     }
 
-    const Invites = DTT.invites.filter(({ id, expired }) => id === interaction.user.id && !expired);
+    const invitee = interaction.options.getUser("invitee", true);
+    const inviteeAsGuildMember = interaction.options.getMember("invitee");
 
-    if (Invites.size > 0) {
+    if (interaction.user.id === invitee.id) {
+      DTT.log(`${interaction.user} attempted to create an invite for themselves.`);
+
       return await interaction.reply({
-        content: `You possess non-expired invites already:\n${Invites.map(Invite => `• \`${Invite.code}\``).join("\n")}`,
+        content: "You cannot create an invite for yourself.",
         ephemeral: true
       });
     }
 
-    const Invite = new DTT.Invite({
-      No: null,
-      ID: interaction.user.id,
-      "Created Timestamp": null,
-      "Expired Timestamp": null,
-      Expired: null,
-      Code: null
-    });
+    if (inviteeAsGuildMember instanceof GuildMember) {
+      DTT.log(`${interaction.user} attempted to create an invite for ${inviteeAsGuildMember} (already in server).`);
 
-    return await Invite.create(interaction);
+      return await interaction.reply({
+        content: `The user (${inviteeAsGuildMember}) you are trying to invite is already in the server.`,
+        ephemeral: true
+      });
+    }
+
+    const invites = Invite.cache.filter(({ inviterId, isExpired }) => inviterId === interaction.user.id && isExpired());
+
+    if (invites.size > 0) {
+      return await interaction.reply({
+        content: `You possess non-expired invites already:\n${invites.map(({ code }) => `• \`${code}\``).join("\n")}`,
+        ephemeral: true
+      });
+    }
+
+    // Silently pass to ensure people don't use this as a way to find out whether someone is banned.
+    if ((await DTT.guild.bans.fetch({ cache: false })).has(invitee.id)) DTT.log(`${interaction.user} attempted to create an invite for ${invitee} (currently banned).`);
+    return await Invite.create(interaction, invitee);
   }
 
   get commandData(): CommandStructure {
@@ -48,6 +67,14 @@ export default class implements InviteCommand {
         name: this.name,
         description: "Generates a one-time invite.",
         type: this.type,
+        options: [
+          {
+            type: Constants.ApplicationCommandOptionTypes.USER,
+            name: "invitee",
+            description: "The intended recipient of this invite.",
+            required: true
+          }
+        ],
         defaultPermission: false
       },
       permissions: [
