@@ -47,7 +47,7 @@ export default class implements InviteCommand {
       });
     }
 
-    const invites = Invite.cache.filter(({ inviterId, isExpired }) => inviterId === interaction.user.id && isExpired());
+    const invites = Invite.cache.filter(invite => invite.inviterId === interaction.user.id && !invite.isExpired());
 
     if (invites.size > 0) {
       return await interaction.reply({
