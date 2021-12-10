@@ -65,7 +65,7 @@ export default class Invite {
     Invite.cache.set(newInvite.No, newInvite);
 
     await newInvite.inviteLogs.send({
-      content: `${interaction.user} generated a one-time invite code: \`${newInvite.code}\` with the intent to invite ${invitee}.`,
+      content: `${interaction.user} generated a one-time invite code (\`${newInvite.code}\`) with the intent to invite ${invitee}.`,
       allowedMentions: {
         parse: []
       }
