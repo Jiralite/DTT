@@ -47,6 +47,15 @@ export default class implements InviteCommand {
       });
     }
 
+    if (invitee.bot) {
+      DTT.log(`${interaction.user} attempted to create an invite for ${invitee} (bot).`);
+
+      return await interaction.reply({
+        content: `The user (${invitee}) you are trying to invite is a bot.`,
+        ephemeral: true
+      });
+    }
+
     const invites = Invite.cache.filter(invite => invite.inviterId === interaction.user.id && !invite.isExpired());
 
     if (invites.size > 0) {
