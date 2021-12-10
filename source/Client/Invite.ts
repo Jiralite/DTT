@@ -105,7 +105,7 @@ export default class Invite {
   }
 
   isExpired(): this is this & { expired: true } {
-    return !this.expired;
+    return this.expired;
   }
 
   get verification(): TextChannel {
