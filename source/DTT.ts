@@ -2,7 +2,6 @@ import { readdirSync } from "node:fs";
 import { CommandName, Constants, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 
 import DTT from "./Client/Client.js";
-import Invite from "./Client/Invite.js";
 
 const eventsPath = new URL("./Events/", import.meta.url);
 
@@ -172,8 +171,6 @@ DTT.on(Constants.Events.INTERACTION_CREATE, async interaction => {
     });
   }
 });
-
-DTT.on(Constants.Events.INVITE_DELETE, invite => Invite.cache.find(({ code }) => code === invite.code)?.remove());
 
 DTT.on(Constants.Events.MESSAGE_CREATE, async message => {
   if (message.author.bot || !message.inGuild()) return;
