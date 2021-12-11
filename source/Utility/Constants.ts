@@ -1,4 +1,4 @@
-export const guildId = "765611756441436160";
+export const guildId = "765611756441436160" as const;
 
 export const channels = {
   "read-me": "765620328511963176",
@@ -11,7 +11,7 @@ export const channels = {
   "dtt-bot-log": "853235554375434270",
   "dtt-bugmail-logs": "853243608828346409",
   "invite-logs": "765676229478711366"
-};
+} as const;
 
 export const emojis = {
   typing: "852637406334156800",
@@ -46,7 +46,7 @@ export const emojis = {
   canary: "894434267868827659",
   ptb: "894434637370241064",
   stable: "894434646274752532"
-};
+} as const;
 
 export const roles = {
   Admin: "765611993532334120",
@@ -111,4 +111,4 @@ export const roles = {
   GDPR: "818960617972957195",
   "Video Background": "903315114063704086",
   "Account Switching": "913254526834843648"
-};
+} as const;
