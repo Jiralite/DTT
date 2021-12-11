@@ -11,11 +11,6 @@ for (const file of readdirSync(eventsPath).filter(file => file !== "index.js")) 
   DTT[once ? "once" : "on"](name, fire);
 }
 
-DTT.on(Constants.Events.GUILD_MEMBER_UPDATE, (oldGuildmember, newGuildmember) => {
-  if (oldGuildmember.guild.id !== DTT.guild.id) return;
-  if (oldGuildmember.pending === true && newGuildmember.pending === false) DTT.Verification.sendVerification(newGuildmember);
-});
-
 DTT.on(Constants.Events.INTERACTION_CREATE, async interaction => {
   if (interaction.guildId !== DTT.guild.id) return;
 
