@@ -15,8 +15,7 @@ const pool = createPool({
   user: process.env.MARIA_USER,
   password: process.env.MARIA_PASSWORD,
   host: process.env.MARIA_HOST,
-  database: process.env.MARIA_DATABASE,
-  collation: process.env.MARIA_COLLATION
+  database: process.env.MARIA_DATABASE
 });
 
 class DTT <T extends boolean> extends Client<T> {
