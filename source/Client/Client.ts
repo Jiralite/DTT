@@ -72,7 +72,7 @@ class DTT <T extends boolean> extends Client<T> {
     }).catch(() => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   consoleLog(consoleLog: any, stamp = new Date().toISOString()): void {
     console.log(`- - - - - ${stamp} - - - - -`);
     console.log(consoleLog);
