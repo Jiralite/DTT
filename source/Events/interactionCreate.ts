@@ -1,4 +1,4 @@
-import { Constants, Formatters, GuildMember, Role, Snowflake } from "discord.js";
+import { Constants, Formatters, GuildMember, Permissions, Role, Snowflake } from "discord.js";
 import DTT from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Verification, { VerificationType } from "../Client/Verification.js";
@@ -24,6 +24,13 @@ export const event: Event<typeof name> = {
       }
 
       const command = DTT.commands[commandName];
+
+      if (interaction.channelId === DTT.channel("bugmail-queue").id && command.name !== "free-bugmail" && !interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
+        return interaction.reply({
+          content: "Disallowed slash command for this channel.",
+          ephemeral: true
+        });
+      }
 
       try {
         await command.handle(interaction, interaction.options.getSubcommand(false));
