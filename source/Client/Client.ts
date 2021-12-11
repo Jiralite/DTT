@@ -1,12 +1,12 @@
 import { readdirSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { Client, ClientOptions, Collection, Command, CommandName, Constants, Guild, GuildChannel, GuildEmoji, ImageName, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Constants, Guild, GuildChannel, GuildEmoji, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
+import commands, { Command, CommandName } from "../Commands/index.js";
 
-import FreeBugMail from "./FreeBugMail.js";
-import commands from "../Commands/index.js";
+type ImageName = "Opinion";
 
 const imagesPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
 const images = readdirSync(imagesPath).filter(heading => heading.endsWith(".png"));
@@ -20,9 +20,7 @@ const pool = createPool({
 
 class DTT <T extends boolean> extends Client<T> {
   readonly Maria = pool;
-  readonly FreeBugMail = FreeBugMail;
   readonly commands: Record<CommandName, Command>;
-  readonly freeBugMails: Collection<number, FreeBugMail>;
   readonly images: Record<ImageName, string>;
 
   constructor(options: ClientOptions) {
@@ -33,8 +31,6 @@ class DTT <T extends boolean> extends Client<T> {
       _commands[_command.name] = _command;
       return _commands;
     }, {} as Record<CommandName, Command>);
-
-    this.freeBugMails = new Collection();
 
     this.images = images.reduce((_images, image) => {
       _images[image.slice(0, image.indexOf(".")) as ImageName] = imagesPath + image;

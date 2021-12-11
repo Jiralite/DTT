@@ -1,6 +1,8 @@
-import { CommandName, Constants, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
+import { Constants, Formatters, GuildMember, Role, Snowflake } from "discord.js";
 import DTT from "../Client/Client.js";
-import Verification from "../Client/Verification.js";
+import FreeBugMail from "../Client/FreeBugMail.js";
+import Verification, { VerificationType } from "../Client/Verification.js";
+import { isCommandName, RoleCategories, RolesCommand, SubRoleCategories } from "../Commands/index.js";
 import { Event } from "./index.js";
 
 const name = Constants.Events.INTERACTION_CREATE;
@@ -9,20 +11,19 @@ export const event: Event<typeof name> = {
   name,
   once: false,
   async fire(interaction): Promise<void> {
-    if (interaction.guildId !== DTT.guild.id) return;
+    if (!interaction.inCachedGuild() || interaction.guildId !== DTT.guild.id) return;
 
     if (interaction.isCommand()) {
       const commandName = interaction.commandName;
-      const command = DTT.commands[commandName as CommandName];
 
-      if (!command) {
-        interaction.reply({
+      if (!isCommandName(commandName)) {
+        return interaction.reply({
           content: "your ban has been scheduled for tomorrow",
           ephemeral: true
         });
-
-        return;
       }
+
+      const command = DTT.commands[commandName];
 
       try {
         await command.handle(interaction, interaction.options.getSubcommand(false));
@@ -92,37 +93,31 @@ export const event: Event<typeof name> = {
         }
       }
 
-      if (interaction.customId === "Free BugMail") return DTT.FreeBugMail.addRole(interaction);
-      if (interaction.customId === "No Free BugMail") return DTT.FreeBugMail.removeRole(interaction);
-      const claimRequest = /(\d+)-(PRECLAIM|CLAIM|BUGMAILED|RESTORE)/.exec(interaction.customId);
+      if (interaction.customId === "Free BugMail") return FreeBugMail.addRole(interaction);
+      if (interaction.customId === "No Free BugMail") return FreeBugMail.removeRole(interaction);
+      const freeBugMailRegExp = /(\d+)-(PENDING|PRECLAIM|RESOLVED|RESTORE)/.exec(interaction.customId);
 
-      if (claimRequest && (interaction.channelId === DTT.channel("bugmail-queue").id || interaction.channelId === DTT.channel("bugmail-discussion").id)) {
-        if (claimRequest[2] === "PRECLAIM") return DTT.freeBugMails.get(+claimRequest[1])?.preClaim(interaction);
-        if (claimRequest[2] === "CLAIM") return DTT.freeBugMails.get(+claimRequest[1])?.claim(interaction);
-        if (claimRequest[2] === "BUGMAILED") return DTT.freeBugMails.get(+claimRequest[1])?.alreadyBugMailed(interaction);
-        if (claimRequest[2] === "RESTORE") return DTT.freeBugMails.get(+claimRequest[1])?.restore(interaction);
-      }
+      if (freeBugMailRegExp && (interaction.channelId === DTT.channel("bugmail-queue").id || interaction.channelId === DTT.channel("bugmail-discussion").id)) {
+        if (freeBugMailRegExp[2] === "PRECLAIM") return FreeBugMail.cache.get(Number(freeBugMailRegExp[1]))?.preClaim(interaction);
+        if (freeBugMailRegExp[2] === "RESTORE") return FreeBugMail.cache.get(Number(freeBugMailRegExp[1]))?.restore(interaction);
 
-      const weekBugMail = /(\d+)-(PENDING|RESOLVED)/.exec(interaction.customId);
+        const freeBugMail = FreeBugMail.cache.get(Number(freeBugMailRegExp[1]));
+        if (!freeBugMail || !freeBugMail.isPending()) return;
 
-      if (weekBugMail) {
-        const FreeBugMail = DTT.freeBugMails.get(+weekBugMail[1]);
-        if (!FreeBugMail) return;
-
-        if (interaction.user.id !== FreeBugMail.claimedById) {
+        if (interaction.user.id !== freeBugMail.claimedById) {
           return interaction.reply({
-            content: `We're currently awaiting the response of <@${FreeBugMail.claimedById}> right now, not you!`,
+            content: `We're currently awaiting the response of ${Formatters.userMention(freeBugMail.claimedById)} right now, not you!`,
             ephemeral: true
           });
         }
 
-        if (weekBugMail[2] === "PENDING") return FreeBugMail.resumePendingTimeout(interaction);
-        if (weekBugMail[2] === "RESOLVED") return FreeBugMail.resolvePendingTimeout(interaction);
+        if (freeBugMailRegExp[2] === "PENDING") return freeBugMail.resumePendingTimeout(interaction);
+        if (freeBugMailRegExp[2] === "RESOLVED") return freeBugMail.resolvePendingTimeout(interaction);
       }
     }
 
     if (interaction.isSelectMenu()) {
-      if (interaction.customId === "SELFROLE_CATEGORY") return (DTT.commands.roles as RolesCommand)?.categoryInteraction(interaction, interaction.values[0] as RoleCategories);
+      if (interaction.customId === "SELFROLE_CATEGORY") return (DTT.commands.roles as RolesCommand).categoryInteraction(interaction, interaction.values[0] as RoleCategories);
       if (!interaction.customId.startsWith("SELFROLE")) return;
       const roles: Role[] = interaction.values.map(id => DTT.guild.roles.resolve(id) as Role);
 

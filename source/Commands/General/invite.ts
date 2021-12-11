@@ -1,16 +1,17 @@
-import { CommandInteraction, CommandStructure, Constants, GuildMember, InviteCommand, Permissions } from "discord.js";
+import { CommandInteraction, Constants, GuildMember, Permissions } from "discord.js";
 import DTT from "../../Client/Client.js";
 import Invite from "../../Client/Invite.js";
+import { InviteCommand, CommandStructure } from "../index.js";
 
 export default class implements InviteCommand {
   readonly name = "invite";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
-  async handle(interaction: CommandInteraction): Promise<void> {
+  async handle(interaction: CommandInteraction<"cached">): Promise<void> {
     return await this.execute(interaction);
   }
 
-  async execute(interaction: CommandInteraction): Promise<void> {
+  async execute(interaction: CommandInteraction<"cached">): Promise<void> {
     const permissionCheck = (await DTT.guild.members.fetch(DTT.user.id)).permissions.missing([
       Permissions.FLAGS.BAN_MEMBERS,
       Permissions.FLAGS.CREATE_INSTANT_INVITE

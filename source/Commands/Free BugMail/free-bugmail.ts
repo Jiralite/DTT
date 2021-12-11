@@ -1,11 +1,13 @@
-import { CommandInteraction, CommandStructure, Constants, FreeBugMailCommand } from "discord.js";
+import { CommandInteraction, Constants } from "discord.js";
 import DTT from "../../Client/Client.js";
+import FreeBugMail from "../../Client/FreeBugMail.js";
+import { CommandStructure, FreeBugMailCommand } from "../index.js";
 
 export default class implements FreeBugMailCommand {
   readonly name = "free-bugmail";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
-  async handle(interaction: CommandInteraction, subcommand: string): Promise<void> {
+  async handle(interaction: CommandInteraction<"cached">, subcommand: string): Promise<void> {
     switch (subcommand) {
       case "submit":
         return await this.submit(interaction);
@@ -16,7 +18,7 @@ export default class implements FreeBugMailCommand {
     }
   }
 
-  async submit(interaction: CommandInteraction): Promise<void> {
+  async submit(interaction: CommandInteraction<"cached">): Promise<void> {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
@@ -40,25 +42,11 @@ export default class implements FreeBugMailCommand {
       });
     }
 
-    const message = await interaction.deferReply({
-      fetchReply: true
-    });
-
-    const FreeBugMail = new DTT.FreeBugMail({
-      No: null,
-      Timestamp: interaction.createdTimestamp,
-      "Weekly Timestamp": interaction.createdTimestamp,
-      "Message ID": message.id,
-      "User ID": interaction.user.id,
-      "Claimed By ID": null,
-      Mentioned: null,
-      State: null
-    });
-
-    return await FreeBugMail.create(interaction, text);
+    const { id } = await interaction.deferReply({ fetchReply: true });
+    return await FreeBugMail.create(interaction, text, id);
   }
 
-  async edit(interaction: CommandInteraction): Promise<void> {
+  async edit(interaction: CommandInteraction<"cached">): Promise<void> {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
@@ -73,9 +61,9 @@ export default class implements FreeBugMailCommand {
 
     const number = interaction.options.getInteger("number", true);
     const text = interaction.options.getString("text", true);
-    const FreeBugMail = DTT.freeBugMails.get(number);
+    const freeBugMail = FreeBugMail.cache.get(number);
 
-    if (!FreeBugMail) {
+    if (!freeBugMail) {
       DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
 
       return await interaction.reply({
@@ -84,8 +72,8 @@ export default class implements FreeBugMailCommand {
       });
     }
 
-    if (FreeBugMail.userId !== interaction.user.id) {
-      DTT.freeBugMailLog(`${logText} Attempted to edit #${FreeBugMail.No} which the account is not the author of.`);
+    if (freeBugMail.userId !== interaction.user.id) {
+      DTT.freeBugMailLog(`${logText} Attempted to edit #${freeBugMail.No} which the account is not the author of.`);
 
       return await interaction.reply({
         content: "This Free BugMail request cannot be edited by you.",
@@ -93,8 +81,8 @@ export default class implements FreeBugMailCommand {
       });
     }
 
-    if (FreeBugMail.state !== "OPEN") {
-      DTT.freeBugMailLog(`${logText} Attempted to edit Free BugMail request #${FreeBugMail.No} which was not open.`);
+    if (!freeBugMail.isOpen()) {
+      DTT.freeBugMailLog(`${logText} Attempted to edit Free BugMail request #${freeBugMail.No} which was not open.`);
 
       return await interaction.reply({
         content: "This Free BugMail request is not open.",
@@ -111,10 +99,10 @@ export default class implements FreeBugMailCommand {
       });
     }
 
-    return await FreeBugMail.edit(interaction, text);
+    return await freeBugMail.edit(interaction, text);
   }
 
-  async complete(interaction: CommandInteraction): Promise<void> {
+  async complete(interaction: CommandInteraction<"cached">): Promise<void> {
     const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
@@ -128,9 +116,9 @@ export default class implements FreeBugMailCommand {
     }
 
     const number = interaction.options.getInteger("number", true);
-    const FreeBugMail = DTT.freeBugMails.get(number);
+    const freeBugMail = FreeBugMail.cache.get(number);
 
-    if (!FreeBugMail) {
+    if (!freeBugMail) {
       DTT.freeBugMailLog(`${logText} Could not find provided Free BugMail request number ${number}.`);
 
       return await interaction.reply({
@@ -139,8 +127,8 @@ export default class implements FreeBugMailCommand {
       });
     }
 
-    if (FreeBugMail.state === "DISABLED") {
-      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which has been disabled.`);
+    if (freeBugMail.isDisabled()) {
+      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${freeBugMail.No} which has been disabled.`);
 
       return await interaction.reply({
         content: "This Free BugMail request is disabled.",
@@ -148,8 +136,8 @@ export default class implements FreeBugMailCommand {
       });
     }
 
-    if ((FreeBugMail.userId !== interaction.user.id && FreeBugMail.claimedById !== interaction.user.id) || FreeBugMail.state !== "PENDING") {
-      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${FreeBugMail.No} which the account is not the author of or the claimer of.`);
+    if ((freeBugMail.userId !== interaction.user.id && freeBugMail.claimedById !== interaction.user.id) || !freeBugMail.isPending()) {
+      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${freeBugMail.No} which the account is not the author nor claimer of.`);
 
       return await interaction.reply({
         content: "This Free BugMail request cannot be completed.",
@@ -157,7 +145,7 @@ export default class implements FreeBugMailCommand {
       });
     }
 
-    return await FreeBugMail.resolve(interaction, false);
+    return await freeBugMail.resolve(interaction, false);
   }
 
   get commandData(): CommandStructure {

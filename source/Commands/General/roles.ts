@@ -1,5 +1,6 @@
-import { ButtonInteraction, CommandInteraction, CommandStructure, Constants, GuildMember, MessageActionRow, MessageButton, MessageSelectMenu, MessageSelectOptionData, RoleCategories, RolesCommand, RoleStructure, SelectMenuInteraction, SubRoleCategories } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Constants, GuildMember, MessageActionRow, MessageButton, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction } from "discord.js";
 import DTT from "../../Client/Client.js";
+import { CommandStructure, RoleCategories, RolesCommand, RoleStructure, SubRoleCategories } from "../index.js";
 
 export default class implements RolesCommand {
   readonly name = "roles";
@@ -18,11 +19,11 @@ export default class implements RolesCommand {
     "Phabricator Updates"
   ];
 
-  async handle(interaction: ButtonInteraction | CommandInteraction): Promise<void> {
+  async handle(interaction: ButtonInteraction<"cached"> | CommandInteraction<"cached">): Promise<void> {
     return await this.execute(interaction);
   }
 
-  async execute(interaction: ButtonInteraction | CommandInteraction): Promise<void> {
+  async execute(interaction: ButtonInteraction<"cached"> | CommandInteraction<"cached">): Promise<void> {
     const content = "Choose a category to self-assign roles from!";
     const actionRow = new MessageActionRow();
     const selectMenu = new MessageSelectMenu();

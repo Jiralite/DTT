@@ -1,15 +1,16 @@
-import { CommandInteraction, CommandStructure, Constants, RememberCommand } from "discord.js";
+import { CommandInteraction, Constants } from "discord.js";
 import DTT from "../../Client/Client.js";
+import { RememberCommand, CommandStructure } from "../index.js";
 
 export default class implements RememberCommand {
   readonly name = "remember";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
-  async handle(interaction: CommandInteraction): Promise<void> {
+  async handle(interaction: CommandInteraction<"cached">): Promise<void> {
     return await this.execute(interaction);
   }
 
-  async execute(interaction: CommandInteraction): Promise<void> {
+  async execute(interaction: CommandInteraction<"cached">): Promise<void> {
     const moment = interaction.options.getString("moment", true);
 
     if (moment === "Opinion") {

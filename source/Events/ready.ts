@@ -2,6 +2,7 @@ import { Constants, Formatters, MessageEmbed, TextChannel } from "discord.js";
 import { decodeHTML } from "entities";
 import fetch from "node-fetch";
 import DTT from "../Client/Client.js";
+import FreeBugMail from "../Client/FreeBugMail.js";
 import Invite from "../Client/Invite.js";
 import { Event } from "./index.js";
 
@@ -57,10 +58,10 @@ async function Maria(): Promise<void> {
 
 async function collectFreeBugMails(): Promise<void> {
   for (const FreeBugMailPacket of await DTT.Maria.query("SELECT * FROM `Free BugMails`;")) {
-    const FreeBugMail = new DTT.FreeBugMail(FreeBugMailPacket);
-    DTT.freeBugMails.set(FreeBugMail.No as number, FreeBugMail);
-    FreeBugMail.timeout();
-    FreeBugMail.mentionedTimeout();
+    const freeBugMail = new FreeBugMail(FreeBugMailPacket);
+    FreeBugMail.cache.set(freeBugMail.No, freeBugMail);
+    if (freeBugMail.isOpen() && !freeBugMail.mentioned) freeBugMail.mentionedTimeout();
+    if (freeBugMail.isPending()) freeBugMail.weeklyTimeout();
   }
 }
 

@@ -1,5 +1,6 @@
 import { Constants } from "discord.js";
 import DTT from "../Client/Client.js";
+import FreeBugMail from "../Client/FreeBugMail.js";
 import { Event } from "./index.js";
 
 const name = Constants.Events.MESSAGE_DELETE;
@@ -10,14 +11,14 @@ export const event: Event<typeof name> = {
   fire(message): void {
     if (message.guild?.id !== DTT.guild.id) return;
 
-    for (const FreeBugMail of DTT.freeBugMails.values()) {
-      if (FreeBugMail.messageId === message.id && FreeBugMail.state !== "RESOLVED") {
-        FreeBugMail.remove();
+    for (const freeBugMail of FreeBugMail.cache.values()) {
+      if (freeBugMail.messageId === message.id && !freeBugMail.isResolved()) {
+        freeBugMail.remove();
         return;
       }
 
-      if (FreeBugMail.disabledMessageId === message.id) {
-        FreeBugMail.disabledMessageId = null;
+      if (freeBugMail.disabledMessageId === message.id) {
+        freeBugMail.disabledMessageId = null;
         return;
       }
     }
