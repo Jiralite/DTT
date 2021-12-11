@@ -1,15 +1,7 @@
-import { readdirSync } from "fs";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
 import { Client, ClientOptions, Constants, Guild, GuildChannel, GuildEmoji, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 import commands, { Command, CommandName } from "../Commands/index.js";
-
-type ImageName = "Opinion";
-
-const imagesPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
-const images = readdirSync(imagesPath).filter(heading => heading.endsWith(".png"));
 
 const pool = createPool({
   user: process.env.MARIA_USER,
@@ -21,7 +13,6 @@ const pool = createPool({
 class DTT <T extends boolean> extends Client<T> {
   readonly Maria = pool;
   readonly commands: Record<CommandName, Command>;
-  readonly images: Record<ImageName, string>;
 
   constructor(options: ClientOptions) {
     super(options);
@@ -31,11 +22,6 @@ class DTT <T extends boolean> extends Client<T> {
       _commands[_command.name] = _command;
       return _commands;
     }, {} as Record<CommandName, Command>);
-
-    this.images = images.reduce((_images, image) => {
-      _images[image.slice(0, image.indexOf(".")) as ImageName] = imagesPath + image;
-      return _images;
-    }, {} as Record<ImageName, string>);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
