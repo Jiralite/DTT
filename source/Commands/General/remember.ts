@@ -16,7 +16,7 @@ export default class implements RememberCommand {
     if (moment === "Opinion") {
       return await interaction.reply({
         files: [
-          new URL("../../Resources/Opinion.png", import.meta.url).toString()
+          new URL("../../../Resources/Opinion.png", import.meta.url).toString()
         ]
       });
     } else throw new ReferenceError("Unknown choice");
