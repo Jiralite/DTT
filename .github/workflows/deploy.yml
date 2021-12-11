@@ -17,5 +17,6 @@ jobs:
           key: ${{ secrets.SSH }}
           script: |
             cd /home/jiralite/documents/discord/DTT
+            git reset --hard
             git pull origin
 ...
