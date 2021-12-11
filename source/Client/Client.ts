@@ -11,16 +11,14 @@ export const Maria = createPool({
 });
 
 class DTT <T extends boolean> extends Client<T> {
-  readonly commands: Record<CommandName, Command>;
+  readonly commands = commands.reduce((_commands, command) => {
+    const _command = new command();
+    _commands[_command.name] = _command;
+    return _commands;
+  }, {} as Record<CommandName, Command>);
 
   constructor(options: ClientOptions) {
     super(options);
-
-    this.commands = commands.reduce((_commands, command) => {
-      const _command = new command();
-      _commands[_command.name] = _command;
-      return _commands;
-    }, {} as Record<CommandName, Command>);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
