@@ -1,7 +1,7 @@
 import { Constants, Formatters, MessageEmbed, TextChannel } from "discord.js";
 import { decodeHTML } from "entities";
 import fetch from "node-fetch";
-import DTT from "../Client/Client.js";
+import DTT, { Maria } from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Invite from "../Client/Invite.js";
 import { Event } from "./index.js";
@@ -45,9 +45,9 @@ const allowedKeywords = [
 
 const keywordsRegExp = new RegExp(`(?:^|[^a-z\\d])(${allowedKeywords.join("|")})(?:[^a-z\\d]|$)`, "i");
 
-async function Maria(): Promise<void> {
+async function collectFromDatabase(): Promise<void> {
   try {
-    await DTT.Maria.getConnection();
+    await Maria.getConnection();
     await collectFreeBugMails();
     await collectInvites();
   } catch (error) {
@@ -57,7 +57,7 @@ async function Maria(): Promise<void> {
 }
 
 async function collectFreeBugMails(): Promise<void> {
-  for (const FreeBugMailPacket of await DTT.Maria.query("SELECT * FROM `Free BugMails`;")) {
+  for (const FreeBugMailPacket of await Maria.query("SELECT * FROM `Free BugMails`;")) {
     const freeBugMail = new FreeBugMail(FreeBugMailPacket);
     FreeBugMail.cache.set(freeBugMail.No, freeBugMail);
     if (freeBugMail.isOpen() && !freeBugMail.mentioned) freeBugMail.mentionedTimeout();
@@ -66,7 +66,7 @@ async function collectFreeBugMails(): Promise<void> {
 }
 
 async function collectInvites(): Promise<void> {
-  for (const invitePacket of await DTT.Maria.query("SELECT * FROM `Invites`;")) {
+  for (const invitePacket of await Maria.query("SELECT * FROM `Invites`;")) {
     const invite = new Invite(invitePacket);
     Invite.cache.set(invite.No, invite);
     if (!invite.isExpired()) invite.expireTimeout();
@@ -77,7 +77,7 @@ export const event: Event<typeof name> = {
   name,
   once: true,
   async fire(): Promise<void> {
-    await Maria();
+    await collectFromDatabase();
     if (!commitInformation) return DTT.log(defaultReturnText);
     const commitInformationSplit = commitInformation.split("\n");
     const commitSplit = /commit ([A-Z\d]+) \([A-Z]+ -> (.+?),/i.exec(commitInformationSplit[0]);

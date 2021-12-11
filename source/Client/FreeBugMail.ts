@@ -1,5 +1,5 @@
 import { ButtonInteraction, Collection, CommandInteraction, Constants, DiscordAPIError, Formatters, Message, MessageActionRow, MessageButton, MessageEmbed, Role, Snowflake, TextChannel } from "discord.js";
-import DTT from "./Client.js";
+import DTT, { Maria } from "./Client.js";
 
 interface FreeBugMailData {
   No: number;
@@ -41,7 +41,7 @@ export default class FreeBugMail {
   }
 
   static async create(interaction: CommandInteraction<"cached">, text: string, messageId: FreeBugMail["messageId"]): Promise<void> {
-    const { insertId } = await DTT.Maria.query("INSERT INTO `Free BugMails` SET `Timestamp` = ?, `Weekly Timestamp` = ?, `Message ID` = ?, `User ID` = ?, `Mentioned` = ?, `State` = ?;", [
+    const { insertId } = await Maria.query("INSERT INTO `Free BugMails` SET `Timestamp` = ?, `Weekly Timestamp` = ?, `Message ID` = ?, `User ID` = ?, `Mentioned` = ?, `State` = ?;", [
       interaction.createdTimestamp,
       interaction.createdTimestamp,
       messageId,
@@ -100,7 +100,7 @@ export default class FreeBugMail {
 
       this.mentioned = true;
 
-      await DTT.Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [
+      await Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [
         true,
         this.No
       ]);
@@ -140,7 +140,7 @@ export default class FreeBugMail {
     if (!this.isPending()) throw new Error(`Attempted to resume from a weekly timeout for Free BugMail request #${this.No}, but the state was not "PENDING".`);
     DTT.freeBugMailLog(`${interaction.user} has stated Free BugMail request #${this.No} is still ongoing after a week.`);
 
-    await DTT.Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
+    await Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
       interaction.createdTimestamp,
       this.No
     ]);
@@ -220,7 +220,7 @@ export default class FreeBugMail {
   }
 
   async claim(interaction: ButtonInteraction<"cached">): Promise<void> {
-    await DTT.Maria.query("UPDATE `Free BugMails` SET `Claimed By ID` = ?, `State` = ? WHERE `No` = ?;", [
+    await Maria.query("UPDATE `Free BugMails` SET `Claimed By ID` = ?, `State` = ? WHERE `No` = ?;", [
       interaction.user.id,
       "PENDING",
       this.No
@@ -279,7 +279,7 @@ export default class FreeBugMail {
   }
 
   async resolve(interaction: ButtonInteraction<"cached"> | CommandInteraction<"cached">, fromWeeklyTimeout: boolean): Promise<void> {
-    await DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
     ]);
@@ -329,7 +329,7 @@ export default class FreeBugMail {
 
     DTT.freeBugMailLog(`Free BugMail request #${this.No} has been manually deleted and ergo automatically resolved.`);
 
-    await DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "RESOLVED",
       this.No
     ]);
@@ -355,7 +355,7 @@ export default class FreeBugMail {
 
     await message.edit({ components: message.components, embeds: message.embeds });
 
-    await DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
       "DISABLED",
       this.No
     ]);
@@ -408,7 +408,7 @@ export default class FreeBugMail {
     try {
       const message = await this.fetchMessage();
 
-      DTT.Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
+      Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
         "OPEN",
         this.No
       ]);

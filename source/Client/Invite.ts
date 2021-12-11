@@ -1,5 +1,5 @@
 import { Collection, CommandInteraction, Formatters, Snowflake, TextChannel, User } from "discord.js";
-import DTT from "./Client.js";
+import DTT, { Maria } from "./Client.js";
 
 interface InviteData {
   No: number;
@@ -42,7 +42,7 @@ export default class Invite {
       reason: `Created with the intent to invite ${invitee.id}.`
     });
 
-    const { insertId } = await DTT.Maria.query("INSERT INTO `Invites` SET `Inviter ID` = ?, `Invitee ID` = ?, `Created Timestamp` = ?, `Expires Timestamp` = ?, `Expired` = ?, `Code` = ?;", [
+    const { insertId } = await Maria.query("INSERT INTO `Invites` SET `Inviter ID` = ?, `Invitee ID` = ?, `Created Timestamp` = ?, `Expires Timestamp` = ?, `Expired` = ?, `Code` = ?;", [
       interaction.user.id,
       invitee.id,
       invite.createdTimestamp,
@@ -84,7 +84,7 @@ export default class Invite {
   }
 
   async remove(): Promise<void> {
-    await DTT.Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
+    await Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
       true,
       this.No
     ]);

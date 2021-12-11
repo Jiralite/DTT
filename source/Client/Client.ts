@@ -3,7 +3,7 @@ import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 import commands, { Command, CommandName } from "../Commands/index.js";
 
-const pool = createPool({
+export const Maria = createPool({
   user: process.env.MARIA_USER,
   password: process.env.MARIA_PASSWORD,
   host: process.env.MARIA_HOST,
@@ -11,7 +11,6 @@ const pool = createPool({
 });
 
 class DTT <T extends boolean> extends Client<T> {
-  readonly Maria = pool;
   readonly commands: Record<CommandName, Command>;
 
   constructor(options: ClientOptions) {
