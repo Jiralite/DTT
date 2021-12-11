@@ -32,7 +32,7 @@ export default class Invite {
     this.code = invite.Code;
   }
 
-  static async create(interaction: CommandInteraction, invitee: User): Promise<void> {
+  static async create(interaction: CommandInteraction<"cached">, invitee: User): Promise<void> {
     const verification = DTT.channel("verification") as TextChannel;
 
     const invite = await verification.createInvite({
