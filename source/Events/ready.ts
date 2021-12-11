@@ -1,9 +1,11 @@
-import { Formatters, MessageEmbed, TextChannel } from "discord.js";
+import { Constants, Formatters, MessageEmbed, TextChannel } from "discord.js";
 import { decodeHTML } from "entities";
 import fetch from "node-fetch";
 import DTT from "../Client/Client.js";
 import Invite from "../Client/Invite.js";
+import { Event } from "./index.js";
 
+const name = Constants.Events.CLIENT_READY;
 const commitInformation = process.env.COMMIT_INFORMATION;
 const defaultReturnText = "Selflessly slaving away.";
 const baseURL = "https://github.com/";
@@ -70,32 +72,36 @@ async function collectInvites(): Promise<void> {
   }
 }
 
-export default async (): Promise<void> => {
-  await Maria();
-  if (!commitInformation) return DTT.log(defaultReturnText);
-  const commitInformationSplit = commitInformation.split("\n");
-  const commitSplit = /commit ([A-Z\d]+) \([A-Z]+ -> (.+?),/i.exec(commitInformationSplit[0]);
-  if (!commitSplit) return DTT.log(defaultReturnText);
-  const hash = commitSplit[1];
-  const branch = commitSplit[2];
-  const smallHash = hash.slice(0, 7);
-  const author = commitInformationSplit[1].slice(8, commitInformationSplit[1].indexOf("<") - 1);
-  const message = commitInformationSplit[4].trim();
-  const authorURL = baseURL + author;
-  const branchURL = `${repositoryURL}tree/${encodeURIComponent(branch)}`;
-  const commitURL = `${repositoryURL}commit/${hash}`;
+export const event: Event<typeof name> = {
+  name,
+  once: true,
+  async fire(): Promise<void> {
+    await Maria();
+    if (!commitInformation) return DTT.log(defaultReturnText);
+    const commitInformationSplit = commitInformation.split("\n");
+    const commitSplit = /commit ([A-Z\d]+) \([A-Z]+ -> (.+?),/i.exec(commitInformationSplit[0]);
+    if (!commitSplit) return DTT.log(defaultReturnText);
+    const hash = commitSplit[1];
+    const branch = commitSplit[2];
+    const smallHash = hash.slice(0, 7);
+    const author = commitInformationSplit[1].slice(8, commitInformationSplit[1].indexOf("<") - 1);
+    const message = commitInformationSplit[4].trim();
+    const authorURL = baseURL + author;
+    const branchURL = `${repositoryURL}tree/${encodeURIComponent(branch)}`;
+    const commitURL = `${repositoryURL}commit/${hash}`;
 
-  await DTT.logChannel.send({
-    embeds: [
-      {
-        description: `Running [\`${smallHash}\`](${commitURL}) on [\`${branch}\`](${branchURL}) at ${Formatters.time(Math.floor(Date.now() / 1000))}.\n${message} - [${author}](${authorURL})`,
-        timestamp: Date.now(),
-        color: (await DTT.guild.members.fetch(DTT.user.id)).displayColor
-      }
-    ]
-  });
+    await DTT.logChannel.send({
+      embeds: [
+        {
+          description: `Running [\`${smallHash}\`](${commitURL}) on [\`${branch}\`](${branchURL}) at ${Formatters.time(Math.floor(Date.now() / 1000))}.\n${message} - [${author}](${authorURL})`,
+          timestamp: Date.now(),
+          color: (await DTT.guild.members.fetch(DTT.user.id)).displayColor
+        }
+      ]
+    });
 
-  fetchRedditPosts();
+    fetchRedditPosts();
+  }
 };
 
 interface RawRedditDataChildrenDataResponse {

@@ -1,9 +1,15 @@
-import DTT from "./Client/Client.js";
+import { readdirSync } from "node:fs";
 import { CommandName, Constants, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
-import ready from "./Events/ready.js";
+
+import DTT from "./Client/Client.js";
 import Invite from "./Client/Invite.js";
 
-DTT.once(Constants.Events.CLIENT_READY, ready);
+const eventsPath = new URL("./Events/", import.meta.url);
+
+for (const file of readdirSync(eventsPath).filter(file => file !== "index.js")) {
+  const { name, once, fire } = (await import(eventsPath + file)).event;
+  DTT[once ? "once" : "on"](name, fire);
+}
 
 DTT.on(Constants.Events.GUILD_MEMBER_UPDATE, (oldGuildmember, newGuildmember) => {
   if (oldGuildmember.guild.id !== DTT.guild.id) return;
