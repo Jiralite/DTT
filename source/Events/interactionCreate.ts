@@ -1,5 +1,6 @@
 import { CommandName, Constants, GuildMember, Role, RoleCategories, RolesCommand, Snowflake, SubRoleCategories, VerificationType } from "discord.js";
 import DTT from "../Client/Client.js";
+import Verification from "../Client/Verification.js";
 import { Event } from "./index.js";
 
 const name = Constants.Events.INTERACTION_CREATE;
@@ -56,7 +57,7 @@ export const event: Event<typeof name> = {
 
     if (interaction.isButton()) {
       const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
-      if (joiner) return DTT.Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
+      if (joiner) return Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
       if (interaction.customId === "SELFROLE_BACK") return DTT.commands.roles.handle(interaction);
       const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 

@@ -49,11 +49,11 @@ export default class Verification {
 
       switch (authentication) {
         case "TESTER":
-          return DTT.Verification.authoriseTester(interaction, affectedGuildMember);
+          return Verification.authoriseTester(interaction, affectedGuildMember);
         case "ALT":
-          return DTT.Verification.authoriseAlt(interaction, affectedGuildMember);
+          return Verification.authoriseAlt(interaction, affectedGuildMember);
         case "DENY":
-          return DTT.Verification.authoriseKick(interaction, affectedGuildMember);
+          return Verification.authoriseKick(interaction, affectedGuildMember);
       }
     } catch (error) {
       if (error instanceof DiscordAPIError) {

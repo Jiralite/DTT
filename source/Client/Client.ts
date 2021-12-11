@@ -6,7 +6,6 @@ import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 import FreeBugMail from "./FreeBugMail.js";
-import Verification from "./Verification.js";
 import commands from "../Commands/index.js";
 
 const imagesPath = `${dirname(fileURLToPath(import.meta.url))}/../../Resources/`;
@@ -23,7 +22,6 @@ const pool = createPool({
 class DTT <T extends boolean> extends Client<T> {
   readonly Maria = pool;
   readonly FreeBugMail = FreeBugMail;
-  readonly Verification = Verification;
   readonly commands: Record<CommandName, Command>;
   readonly freeBugMails: Collection<number, FreeBugMail>;
   readonly images: Record<ImageName, string>;
