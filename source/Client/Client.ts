@@ -15,7 +15,7 @@ class DTT <T extends boolean> extends Client<T> {
     const _command = new command();
     _commands[_command.name] = _command;
     return _commands;
-  }, {} as Record<CommandName, Command>);
+  }, {} as Record<keyof typeof CommandName, Command>);
 
   constructor(options: ClientOptions) {
     super(options);
