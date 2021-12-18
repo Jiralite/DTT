@@ -80,13 +80,14 @@ export const event: Event<typeof name> = {
     await collectFromDatabase();
     if (!commitInformation) return DTT.log(defaultReturnText);
     const commitInformationSplit = commitInformation.split("\n");
-    const commitSplit = /commit ([A-Z\d]+) \([A-Z]+ -> (.+?),/i.exec(commitInformationSplit[0]);
+    const commitSplit = /commit ([a-z\d]+) \([a-z]+ -> (.+?),/i.exec(commitInformationSplit[0]);
     if (!commitSplit) return DTT.log(defaultReturnText);
     const hash = commitSplit[1];
     const branch = commitSplit[2];
     const smallHash = hash.slice(0, 7);
-    const author = commitInformationSplit[1].slice(8, commitInformationSplit[1].indexOf("<") - 1);
-    const message = commitInformationSplit[4].trim();
+    const authorLine = commitInformationSplit.find(information => information.startsWith("Author:"));
+    const author = authorLine?.slice(8, authorLine.indexOf("<") - 1) ?? null;
+    const message = commitInformationSplit[commitInformationSplit.findIndex(information => information.startsWith("Date:")) + 2].trim();
     const authorURL = baseURL + author;
     const branchURL = `${repositoryURL}tree/${encodeURIComponent(branch)}`;
     const commitURL = `${repositoryURL}commit/${hash}`;
