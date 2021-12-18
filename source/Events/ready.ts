@@ -91,14 +91,14 @@ export const event: Event<typeof name> = {
     const authorURL = baseURL + author;
     const branchURL = `${repositoryURL}tree/${encodeURIComponent(branch)}`;
     const commitURL = `${repositoryURL}commit/${hash}`;
+    const embed = new MessageEmbed();
+    embed.setColor((await DTT.guild.members.fetch(DTT.user.id)).displayColor);
+    embed.setDescription(`Running [\`${smallHash}\`](${commitURL}) on [\`${branch}\`](${branchURL}) at ${Formatters.time(Math.floor(Date.now() / 1000))}.\n${message}${author ? ` - [${author}](${authorURL})` : ""}`);
+    embed.setTimestamp();
 
     await DTT.logChannel.send({
       embeds: [
-        {
-          description: `Running [\`${smallHash}\`](${commitURL}) on [\`${branch}\`](${branchURL}) at ${Formatters.time(Math.floor(Date.now() / 1000))}.\n${message} - [${author}](${authorURL})`,
-          timestamp: Date.now(),
-          color: (await DTT.guild.members.fetch(DTT.user.id)).displayColor
-        }
+        embed
       ]
     });
 
