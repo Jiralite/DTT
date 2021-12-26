@@ -179,7 +179,7 @@ export default class FreeBugMail {
       });
     }
 
-    (interaction.component as MessageButton).setDisabled();
+    interaction.component.setDisabled();
     await interaction.message.edit({ components: interaction.message.components });
     DTT.freeBugMailLog(`${interaction.user} is attempting to claim Free BugMail request #${this.No} and is being asked to double check before fully claiming.`);
     const actionRow = new MessageActionRow();
@@ -205,11 +205,11 @@ export default class FreeBugMail {
     try {
       const awaitedInteraction = await message.awaitMessageComponent({ componentType: "BUTTON", time: 60000 });
 
-      if ((awaitedInteraction.component as MessageButton).customId === `${this.No}-CLAIM`) return this.claim(awaitedInteraction);
+      if (awaitedInteraction.component.customId === `${this.No}-CLAIM`) return this.claim(awaitedInteraction);
       this.alreadyBugMailed(awaitedInteraction);
     } catch {
       DTT.freeBugMailLog(`${interaction.user} did not fully claim Free BugMail request #${this.No}.`);
-      (interaction.component as MessageButton).setDisabled(false);
+      interaction.component.setDisabled(false);
       interaction.message.edit({ components: interaction.message.components });
 
       interaction.editReply({

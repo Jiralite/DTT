@@ -58,8 +58,8 @@ export default class implements RolesCommand {
     }
   }
 
-  async categoryInteraction(interaction: SelectMenuInteraction, category: RoleCategories): Promise<void> {
-    const components = this.category(interaction.member as GuildMember, category);
+  async categoryInteraction(interaction: SelectMenuInteraction<"cached">, category: RoleCategories): Promise<void> {
+    const components = this.category(interaction.member, category);
     const actionRow = new MessageActionRow();
     const button = new MessageButton();
     button.setCustomId("SELFROLE_BACK");

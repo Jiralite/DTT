@@ -1,4 +1,4 @@
-import { Constants, Formatters, GuildMember, Permissions, Role, Snowflake } from "discord.js";
+import { Constants, Formatters, Permissions, Role, Snowflake } from "discord.js";
 import DTT from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Verification, { VerificationType } from "../Client/Verification.js";
@@ -71,10 +71,9 @@ export const event: Event<typeof name> = {
 
       if (roleAssignment) {
         const role = DTT.guild.roles.resolve(roleAssignment[1]) as Role;
-        const member = interaction.member as GuildMember;
 
-        if (member.roles.cache.has(role.id)) {
-          member.roles.remove(role).then(() => interaction.reply({
+        if (interaction.member.roles.cache.has(role.id)) {
+          interaction.member.roles.remove(role).then(() => interaction.reply({
             content: `The ${role} role has been removed from you!`,
             ephemeral: true
           })).catch(error => {
@@ -86,7 +85,7 @@ export const event: Event<typeof name> = {
             });
           });
         } else {
-          member.roles.add(role).then(() => interaction.reply({
+          interaction.member.roles.add(role).then(() => interaction.reply({
             content: `The ${role} role has been added to you!`,
             ephemeral: true
           })).catch(error => {
@@ -137,8 +136,7 @@ export const event: Event<typeof name> = {
         });
       }
 
-      const guildMember = interaction.member as GuildMember;
-      const rolesToSet = guildMember.roles.cache.clone();
+      const rolesToSet = interaction.member.roles.cache.clone();
       const rolesAdded: Role[] = [];
       const rolesRemoved: Role[] = [];
 
@@ -156,7 +154,7 @@ export const event: Event<typeof name> = {
         }
       }
 
-      guildMember.roles.set(rolesToSet).then(() => {
+      interaction.member.roles.set(rolesToSet).then(() => {
         interaction.reply({
           content: `Roles added: ${rolesAdded.join(" & ") || "None."}\nRoles removed: ${rolesRemoved.join(" & ") || "None."}`,
           ephemeral: true

@@ -27,23 +27,23 @@ export interface CommandStructure {
 }
 
 export interface FreeBugMailCommand extends Command {
-  submit(interaction: CommandInteraction): void;
-  edit(interaction: CommandInteraction): void;
-  complete(interaction: CommandInteraction): void;
+  submit(interaction: CommandInteraction<"cached">): void;
+  edit(interaction: CommandInteraction<"cached">): void;
+  complete(interaction: CommandInteraction<"cached">): void;
 }
 
 export interface InviteCommand extends Command {
-  execute(interaction: CommandInteraction): void;
+  execute(interaction: CommandInteraction<"cached">): void;
 }
 
 export interface RegenerateCommand extends Command {
-  execute(interaction: CommandInteraction): Promise<void>;
+  execute(interaction: CommandInteraction<"cached">): Promise<void>;
   readMe(channel: TextChannel | NewsChannel): Promise<void>;
   bugmailQueue(channel: TextChannel | NewsChannel): Promise<void>;
 }
 
 export interface RememberCommand extends Command {
-  execute(interaction: CommandInteraction): Promise<void>;
+  execute(interaction: CommandInteraction<"cached">): Promise<void>;
 }
 
 export type RoleCategories = "macOS" | "Linux" | "Windows" | "Android" | "iOS" | "Chrome OS" | "Miscellaneous" | "Experiments" | "Discord Updates" | "Phabricator Updates";
@@ -55,8 +55,8 @@ export interface RoleStructure {
 }
 
 export interface RolesCommand extends Command {
-  execute(interaction: ButtonInteraction | CommandInteraction): void;
-  categoryInteraction(interaction: SelectMenuInteraction | NewsChannel, category: RoleCategories): void;
+  execute(interaction: ButtonInteraction<"cached"> | CommandInteraction<"cached">): void;
+  categoryInteraction(interaction: SelectMenuInteraction<"cached"> | NewsChannel, category: RoleCategories): void;
   category(guildMember: GuildMember, category: RoleCategories): MessageActionRowOptions[];
   resolveSelectMenuCategoryRoles(categoryRoleName: SubRoleCategories): RoleStructure[];
   get macOSVersionRoles(): RoleStructure[];
