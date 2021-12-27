@@ -1,3 +1,4 @@
+import process from "node:process";
 import { Client, ClientOptions, Constants, Guild, GuildChannel, GuildEmoji, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";

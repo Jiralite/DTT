@@ -1,3 +1,4 @@
+import process from "node:process";
 import { Constants, Formatters, MessageEmbed, TextChannel } from "discord.js";
 import { decodeHTML } from "entities";
 import fetch from "node-fetch";
