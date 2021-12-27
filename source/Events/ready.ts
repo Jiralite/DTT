@@ -144,7 +144,7 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Prom
       return keywordsRegExp.test(selftext) || keywordsRegExp.test(title);
     }).map(({ data }) => {
       const embed = new MessageEmbed();
-      embed.setAuthor(data.author, undefined, `https://reddit.com/user/${data.author}`);
+      embed.setAuthor({ name: data.author, url: `https://reddit.com/user/${data.author}` });
       const selfText = decodeHTML(data.selftext);
       embed.setDescription(selfText.length > 4096 ? `${selfText.slice(0, 4093)}...` : selfText);
       embed.setFooter(data.subreddit_name_prefixed);

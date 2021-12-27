@@ -68,7 +68,7 @@ export default class FreeBugMail {
     button.setStyle(Constants.MessageButtonStyles.PRIMARY);
     actionRow.addComponents(button);
     const embed = new MessageEmbed();
-    embed.setAuthor(interaction.user.tag, interaction.member.displayAvatarURL({ format: "png", dynamic: true }));
+    embed.setAuthor({ name: interaction.user.tag, iconURL: interaction.member.displayAvatarURL({ format: "png", dynamic: true }) });
     embed.setColor((await DTT.guild.members.fetch(DTT.user.id)).displayColor);
     embed.setDescription(text);
     embed.setFooter(`#${newFreeBugMail.No}`);
