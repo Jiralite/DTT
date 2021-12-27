@@ -165,7 +165,8 @@ export default class implements FreeBugMailCommand {
                 name: "number",
                 description: "The Free BugMail request # to complete.",
                 required: true,
-                choices: []
+                choices: [],
+                minValue: 1
               }
             ]
           },
@@ -178,7 +179,8 @@ export default class implements FreeBugMailCommand {
                 type: Constants.ApplicationCommandOptionTypes.INTEGER,
                 name: "number",
                 description: "The Free BugMail request # to edit.",
-                required: true
+                required: true,
+                minValue: 1
               },
               {
                 type: Constants.ApplicationCommandOptionTypes.STRING,
