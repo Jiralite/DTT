@@ -425,10 +425,6 @@ export default class implements RolesCommand {
   get iOSVersionRoles(): RoleStructure[] {
     return [
       {
-        role: DTT.role("iOS 10"),
-        emoji: DTT.emoji("iOS10")
-      },
-      {
         role: DTT.role("iOS 11"),
         emoji: DTT.emoji("iOS11")
       },
