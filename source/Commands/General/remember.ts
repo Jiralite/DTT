@@ -46,6 +46,26 @@ export default class implements RememberCommand {
       },
       permissions: [
         {
+          id: DTT.role("Admin").id,
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
+          permission: true
+        },
+        {
+          id: DTT.role("DT Staff").id,
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
+          permission: true
+        },
+        {
+          id: DTT.role("Moderator").id,
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
+          permission: true
+        },
+        {
+          id: DTT.role("Discord Employee").id,
+          type: Constants.ApplicationCommandPermissionTypes.ROLE,
+          permission: true
+        },
+        {
           id: DTT.role("Tester").id,
           type: Constants.ApplicationCommandPermissionTypes.ROLE,
           permission: true
