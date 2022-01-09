@@ -1,5 +1,5 @@
 import process from "node:process";
-import { Client, ClientOptions, Constants, Guild, GuildChannel, GuildEmoji, Intents, Role, TextChannel, ThreadChannel } from "discord.js";
+import { Client, ClientOptions, Constants, Guild, GuildChannel, GuildEmoji, Intents, MessageOptions, Permissions, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 import commands, { Command, CommandName } from "../Commands/index.js";
@@ -49,6 +49,33 @@ class DTT <T extends boolean> extends Client<T> {
         parse: []
       }
     }).catch(() => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async inviteLog(message: string | Omit<MessageOptions, "allowedMentions">, consoleLog: any = message): Promise<void> {
+    let stamp = new Date().toISOString();
+    this.consoleLog(consoleLog, stamp);
+    if (!this.isReady()) throw new Error("Client logging when not ready.");
+    const me = await this.guild.members.fetch(this.user.id);
+    const inviteLogs = this.channel("invite-logs");
+    if (!inviteLogs.isText()) throw new Error("Attempting to log in a non-text-based channel.");
+
+    if (!inviteLogs.permissionsFor(me).has([
+      Permissions.FLAGS.SEND_MESSAGES,
+      Permissions.FLAGS.VIEW_CHANNEL
+    ])) {
+      throw new Error("Missing permissions to log.");
+    }
+
+    stamp = `\`[${stamp}]\``;
+    typeof message === "string" ? message = { content: `${stamp} ${message}` } : message.content = `${stamp} ${message.content}`;
+
+    inviteLogs.send({
+      allowedMentions: {
+        parse: []
+      },
+      ...message
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,6 +149,7 @@ class DTT <T extends boolean> extends Client<T> {
 
 export default new DTT<true>({
   partials: [
+    Constants.PartialTypes.GUILD_MEMBER,
     Constants.PartialTypes.MESSAGE
   ],
   intents: [

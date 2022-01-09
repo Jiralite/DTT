@@ -64,8 +64,8 @@ export const event: Event<typeof name> = {
     }
 
     if (interaction.isButton()) {
-      const joiner = /(TESTER|ALT|DENY)-(\d+)/.exec(interaction.customId);
-      if (joiner) return Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake));
+      const joiner = /(TESTER|EMPLOYEE|ALT|DENY)-(\d+)-(\d+)/.exec(interaction.customId);
+      if (joiner) return Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake), joiner[3] as Snowflake);
       if (interaction.customId === "SELFROLE_BACK") return DTT.commands.roles.handle(interaction);
       const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 

@@ -1,4 +1,4 @@
-import { Collection, CommandInteraction, Formatters, Snowflake, TextChannel, User } from "discord.js";
+import { Collection, CommandInteraction, Snowflake, TextChannel, User } from "discord.js";
 import DTT, { Maria } from "./Client.js";
 
 interface InviteData {
@@ -63,13 +63,7 @@ export default class Invite {
     });
 
     Invite.cache.set(newInvite.No, newInvite);
-
-    await newInvite.inviteLogs.send({
-      content: `${interaction.user} generated a one-time invite code (\`${newInvite.code}\`) with the intent to invite ${invitee}.`,
-      allowedMentions: {
-        parse: []
-      }
-    });
+    await DTT.inviteLog(`${interaction.user} (${interaction.user.tag}) generated a one-time invite code (\`${newInvite.code}\`) with the intent to invite ${invitee} (${invitee.tag}).`);
 
     await interaction.reply({
       content: `Your invite code with the intent to invite ${invitee}: \`${newInvite.code}\``,
@@ -96,12 +90,9 @@ export default class Invite {
       this.timeout = null;
     }
 
-    await this.inviteLogs.send({
-      content: `Invite code \`${this.code}\` has just expired.\n${Formatters.userMention(this.inviterId)} generated this invite code with the intent to invite ${Formatters.userMention(this.inviteeId)}.`,
-      allowedMentions: {
-        parse: []
-      }
-    });
+    const inviter = await DTT.users.fetch(this.inviterId);
+    const invitee = await DTT.users.fetch(this.inviteeId);
+    await DTT.inviteLog(`Invite code \`${this.code}\` has just expired. ${inviter} (${inviter.tag}) generated this invite code with the intent to invite ${invitee} (${invitee.tag}).`);
   }
 
   isExpired(): this is this & { expired: true } {
@@ -110,9 +101,5 @@ export default class Invite {
 
   get verification(): TextChannel {
     return DTT.channel("verification") as TextChannel;
-  }
-
-  get inviteLogs(): TextChannel {
-    return DTT.channel("invite-logs") as TextChannel;
   }
 }
