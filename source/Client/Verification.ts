@@ -66,7 +66,11 @@ export default class Verification {
         });
       }
 
-      await guildMember.roles.add(role);
+      await guildMember.roles.add([
+        DTT.role("Member"),
+        role
+      ]);
+
       await interaction.message.edit({ components: [] });
 
       await interaction.reply({

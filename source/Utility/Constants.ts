@@ -54,6 +54,7 @@ export const roles = {
   "DT Mod or BA": "832393264975970306",
   "DT Staff": "776828300450201600",
   Moderator: "815329929838198824",
+  Member: "929726126232854569",
   "Discord Employee": "928034417660805191",
   Tester: "765638424618074122",
   "BW Contributor": "791022460454567947",
