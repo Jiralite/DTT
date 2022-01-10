@@ -1,8 +1,16 @@
-import { ButtonInteraction, CommandInteraction, Constants, GuildMember, MessageActionRow, MessageButton, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction } from "discord.js";
+import { ButtonInteraction, CommandInteraction, Constants, GuildEmoji, GuildMember, MessageActionRow, MessageButton, MessageSelectMenu, MessageSelectOptionData, Role, SelectMenuInteraction } from "discord.js";
 import DTT from "../../Client/Client.js";
-import { CommandStructure, RoleCategories, RolesCommand, RoleStructure, SubRoleCategories } from "../index.js";
+import { Command, CommandStructure } from "../index.js";
 
-export default class implements RolesCommand {
+export type RoleCategories = "macOS" | "Linux" | "Windows" | "Android" | "iOS" | "Chrome OS" | "Miscellaneous" | "Experiments" | "Discord Updates" | "Phabricator Updates";
+export type SubRoleCategories = "macOSVersionRoles" | "windowsVersionRoles" | "androidDeviceRoles" | "androidVersionRoles" | "iOSDeviceRoles" | "iOSVersionRoles" | "iOSMiscellaneousRoles" | "miscellaneousRoles" | "experimentRoles" | "discordUpdatesRoles" | "phabricatorUpdatesRoles";
+
+export interface RoleStructure {
+  role: Role;
+  emoji: GuildEmoji | string;
+}
+
+export default class implements Command {
   readonly name = "roles";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
@@ -19,7 +27,7 @@ export default class implements RolesCommand {
     "Phabricator Updates"
   ];
 
-  async handle(interaction: ButtonInteraction<"cached"> | CommandInteraction<"cached">): Promise<void> {
+  async handle(interaction: CommandInteraction<"cached">): Promise<void> {
     return await this.execute(interaction);
   }
 

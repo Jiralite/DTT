@@ -1,9 +1,9 @@
 import { CommandInteraction, Constants, GuildMember, Permissions } from "discord.js";
 import DTT from "../../Client/Client.js";
 import Invite from "../../Client/Invite.js";
-import { InviteCommand, CommandStructure } from "../index.js";
+import { Command, CommandStructure } from "../index.js";
 
-export default class implements InviteCommand {
+export default class implements Command {
   readonly name = "invite";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 

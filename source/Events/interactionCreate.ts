@@ -2,7 +2,8 @@ import { Constants, Formatters, Permissions, Role, Snowflake } from "discord.js"
 import DTT from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Verification, { VerificationType } from "../Client/Verification.js";
-import { isCommandName, RoleCategories, RolesCommand, SubRoleCategories } from "../Commands/index.js";
+import { RoleCategories, SubRoleCategories } from "../Commands/General/roles.js";
+import commands, { isCommandName } from "../Commands/index.js";
 import { Event } from "./index.js";
 
 const name = Constants.Events.INTERACTION_CREATE;
@@ -23,7 +24,7 @@ export const event: Event<typeof name> = {
         });
       }
 
-      const command = DTT.commands[commandName];
+      const command = commands[commandName];
 
       if (interaction.channelId === DTT.channel("bugmail-queue").id && command.name !== "free-bugmail" && !interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
         return interaction.reply({
@@ -33,7 +34,7 @@ export const event: Event<typeof name> = {
       }
 
       try {
-        await command.handle(interaction, interaction.options.getSubcommand(false));
+        await command.handle(interaction);
       } catch (error) {
         DTT.log(`Error running command "${commandName}".`, error);
         const errorMessage = "An error was encountered. It's being tracked.";
@@ -66,7 +67,7 @@ export const event: Event<typeof name> = {
     if (interaction.isButton()) {
       const joiner = /(TESTER|EMPLOYEE|ALT|DENY)-(\d+)-(\d+)/.exec(interaction.customId);
       if (joiner) return Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake), joiner[3] as Snowflake);
-      if (interaction.customId === "SELFROLE_BACK") return DTT.commands.roles.handle(interaction);
+      if (interaction.customId === "SELFROLE_BACK") return commands.roles.execute(interaction);
       const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 
       if (roleAssignment) {
@@ -123,7 +124,7 @@ export const event: Event<typeof name> = {
     }
 
     if (interaction.isSelectMenu()) {
-      if (interaction.customId === "SELFROLE_CATEGORY") return (DTT.commands.roles as RolesCommand).categoryInteraction(interaction, interaction.values[0] as RoleCategories);
+      if (interaction.customId === "SELFROLE_CATEGORY") return commands.roles.categoryInteraction(interaction, interaction.values[0] as RoleCategories);
       if (!interaction.customId.startsWith("SELFROLE")) return;
       const roles: Role[] = interaction.values.map(id => DTT.guild.roles.resolve(id) as Role);
 
@@ -147,7 +148,7 @@ export const event: Event<typeof name> = {
         }
       }
 
-      for (const { role } of (DTT.commands.roles as RolesCommand).resolveSelectMenuCategoryRoles(interaction.customId.slice(9) as SubRoleCategories).filter(({ role }) => !roles.some(({ id }) => id === role.id))) {
+      for (const { role } of commands.roles.resolveSelectMenuCategoryRoles(interaction.customId.slice(9) as SubRoleCategories).filter(({ role }) => !roles.some(({ id }) => id === role.id))) {
         if (rolesToSet.has(role.id)) {
           rolesToSet.delete(role.id);
           rolesRemoved.push(role);

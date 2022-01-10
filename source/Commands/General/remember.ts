@@ -1,8 +1,8 @@
 import { CommandInteraction, Constants } from "discord.js";
 import DTT from "../../Client/Client.js";
-import { RememberCommand, CommandStructure } from "../index.js";
+import { Command, CommandStructure } from "../index.js";
 
-export default class implements RememberCommand {
+export default class implements Command {
   readonly name = "remember";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 

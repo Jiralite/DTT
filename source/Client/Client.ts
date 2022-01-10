@@ -2,7 +2,7 @@ import process from "node:process";
 import { Client, ClientOptions, Constants, Guild, GuildChannel, GuildEmoji, Intents, MessageOptions, Permissions, Role, TextChannel, ThreadChannel } from "discord.js";
 import { createPool } from "mariadb";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
-import commands, { Command, CommandName } from "../Commands/index.js";
+import commands, { CommandName } from "../Commands/index.js";
 
 export const Maria = createPool({
   user: process.env.MARIA_USER,
@@ -12,12 +12,6 @@ export const Maria = createPool({
 });
 
 class DTT <T extends boolean> extends Client<T> {
-  readonly commands = commands.reduce((_commands, command) => {
-    const _command = new command();
-    _commands[_command.name] = _command;
-    return _commands;
-  }, {} as Record<keyof typeof CommandName, Command>);
-
   constructor(options: ClientOptions) {
     super(options);
   }
@@ -86,13 +80,13 @@ class DTT <T extends boolean> extends Client<T> {
 
   async applyCommands(): Promise<void> {
     try {
-      const applicationCommands = await this.guild.commands.set(Object.values(this.commands).map(({ commandData: { applicationCommandData } }) => applicationCommandData));
+      const applicationCommands = await this.guild.commands.set(Object.values(commands).map(({ commandData: { applicationCommandData } }) => applicationCommandData));
       this.consoleLog(applicationCommands.map(({ name, type }) => `Set ${name} as an ${type} application command.`).join("\n"));
 
       const applicationCommandsPermissions = await this.guild.commands.permissions.set({
         fullPermissions: applicationCommands.map(({ id, name }) => ({
           id,
-          permissions: this.commands[name as CommandName].commandData.permissions
+          permissions: commands[name as CommandName].commandData.permissions
         }))
       });
 

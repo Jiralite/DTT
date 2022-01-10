@@ -1,14 +1,14 @@
 import { CommandInteraction, Constants } from "discord.js";
 import DTT from "../../Client/Client.js";
 import FreeBugMail from "../../Client/FreeBugMail.js";
-import { CommandStructure, FreeBugMailCommand } from "../index.js";
+import { Command, CommandStructure } from "../index.js";
 
-export default class implements FreeBugMailCommand {
+export default class implements Command {
   readonly name = "free-bugmail";
   readonly type = Constants.ApplicationCommandTypes.CHAT_INPUT;
 
-  async handle(interaction: CommandInteraction<"cached">, subcommand: string): Promise<void> {
-    switch (subcommand) {
+  async handle(interaction: CommandInteraction<"cached">): Promise<void> {
+    switch (interaction.options.getSubcommand()) {
       case "submit":
         return await this.submit(interaction);
       case "edit":
