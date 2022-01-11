@@ -16,7 +16,6 @@ export const channels = {
 export const emojis = {
   typing: "852637406334156800",
   apple: "894407727898566667",
-  linux: "894409813780480031",
   windows7: "894410332641050724",
   windows8: "894410856115363921",
   windows10: "894412112754016256",
@@ -44,7 +43,8 @@ export const emojis = {
   discord: "894432894070689804",
   canary: "894434267868827659",
   ptb: "894434637370241064",
-  stable: "894434646274752532"
+  stable: "894434646274752532",
+  linux: "930459774275952671"
 } as const;
 
 export const roles = {
