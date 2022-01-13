@@ -1,4 +1,19 @@
-import { ButtonInteraction, Collection, CommandInteraction, Constants, DiscordAPIError, Formatters, Message, MessageActionRow, MessageButton, MessageEmbed, Role, Snowflake, TextChannel } from "discord.js";
+import {
+  ButtonInteraction,
+  Collection,
+  CommandInteraction,
+  Constants,
+  DiscordAPIError,
+  Formatters,
+  Message,
+  MessageActionRow,
+  MessageButton,
+  MessageEmbed,
+  Role,
+  Snowflake,
+  TextChannel
+} from "discord.js";
+
 import DTT, { Maria } from "./Client.js";
 
 interface FreeBugMailData {
@@ -40,15 +55,15 @@ export default class FreeBugMail {
     this.state = freeBugMail.State;
   }
 
-  static async create(interaction: CommandInteraction<"cached">, text: string, messageId: FreeBugMail["messageId"]): Promise<void> {
-    const { insertId } = await Maria.query("INSERT INTO `Free BugMails` SET `Timestamp` = ?, `Weekly Timestamp` = ?, `Message ID` = ?, `User ID` = ?, `Mentioned` = ?, `State` = ?;", [
-      interaction.createdTimestamp,
-      interaction.createdTimestamp,
-      messageId,
-      interaction.user.id,
-      false,
-      "OPEN"
-    ]);
+  static async create(
+    interaction: CommandInteraction<"cached">,
+    text: string,
+    messageId: FreeBugMail["messageId"]
+  ): Promise<void> {
+    const { insertId } = await Maria.query(
+      "INSERT INTO `Free BugMails` SET `Timestamp` = ?, `Weekly Timestamp` = ?, `Message ID` = ?, `User ID` = ?, `Mentioned` = ?, `State` = ?;",
+      [interaction.createdTimestamp, interaction.createdTimestamp, messageId, interaction.user.id, false, "OPEN"]
+    );
 
     const newFreeBugMail = new FreeBugMail({
       No: insertId,
@@ -68,20 +83,20 @@ export default class FreeBugMail {
     button.setStyle(Constants.MessageButtonStyles.PRIMARY);
     actionRow.addComponents(button);
     const embed = new MessageEmbed();
-    embed.setAuthor({ name: interaction.user.tag, iconURL: interaction.member.displayAvatarURL({ format: "png", dynamic: true }) });
-    embed.setColor((await DTT.guild.members.fetch(DTT.user.id)).displayColor);
+    embed.setAuthor({
+      name: interaction.user.tag,
+      iconURL: interaction.member.displayAvatarURL({ format: "png", dynamic: true })
+    });
+    const member = await DTT.guild.members.fetch(DTT.user.id);
+    embed.setColor(member.displayColor);
     embed.setDescription(text);
-    embed.setFooter(`#${newFreeBugMail.No}`);
+    embed.setFooter({ text: `#${newFreeBugMail.No}` });
     embed.setTimestamp();
     DTT.freeBugMailLog(`${interaction.user} created Free BugMail request #${newFreeBugMail.No}.\n\n${text}`);
 
     await interaction.editReply({
-      components: [
-        actionRow
-      ],
-      embeds: [
-        embed
-      ]
+      components: [actionRow],
+      embeds: [embed]
     });
 
     newFreeBugMail.mentionedTimeout();
@@ -91,54 +106,63 @@ export default class FreeBugMail {
     this.hourTimeout = setTimeout(async () => {
       await this.bugmailDiscussion.send({
         allowedMentions: {
-          parse: [
-            "roles"
-          ]
+          parse: ["roles"]
         },
-        content: `Hey, is anyone with a ${this.freeBugMail} able to help with Free BugMail request #${this.No} belonging to ${Formatters.userMention(this.userId)}?`
+        content: `Hey, is anyone with a ${this.freeBugMail} able to help with Free BugMail request #${
+          this.No
+        } belonging to ${Formatters.userMention(this.userId)}?`
       });
 
       this.mentioned = true;
 
-      await Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [
-        true,
-        this.No
-      ]);
+      await Maria.query("UPDATE `Free BugMails` SET `Mentioned` = ? WHERE `No` = ?;", [true, this.No]);
 
       if (this.hourTimeout !== null) {
         clearTimeout(this.hourTimeout);
         this.hourTimeout = null;
       }
-    }, 3600000 - (Date.now() - this.timestamp));
+    }, 3_600_000 - (Date.now() - this.timestamp));
   }
 
   weeklyTimeout(): void {
-    if (!this.isPending()) throw new Error(`Attempted to start a weekly timeout for Free BugMail request #${this.No}, but the state was not "PENDING".`);
+    if (!this.isPending())
+      throw new Error(
+        `Attempted to start a weekly timeout for Free BugMail request #${this.No}, but the state was not "PENDING".`
+      );
 
-    this.reminderTimeout = setTimeout(claimedById => {
-      const actionRow = new MessageActionRow();
-      const button = new MessageButton();
-      const button2 = new MessageButton();
-      button.setCustomId(`${this.No}-PENDING`);
-      button.setLabel("Yes");
-      button.setStyle(Constants.MessageButtonStyles.PRIMARY);
-      button2.setCustomId(`${this.No}-RESOLVED`);
-      button2.setLabel("No");
-      button2.setStyle(Constants.MessageButtonStyles.SECONDARY);
-      actionRow.addComponents(button, button2);
+    this.reminderTimeout = setTimeout(
+      claimedById => {
+        const actionRow = new MessageActionRow();
+        const button = new MessageButton();
+        const button2 = new MessageButton();
+        button.setCustomId(`${this.No}-PENDING`);
+        button.setLabel("Yes");
+        button.setStyle(Constants.MessageButtonStyles.PRIMARY);
+        button2.setCustomId(`${this.No}-RESOLVED`);
+        button2.setLabel("No");
+        button2.setStyle(Constants.MessageButtonStyles.SECONDARY);
+        actionRow.addComponents(button, button2);
 
-      this.bugmailDiscussion.send({
-        components: [
-          actionRow
-        ],
-        content: `Hey, ${Formatters.userMention(claimedById)}. It's been a week. Is Free BugMail request #${this.No} still ongoing?`
-      });
-    }, 604800000 - (Date.now() - this.weeklyTimestamp), this.claimedById);
+        this.bugmailDiscussion.send({
+          components: [actionRow],
+          content: `Hey, ${Formatters.userMention(claimedById)}. It's been a week. Is Free BugMail request #${
+            this.No
+          } still ongoing?`
+        });
+      },
+      604_800_000 - (Date.now() - this.weeklyTimestamp),
+      this.claimedById
+    );
   }
 
   async resumePendingTimeout(interaction: ButtonInteraction<"cached">): Promise<void> {
-    if (!this.isPending()) throw new Error(`Attempted to resume from a weekly timeout for Free BugMail request #${this.No}, but the state was not "PENDING".`);
-    DTT.freeBugMailLog(`${interaction.user} has stated Free BugMail request #${this.No} is still ongoing after a week.`);
+    if (!this.isPending())
+      throw new Error(
+        `Attempted to resume from a weekly timeout for Free BugMail request #${this.No}, but the state was not "PENDING".`
+      );
+    DTT.freeBugMailLog(
+      `${interaction.user} has stated Free BugMail request #${this.No} is still ongoing after a week.`
+    );
 
     await Maria.query("UPDATE `Free BugMails` SET `Weekly Timestamp` = ? WHERE `No` = ?;", [
       interaction.createdTimestamp,
@@ -149,39 +173,56 @@ export default class FreeBugMail {
 
     await interaction.update({
       components: [],
-      content: `You've stated that the BugMail is still ongoing, ${Formatters.userMention(this.claimedById)}. Ongoing it remains!`
+      content: `You've stated that the BugMail is still ongoing, ${Formatters.userMention(
+        this.claimedById
+      )}. Ongoing it remains!`
     });
 
     this.weeklyTimeout();
   }
 
   async resolvePendingTimeout(interaction: ButtonInteraction<"cached">): Promise<void> {
-    if (!this.isPending()) throw new Error(`Attempted to resolve from a weekly timeout for Free BugMail request #${this.No}, but the state was not "PENDING".`);
-    DTT.freeBugMailLog(`${interaction.user} stated has stated Free BugMail request #${this.No} has been completed after a weekly reminder.`);
+    if (!this.isPending())
+      throw new Error(
+        `Attempted to resolve from a weekly timeout for Free BugMail request #${this.No}, but the state was not "PENDING".`
+      );
+    DTT.freeBugMailLog(
+      `${interaction.user} stated has stated Free BugMail request #${this.No} has been completed after a weekly reminder.`
+    );
 
     await interaction.update({
       components: [],
-      content: `You've stated that Free BugMail request #${this.No} has been completed, ${Formatters.userMention(this.claimedById)}. Completed it be!`
+      content: `You've stated that Free BugMail request #${this.No} has been completed, ${Formatters.userMention(
+        this.claimedById
+      )}. Completed it be!`
     });
 
     await this.resolve(interaction, true);
   }
 
   async preClaim(interaction: ButtonInteraction<"cached">): Promise<void> {
-    const freeBugMail = FreeBugMail.cache.find(freeBugMail => freeBugMail.claimedById === interaction.user.id && freeBugMail.isPending());
+    const freeBugMail = FreeBugMail.cache.find(
+      freeBugMail => freeBugMail.claimedById === interaction.user.id && freeBugMail.isPending()
+    );
 
     if (freeBugMail) {
-      DTT.freeBugMailLog(`${interaction.user} attempted to claim Free BugMail request #${this.No} but already has a pending BugMail (#${freeBugMail.No}).`);
+      DTT.freeBugMailLog(
+        `${interaction.user} attempted to claim Free BugMail request #${this.No} but already has a pending BugMail (#${freeBugMail.No}).`
+      );
 
       return await interaction.reply({
-        content: `You seem to already have claimed a pending Free BugMail request for ${Formatters.userMention(freeBugMail.userId)}: [#${freeBugMail.No}](${freeBugMail.messageLink})`,
+        content: `You seem to already have claimed a pending Free BugMail request for ${Formatters.userMention(
+          freeBugMail.userId
+        )}: [#${freeBugMail.No}](${freeBugMail.messageLink})`,
         ephemeral: true
       });
     }
 
     interaction.component.setDisabled();
     await interaction.message.edit({ components: interaction.message.components });
-    DTT.freeBugMailLog(`${interaction.user} is attempting to claim Free BugMail request #${this.No} and is being asked to double check before fully claiming.`);
+    DTT.freeBugMailLog(
+      `${interaction.user} is attempting to claim Free BugMail request #${this.No} and is being asked to double check before fully claiming.`
+    );
     const actionRow = new MessageActionRow();
     const button = new MessageButton();
     const button2 = new MessageButton();
@@ -194,16 +235,15 @@ export default class FreeBugMail {
     actionRow.addComponents(button, button2);
 
     const message = await interaction.reply({
-      components: [
-        actionRow
-      ],
-      content: "⚠️ Have you searched in Discord Testers (specifically <#733499719267123200>) to ensure that this isn't already BugMailed?",
+      components: [actionRow],
+      content:
+        "⚠️ Have you searched in Discord Testers (specifically <#733499719267123200>) to ensure that this isn't already BugMailed?",
       ephemeral: true,
       fetchReply: true
     });
 
     try {
-      const awaitedInteraction = await message.awaitMessageComponent({ componentType: "BUTTON", time: 60000 });
+      const awaitedInteraction = await message.awaitMessageComponent({ componentType: "BUTTON", time: 60_000 });
 
       if (awaitedInteraction.component.customId === `${this.No}-CLAIM`) return this.claim(awaitedInteraction);
       this.alreadyBugMailed(awaitedInteraction);
@@ -232,15 +272,16 @@ export default class FreeBugMail {
 
     message.embeds[0].spliceFields(0, 1, {
       name: "Notes",
-      value: `Claimed by ${interaction.user} ${Formatters.time(~~(Date.now() / 1000), Formatters.TimestampStyles.RelativeTime)}`,
+      value: `Claimed by ${interaction.user} ${Formatters.time(
+        ~~(Date.now() / 1000),
+        Formatters.TimestampStyles.RelativeTime
+      )}`,
       inline: false
     });
 
     await message.edit({
       components: [],
-      embeds: [
-        message.embeds[0]
-      ]
+      embeds: [message.embeds[0]]
     });
 
     await message.react(DTT.emoji("typing"));
@@ -249,13 +290,17 @@ export default class FreeBugMail {
     DTT.freeBugMailLog(`${interaction.user} successfully claimed Free BugMail request #${this.No}.`);
 
     await this.bugmailDiscussion.send({
-      content: `${interaction.user} has just claimed the Free BugMail request of ${Formatters.userMention(this.userId)}.\nBe sure to post in <#733499719267123200> and ${DTT.channel("bugmailed-reports")} for clarity!`,
+      content: `${interaction.user} has just claimed the Free BugMail request of ${Formatters.userMention(
+        this.userId
+      )}.\nBe sure to post in <#733499719267123200> and ${DTT.channel("bugmailed-reports")} for clarity!`,
       embeds: message.embeds
     });
 
     await interaction.update({
       components: [],
-      content: `You have successfully claimed Free BugMail request [#${this.No}](${this.messageLink}) belonging to ${Formatters.userMention(this.userId)}!`
+      content: `You have successfully claimed Free BugMail request [#${this.No}](${
+        this.messageLink
+      }) belonging to ${Formatters.userMention(this.userId)}!`
     });
 
     if (this.hourTimeout !== null) {
@@ -278,11 +323,11 @@ export default class FreeBugMail {
     });
   }
 
-  async resolve(interaction: ButtonInteraction<"cached"> | CommandInteraction<"cached">, fromWeeklyTimeout: boolean): Promise<void> {
-    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
-      "RESOLVED",
-      this.No
-    ]);
+  async resolve(
+    interaction: ButtonInteraction<"cached"> | CommandInteraction<"cached">,
+    fromWeeklyTimeout: boolean
+  ): Promise<void> {
+    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["RESOLVED", this.No]);
 
     this.state = "RESOLVED";
 
@@ -295,7 +340,9 @@ export default class FreeBugMail {
 
     if (!fromWeeklyTimeout) {
       await interaction.reply({
-        content: `You have completed Free BugMail request #${this.No} belonging to ${Formatters.userMention(this.userId)}!`,
+        content: `You have completed Free BugMail request #${this.No} belonging to ${Formatters.userMention(
+          this.userId
+        )}!`,
         ephemeral: true
       });
     }
@@ -303,12 +350,12 @@ export default class FreeBugMail {
     if (!interaction.member.roles.cache.has(this.freeBugMail.id)) interaction.member.roles.add(this.freeBugMail);
 
     await this.bugmailDiscussion.send({
-      content: `${interaction.user} has completed the Free BugMail request of ${Formatters.userMention(this.userId)}!\nThe ${this.freeBugMail} role has been added to you!`,
+      content: `${interaction.user} has completed the Free BugMail request of ${Formatters.userMention(
+        this.userId
+      )}!\nThe ${this.freeBugMail} role has been added to you!`,
       embeds: message.embeds,
       allowedMentions: {
-        parse: [
-          "users"
-        ]
+        parse: ["users"]
       }
     });
 
@@ -329,17 +376,16 @@ export default class FreeBugMail {
 
     DTT.freeBugMailLog(`Free BugMail request #${this.No} has been manually deleted and ergo automatically resolved.`);
 
-    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
-      "RESOLVED",
-      this.No
-    ]);
+    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["RESOLVED", this.No]);
 
     this.state = "RESOLVED";
 
     if (this.disabledMessageId) {
-      await this.bugmailDiscussion.messages.edit(this.disabledMessageId, {
-        components: []
-      }).catch(() => null);
+      await this.bugmailDiscussion.messages
+        .edit(this.disabledMessageId, {
+          components: []
+        })
+        .catch(() => null);
     }
   }
 
@@ -349,16 +395,16 @@ export default class FreeBugMail {
 
     message.embeds[0].spliceFields(0, 1, {
       name: "Notes",
-      value: `Disabled by ${interaction.user} ${Formatters.time(~~(Date.now() / 1000), Formatters.TimestampStyles.RelativeTime)}`,
+      value: `Disabled by ${interaction.user} ${Formatters.time(
+        ~~(Date.now() / 1000),
+        Formatters.TimestampStyles.RelativeTime
+      )}`,
       inline: false
     });
 
     await message.edit({ components: message.components, embeds: message.embeds });
 
-    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
-      "DISABLED",
-      this.No
-    ]);
+    await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["DISABLED", this.No]);
 
     this.state = "DISABLED";
     DTT.freeBugMailLog(`${interaction.user} has specified Free BugMail request #${this.No} as already claimed.`);
@@ -370,9 +416,7 @@ export default class FreeBugMail {
     actionRow.addComponents(button);
 
     const { id } = await this.bugmailDiscussion.send({
-      components: [
-        actionRow
-      ],
+      components: [actionRow],
       content: `Free BugMail request #${this.No} has been specified as already BugMailed. It is now pending deletion.`,
       embeds: message.embeds
     });
@@ -388,7 +432,9 @@ export default class FreeBugMail {
   async restore(interaction: ButtonInteraction<"cached">): Promise<void> {
     if (this.isResolved()) {
       await interaction.message.edit({ components: [] });
-      DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but the Free BugMail request was already resolved. The button has now been removed.`);
+      DTT.freeBugMailLog(
+        `${interaction.user} attempted to restore Free BugMail request #${this.No} but the Free BugMail request was already resolved. The button has now been removed.`
+      );
 
       return await interaction.reply({
         content: `Free BugMail request #${this.No} is already resolved. The button has now been removed.`,
@@ -397,7 +443,9 @@ export default class FreeBugMail {
     }
 
     if (!interaction.member.roles.cache.hasAny(...DTT.modRoles.map(modRole => modRole.id))) {
-      DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`);
+      DTT.freeBugMailLog(
+        `${interaction.user} attempted to restore Free BugMail request #${this.No} but failed authorisation checks.`
+      );
 
       return await interaction.reply({
         content: "You do not have permission to perform this interaction.",
@@ -408,10 +456,7 @@ export default class FreeBugMail {
     try {
       const message = await this.fetchMessage();
 
-      Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", [
-        "OPEN",
-        this.No
-      ]);
+      Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["OPEN", this.No]);
 
       this.state = "OPEN";
       message.components[0].components[0].setDisabled(false);
@@ -421,19 +466,22 @@ export default class FreeBugMail {
       DTT.freeBugMailLog(`${interaction.user} restored Free BugMail request #${this.No}!`);
       return await interaction.reply(`Free BugMail request [#${this.No}](${this.messageLink}) has been restored.`);
     } catch (error) {
-      if (error instanceof DiscordAPIError) {
-        if (error.code === Constants.APIErrors.UNKNOWN_MESSAGE) {
-          await interaction.message.edit({ components: [] });
-          DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but the Free BugMail request was not found. The button has now been removed.`);
+      if (error instanceof DiscordAPIError && error.code === Constants.APIErrors.UNKNOWN_MESSAGE) {
+        await interaction.message.edit({ components: [] });
+        DTT.freeBugMailLog(
+          `${interaction.user} attempted to restore Free BugMail request #${this.No} but the Free BugMail request was not found. The button has now been removed.`
+        );
 
-          return await interaction.reply({
-            content: `Apparently, Free BugMail request #${this.No} no longer exists. The button has now been removed.`,
-            ephemeral: true
-          });
-        }
+        return await interaction.reply({
+          content: `Apparently, Free BugMail request #${this.No} no longer exists. The button has now been removed.`,
+          ephemeral: true
+        });
       }
 
-      DTT.freeBugMailLog(`${interaction.user} attempted to restore Free BugMail request #${this.No} but encountered an error.`, error);
+      DTT.freeBugMailLog(
+        `${interaction.user} attempted to restore Free BugMail request #${this.No} but encountered an error.`,
+        error
+      );
 
       return await interaction.reply({
         content: "There was an error restoring this Free BugMail request.",
@@ -446,15 +494,15 @@ export default class FreeBugMail {
     return this.bugmailQueue.messages.fetch(this.messageId);
   }
 
-  isOpen(): this is this & { claimedById: null, state: "OPEN" } {
+  isOpen(): this is this & { claimedById: null; state: "OPEN" } {
     return this.state === "OPEN";
   }
 
-  isPending(): this is this & { claimedById: Snowflake, state: "PENDING" } {
+  isPending(): this is this & { claimedById: Snowflake; state: "PENDING" } {
     return this.state === "PENDING";
   }
 
-  isDisabled(): this is this & { claimedById: null, state: "DISABLED" } {
+  isDisabled(): this is this & { claimedById: null; state: "DISABLED" } {
     return this.state === "DISABLED";
   }
 
@@ -493,21 +541,24 @@ export default class FreeBugMail {
       return;
     }
 
-    interaction.member.roles.add(freeBugMail).then(() => {
-      DTT.freeBugMailLog(`${logText} ${freeBugMail} added to account.`);
+    interaction.member.roles
+      .add(freeBugMail)
+      .then(() => {
+        DTT.freeBugMailLog(`${logText} ${freeBugMail} added to account.`);
 
-      interaction.reply({
-        content: `The ${freeBugMail} role has been added to you!`,
-        ephemeral: true
-      });
-    }).catch(error => {
-      DTT.freeBugMailLog(`${logText} Error in ${freeBugMail} addition.`, error);
+        interaction.reply({
+          content: `The ${freeBugMail} role has been added to you!`,
+          ephemeral: true
+        });
+      })
+      .catch(error => {
+        DTT.freeBugMailLog(`${logText} Error in ${freeBugMail} addition.`, error);
 
-      interaction.reply({
-        content: "There was an error during self-role addition.",
-        ephemeral: true
+        interaction.reply({
+          content: "There was an error during self-role addition.",
+          ephemeral: true
+        });
       });
-    });
   }
 
   static removeRole(interaction: ButtonInteraction<"cached">): void {
@@ -525,20 +576,23 @@ export default class FreeBugMail {
       return;
     }
 
-    interaction.member.roles.remove(freeBugMail).then(() => {
-      DTT.freeBugMailLog(`${logText} ${freeBugMail} removed from account.`);
+    interaction.member.roles
+      .remove(freeBugMail)
+      .then(() => {
+        DTT.freeBugMailLog(`${logText} ${freeBugMail} removed from account.`);
 
-      interaction.reply({
-        content: `The ${freeBugMail} role has been removed from you!`,
-        ephemeral: true
-      });
-    }).catch(error => {
-      DTT.freeBugMailLog(`${logText} Error in ${freeBugMail} removal.`, error);
+        interaction.reply({
+          content: `The ${freeBugMail} role has been removed from you!`,
+          ephemeral: true
+        });
+      })
+      .catch(error => {
+        DTT.freeBugMailLog(`${logText} Error in ${freeBugMail} removal.`, error);
 
-      interaction.reply({
-        content: "There was an error during self-role removal.",
-        ephemeral: true
+        interaction.reply({
+          content: "There was an error during self-role removal.",
+          ephemeral: true
+        });
       });
-    });
   }
 }

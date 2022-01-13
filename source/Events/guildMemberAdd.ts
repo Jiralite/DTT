@@ -1,4 +1,5 @@
 import { Constants } from "discord.js";
+
 import DTT from "../Client/Client.js";
 import Verification from "../Client/Verification.js";
 import { Event } from "./index.js";

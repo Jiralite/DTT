@@ -1,4 +1,5 @@
 import { CommandInteraction, Constants, GuildMember, Permissions } from "discord.js";
+
 import DTT from "../../Client/Client.js";
 import Invite from "../../Client/Invite.js";
 import { Command, CommandStructure } from "../index.js";
@@ -12,10 +13,10 @@ export default class implements Command {
   }
 
   async execute(interaction: CommandInteraction<"cached">): Promise<void> {
-    const permissionCheck = (await DTT.guild.members.fetch(DTT.user.id)).permissions.missing([
-      Permissions.FLAGS.BAN_MEMBERS,
-      Permissions.FLAGS.CREATE_INSTANT_INVITE
-    ]).map(permission => `\`${permission}\``);
+    const member = await DTT.guild.members.fetch(DTT.user.id);
+    const permissionCheck = member.permissions
+      .missing([Permissions.FLAGS.BAN_MEMBERS, Permissions.FLAGS.CREATE_INSTANT_INVITE])
+      .map(permission => `\`${permission}\``);
 
     if (permissionCheck.length > 0) {
       const permissionText = permissionCheck.join(" & ");
@@ -67,7 +68,9 @@ export default class implements Command {
     }
 
     // Silently pass to ensure people don't use this as a way to find out whether someone is banned.
-    if ((await DTT.guild.bans.fetch({ cache: false })).has(invitee.id)) DTT.log(`${interaction.user} attempted to create an invite for ${invitee} (currently banned).`);
+    const ban = await DTT.guild.bans.fetch({ cache: false });
+    if (ban.has(invitee.id))
+      DTT.log(`${interaction.user} attempted to create an invite for ${invitee} (currently banned).`);
     return await Invite.create(interaction, invitee);
   }
 

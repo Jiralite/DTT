@@ -1,8 +1,22 @@
-import process from "node:process";
-import { Client, ClientOptions, Constants, Guild, GuildChannel, GuildEmoji, Intents, MessageOptions, Permissions, Role, TextChannel, ThreadChannel } from "discord.js";
+import {
+  Client,
+  ClientOptions,
+  Constants,
+  Guild,
+  GuildChannel,
+  GuildEmoji,
+  Intents,
+  MessageOptions,
+  Permissions,
+  Role,
+  TextChannel,
+  ThreadChannel
+} from "discord.js";
 import { createPool } from "mariadb";
-import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
+import process from "node:process";
+
 import commands, { CommandName } from "../Commands/index.js";
+import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 export const Maria = createPool({
   user: process.env.MARIA_USER,
@@ -11,41 +25,42 @@ export const Maria = createPool({
   database: process.env.MARIA_DATABASE
 });
 
-class DTT <T extends boolean> extends Client<T> {
+class DTT<T extends boolean> extends Client<T> {
   constructor(options: ClientOptions) {
     super(options);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   log(message: string, consoleLog: any = message): void {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
 
-    this.logChannel.send({
-      content: `${stamp} ${message}`,
-      allowedMentions: {
-        parse: []
-      }
-    }).catch(() => this.logChannel.send(`${stamp} Couldn't send a response.`));
+    this.logChannel
+      .send({
+        content: `${stamp} ${message}`,
+        allowedMentions: {
+          parse: []
+        }
+      })
+      .catch(() => this.logChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   freeBugMailLog(message: string, consoleLog: any = message): void {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
     stamp = `\`[${stamp}]\``;
     if (message.length >= 2000) message = `${message.slice(0, 1997)}...`;
 
-    this.freeBugMailLogChannel.send({
-      content: `${stamp} ${message}`,
-      allowedMentions: {
-        parse: []
-      }
-    }).catch(() => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
+    this.freeBugMailLogChannel
+      .send({
+        content: `${stamp} ${message}`,
+        allowedMentions: {
+          parse: []
+        }
+      })
+      .catch(() => this.freeBugMailLogChannel.send(`${stamp} Couldn't send a response.`));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async inviteLog(message: string | Omit<MessageOptions, "allowedMentions">, consoleLog: any = message): Promise<void> {
     let stamp = new Date().toISOString();
     this.consoleLog(consoleLog, stamp);
@@ -54,15 +69,14 @@ class DTT <T extends boolean> extends Client<T> {
     const inviteLogs = this.channel("invite-logs");
     if (!inviteLogs.isText()) throw new Error("Attempting to log in a non-text-based channel.");
 
-    if (!inviteLogs.permissionsFor(me).has([
-      Permissions.FLAGS.SEND_MESSAGES,
-      Permissions.FLAGS.VIEW_CHANNEL
-    ])) {
+    if (!inviteLogs.permissionsFor(me).has([Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.VIEW_CHANNEL])) {
       throw new Error("Missing permissions to log.");
     }
 
     stamp = `\`[${stamp}]\``;
-    typeof message === "string" ? message = { content: `${stamp} ${message}` } : message.content = `${stamp} ${message.content}`;
+    typeof message === "string"
+      ? (message = { content: `${stamp} ${message}` })
+      : (message.content = `${stamp} ${message.content}`);
 
     inviteLogs.send({
       allowedMentions: {
@@ -72,7 +86,6 @@ class DTT <T extends boolean> extends Client<T> {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   consoleLog(consoleLog: any, stamp = new Date().toISOString()): void {
     console.log(`- - - - - ${stamp} - - - - -`);
     console.log(consoleLog);
@@ -80,8 +93,12 @@ class DTT <T extends boolean> extends Client<T> {
 
   async applyCommands(): Promise<void> {
     try {
-      const applicationCommands = await this.guild.commands.set(Object.values(commands).map(({ commandData: { applicationCommandData } }) => applicationCommandData));
-      this.consoleLog(applicationCommands.map(({ name, type }) => `Set ${name} as an ${type} application command.`).join("\n"));
+      const applicationCommands = await this.guild.commands.set(
+        Object.values(commands).map(({ commandData: { applicationCommandData } }) => applicationCommandData)
+      );
+      this.consoleLog(
+        applicationCommands.map(({ name, type }) => `Set ${name} as an ${type} application command.`).join("\n")
+      );
 
       const applicationCommandsPermissions = await this.guild.commands.permissions.set({
         fullPermissions: applicationCommands.map(({ id, name }) => ({
@@ -90,8 +107,11 @@ class DTT <T extends boolean> extends Client<T> {
         }))
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.consoleLog(applicationCommandsPermissions.map((_, id) => `Set the permissions of ${applicationCommands.get(id)!.name}.`).join("\n"));
+      this.consoleLog(
+        applicationCommandsPermissions
+          .map((_, id) => `Set the permissions of ${applicationCommands.get(id)!.name}.`)
+          .join("\n")
+      );
       this.consoleLog("Finished applying commands!");
     } catch (error) {
       this.log("Failed to apply commands.", error);
@@ -101,7 +121,8 @@ class DTT <T extends boolean> extends Client<T> {
   channel(c: keyof typeof channels): GuildChannel {
     const _channel = this.guild.channels.resolve(channels[c]);
     if (_channel === null) throw new ReferenceError(`Channel "${c}" cannot be found.`);
-    if (_channel instanceof ThreadChannel) throw new TypeError(`Channel "${_channel.name}" is a thread. Threads cannot be used here.`);
+    if (_channel instanceof ThreadChannel)
+      throw new TypeError(`Channel "${_channel.name}" is a thread. Threads cannot be used here.`);
     return _channel;
   }
 
@@ -132,20 +153,12 @@ class DTT <T extends boolean> extends Client<T> {
   }
 
   get modRoles(): Role[] {
-    return [
-      this.role("Admin"),
-      this.role("Moderator"),
-      this.role("DT Staff"),
-      this.role("DT Mod or BA")
-    ];
+    return [this.role("Admin"), this.role("Moderator"), this.role("DT Staff"), this.role("DT Mod or BA")];
   }
 }
 
 export default new DTT<true>({
-  partials: [
-    Constants.PartialTypes.GUILD_MEMBER,
-    Constants.PartialTypes.MESSAGE
-  ],
+  partials: [Constants.PartialTypes.GUILD_MEMBER, Constants.PartialTypes.MESSAGE],
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MEMBERS,

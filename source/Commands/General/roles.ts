@@ -1,9 +1,43 @@
-import { ButtonInteraction, CommandInteraction, Constants, GuildEmoji, GuildMember, MessageActionRow, MessageButton, MessageSelectMenu, MessageSelectOptionData, Role, SelectMenuInteraction } from "discord.js";
+import {
+  ButtonInteraction,
+  CommandInteraction,
+  Constants,
+  GuildEmoji,
+  GuildMember,
+  MessageActionRow,
+  MessageButton,
+  MessageSelectMenu,
+  MessageSelectOptionData,
+  Role,
+  SelectMenuInteraction
+} from "discord.js";
+
 import DTT from "../../Client/Client.js";
 import { Command, CommandStructure } from "../index.js";
 
-export type RoleCategories = "macOS" | "Linux" | "Windows" | "Android" | "iOS" | "Chrome OS" | "Miscellaneous" | "Experiments" | "Discord Updates" | "Phabricator Updates";
-export type SubRoleCategories = "macOSVersionRoles" | "windowsVersionRoles" | "androidDeviceRoles" | "androidVersionRoles" | "iOSDeviceRoles" | "iOSVersionRoles" | "iOSMiscellaneousRoles" | "miscellaneousRoles" | "experimentRoles" | "discordUpdatesRoles" | "phabricatorUpdatesRoles";
+export type RoleCategories =
+  | "macOS"
+  | "Linux"
+  | "Windows"
+  | "Android"
+  | "iOS"
+  | "Chrome OS"
+  | "Miscellaneous"
+  | "Experiments"
+  | "Discord Updates"
+  | "Phabricator Updates";
+export type SubRoleCategories =
+  | "macOSVersionRoles"
+  | "windowsVersionRoles"
+  | "androidDeviceRoles"
+  | "androidVersionRoles"
+  | "iOSDeviceRoles"
+  | "iOSVersionRoles"
+  | "iOSMiscellaneousRoles"
+  | "miscellaneousRoles"
+  | "experimentRoles"
+  | "discordUpdatesRoles"
+  | "phabricatorUpdatesRoles";
 
 export interface RoleStructure {
   role: Role;
@@ -36,11 +70,13 @@ export default class implements Command {
     const actionRow = new MessageActionRow();
     const selectMenu = new MessageSelectMenu();
 
-    selectMenu.setOptions(this.categories.map(category => ({
-      label: category,
-      value: category,
-      default: false
-    })));
+    selectMenu.setOptions(
+      this.categories.map(category => ({
+        label: category,
+        value: category,
+        default: false
+      }))
+    );
 
     selectMenu.setCustomId("SELFROLE_CATEGORY");
     selectMenu.setMaxValues(1);
@@ -48,22 +84,16 @@ export default class implements Command {
     selectMenu.setPlaceholder("Choose a category!");
     actionRow.addComponents(selectMenu);
 
-    if (interaction instanceof ButtonInteraction) {
-      await interaction.update({
-        content,
-        components: [
-          actionRow
-        ]
-      });
-    } else {
-      await interaction.reply({
-        content,
-        components: [
-          actionRow
-        ],
-        ephemeral: true
-      });
-    }
+    await (interaction instanceof ButtonInteraction
+      ? interaction.update({
+          content,
+          components: [actionRow]
+        })
+      : interaction.reply({
+          content,
+          components: [actionRow],
+          ephemeral: true
+        }));
   }
 
   async categoryInteraction(interaction: SelectMenuInteraction<"cached">, category: RoleCategories): Promise<void> {
@@ -77,20 +107,19 @@ export default class implements Command {
 
     await interaction.update({
       content: "Self-assign roles, or go back!",
-      components: [
-        ...components,
-        actionRow
-      ]
+      components: [...components, actionRow]
     });
   }
 
   category(guildMember: GuildMember, category: RoleCategories): MessageActionRow[] {
-    const options = (componentOptions: RoleStructure[]): MessageSelectOptionData[] => componentOptions.map(({ role, emoji }) => ({
-      label: role.name,
-      value: role.id,
-      emoji: emoji,
-      default: guildMember.roles.cache.has(role.id)
-    }));
+    function options(componentOptions: RoleStructure[]): MessageSelectOptionData[] {
+      return componentOptions.map(({ role, emoji }) => ({
+        label: role.name,
+        value: role.id,
+        emoji: emoji,
+        default: guildMember.roles.cache.has(role.id)
+      }));
+    }
 
     if (category === "macOS") {
       const actionRow = new MessageActionRow();
@@ -102,9 +131,7 @@ export default class implements Command {
       selectMenu.setPlaceholder("Assign macOS version roles!");
       actionRow.addComponents(selectMenu);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     if (category === "Linux") {
@@ -116,9 +143,7 @@ export default class implements Command {
       button.setStyle(Constants.MessageButtonStyles.PRIMARY);
       actionRow.addComponents(button);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     if (category === "Windows") {
@@ -131,9 +156,7 @@ export default class implements Command {
       selectMenu.setPlaceholder("Assign Windows version roles!");
       actionRow.addComponents(selectMenu);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     if (category === "Android") {
@@ -155,10 +178,7 @@ export default class implements Command {
       selectMenu2.setPlaceholder("Assign Android version roles!");
       actionRow2.addComponents(selectMenu2);
 
-      return [
-        actionRow,
-        actionRow2
-      ];
+      return [actionRow, actionRow2];
     }
 
     if (category === "iOS") {
@@ -189,11 +209,7 @@ export default class implements Command {
       selectMenu3.setPlaceholder("Assign miscellanous iOS info!");
       actionRow3.addComponents(selectMenu3);
 
-      return [
-        actionRow,
-        actionRow2,
-        actionRow3
-      ];
+      return [actionRow, actionRow2, actionRow3];
     }
 
     if (category === "Chrome OS") {
@@ -205,9 +221,7 @@ export default class implements Command {
       button.setStyle(Constants.MessageButtonStyles.PRIMARY);
       actionRow.addComponents(button);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     if (category === "Miscellaneous") {
@@ -220,9 +234,7 @@ export default class implements Command {
       selectMenu.setPlaceholder("Assign miscellanous roles!");
       actionRow.addComponents(selectMenu);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     if (category === "Experiments") {
@@ -235,9 +247,7 @@ export default class implements Command {
       selectMenu.setPlaceholder("Assign experiment roles!");
       actionRow.addComponents(selectMenu);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     if (category === "Discord Updates") {
@@ -250,9 +260,7 @@ export default class implements Command {
       selectMenu.setPlaceholder("Assign Discord updates roles!");
       actionRow.addComponents(selectMenu);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     if (category === "Phabricator Updates") {
@@ -265,9 +273,7 @@ export default class implements Command {
       selectMenu.setPlaceholder("Assign Phabricator roles!");
       actionRow.addComponents(selectMenu);
 
-      return [
-        actionRow
-      ];
+      return [actionRow];
     }
 
     throw new Error("Unknown category.");

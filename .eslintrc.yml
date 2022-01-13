@@ -1,65 +1,36 @@
+root: true
+parser: "@typescript-eslint/parser"
 env:
   node: true
-  es2021: true
+
 extends:
   - eslint:recommended
   - plugin:@typescript-eslint/recommended
-parser: "@typescript-eslint/parser"
-parserOptions:
-  ecmaVersion: 12
-  sourceType: module
+  - plugin:unicorn/recommended
+  - prettier
 plugins:
   - "@typescript-eslint"
+  - import
+  - simple-import-sort
+
+reportUnusedDisableDirectives: true
 rules:
-  no-unsafe-optional-chaining:
+  "@typescript-eslint/explicit-function-return-type":
     - error
-  dot-location:
-    - off
-  eqeqeq:
+    - allowExpressions: true
+  "@typescript-eslint/explicit-module-boundary-types": "off"
+  "@typescript-eslint/no-explicit-any": "off"
+  "@typescript-eslint/no-non-null-assertion": "off"
+  func-style:
     - error
-    - always
-  no-multi-spaces:
-    - error
-    - ignoreEOLComments: false
-  no-multi-str:
-    - error
-  no-trailing-spaces:
-    - error
-    - skipBlankLines: false
-      ignoreComments: false
-  require-await:
-    - error
-  brace-style:
-    - error
-    - 1tbs
-  comma-dangle:
-    - error
-    - never
-  comma-spacing:
-    - error
-    - before: false
-      after: true
-  eol-last:
-    - error
-    - always
-  indent:
-    - error
-    - 2
-    - SwitchCase: 1
-  linebreak-style:
-    - error
-    - unix
-  no-tabs:
-    - error
-    - allowIndentationTabs: false
-  quotes:
-    - error
-    - double
-  semi:
-    - error
-    - always
-  spaced-comment:
-    - error
-    - always
-  no-var:
-    - error
+    - declaration
+  import/first: error
+  import/newline-after-import: error
+  import/no-duplicates: error
+  simple-import-sort/exports: error
+  simple-import-sort/imports: error
+  unicorn/filename-case: "off"
+  unicorn/no-null: "off"
+  unicorn/prefer-math-trunc: "off"
+  unicorn/prevent-abbreviations: "off"
+  unicorn/template-indent: "off"

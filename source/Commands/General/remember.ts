@@ -1,4 +1,5 @@
 import { CommandInteraction, Constants } from "discord.js";
+
 import DTT from "../../Client/Client.js";
 import { Command, CommandStructure } from "../index.js";
 
@@ -15,9 +16,7 @@ export default class implements Command {
 
     if (moment === "Opinion") {
       return await interaction.reply({
-        files: [
-          new URL("../../../Resources/Opinion.png", import.meta.url).pathname
-        ]
+        files: [new URL("../../../Resources/Opinion.png", import.meta.url).pathname]
       });
     } else throw new ReferenceError("Unknown choice");
   }

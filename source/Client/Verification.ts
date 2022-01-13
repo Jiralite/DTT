@@ -1,11 +1,27 @@
-import { ButtonInteraction, Constants, DiscordAPIError, GuildMember, MessageActionRow, MessageButton, Role, Snowflake, TextChannel } from "discord.js";
+import {
+  ButtonInteraction,
+  Constants,
+  DiscordAPIError,
+  GuildMember,
+  MessageActionRow,
+  MessageButton,
+  Role,
+  Snowflake,
+  TextChannel
+} from "discord.js";
+
 import DTT from "./Client.js";
 
 export type VerificationType = "TESTER" | "EMPLOYEE" | "ALT" | "DENY";
 
+// eslint-disable-next-line unicorn/no-static-only-class
 export default class Verification {
   static async sendVerification(guildMember: GuildMember): Promise<void> {
-    const verificationMessage = await (DTT.channel("verification") as TextChannel).send(`Welcome to **${guildMember.guild.name}**, ${guildMember}! Please review the ${DTT.channel("read-me")} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to <@873604718893617203>!`);
+    const verificationMessage = await (DTT.channel("verification") as TextChannel).send(
+      `Welcome to **${guildMember.guild.name}**, ${guildMember}! Please review the ${DTT.channel(
+        "read-me"
+      )} channel and a member of staff will approve your request to join. If you do not have access within several hours, feel free to send a direct message to <@873604718893617203>!`
+    );
     const actionRow = new MessageActionRow();
     const button = new MessageButton();
     const button2 = new MessageButton();
@@ -26,14 +42,17 @@ export default class Verification {
     actionRow.addComponents(button, button2, button3, button4);
 
     DTT.inviteLog({
-      components: [
-        actionRow
-      ],
+      components: [actionRow],
       content: `${guildMember} (${guildMember.user.tag}) has joined the server.`
     });
   }
 
-  static async authorise(interaction: ButtonInteraction<"cached">, authentication: VerificationType, guildMemberId: Snowflake, verificationMessageId: Snowflake): Promise<void> {
+  static async authorise(
+    interaction: ButtonInteraction<"cached">,
+    authentication: VerificationType,
+    guildMemberId: Snowflake,
+    verificationMessageId: Snowflake
+  ): Promise<void> {
     try {
       const guildMember = await DTT.guild.members.fetch(guildMemberId);
       const verification = DTT.channel("verification") as TextChannel;
@@ -54,7 +73,9 @@ export default class Verification {
         case "DENY":
           await guildMember.kick();
           await interaction.message.edit({ components: [] });
-          await interaction.reply(`${interaction.user} (${interaction.user.tag}) Denied ${guildMember} (${guildMember.user.tag}) access to this server.`);
+          await interaction.reply(
+            `${interaction.user} (${interaction.user.tag}) Denied ${guildMember} (${guildMember.user.tag}) access to this server.`
+          );
           await verification.messages.delete(verificationMessageId);
           return;
       }
@@ -66,10 +87,7 @@ export default class Verification {
         });
       }
 
-      await guildMember.roles.add([
-        DTT.role("Member"),
-        role
-      ]);
+      await guildMember.roles.add([DTT.role("Member"), role]);
 
       await interaction.message.edit({ components: [] });
 
@@ -78,9 +96,14 @@ export default class Verification {
         ephemeral: true
       });
 
-      DTT.inviteLog(`${interaction.user} (${interaction.user.tag}) has verified ${guildMember} (${guildMember.user.tag}) as ${verificationString} ${role.name}.`);
+      DTT.inviteLog(
+        `${interaction.user} (${interaction.user.tag}) has verified ${guildMember} (${guildMember.user.tag}) as ${verificationString} ${role.name}.`
+      );
       await verification.messages.delete(verificationMessageId);
-      if (authentication !== "ALT") await (DTT.channel("general") as TextChannel).send(`Welcome to **${DTT.guild.name}**, ${guildMember}! Be sure to check out the channels in this server!`);
+      if (authentication !== "ALT")
+        await (DTT.channel("general") as TextChannel).send(
+          `Welcome to **${DTT.guild.name}**, ${guildMember}! Be sure to check out the channels in this server!`
+        );
     } catch (error) {
       if (error instanceof DiscordAPIError) {
         if (error.code === Constants.APIErrors.MISSING_PERMISSIONS) {

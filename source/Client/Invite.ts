@@ -1,4 +1,5 @@
 import { Collection, CommandInteraction, Snowflake, TextChannel, User } from "discord.js";
+
 import DTT, { Maria } from "./Client.js";
 
 interface InviteData {
@@ -36,34 +37,32 @@ export default class Invite {
     const verification = DTT.channel("verification") as TextChannel;
 
     const invite = await verification.createInvite({
-      maxAge: 86400, // 1 day
+      maxAge: 86_400, // 1 day
       maxUses: 1,
       unique: true,
       reason: `Created with the intent to invite ${invitee.id}.`
     });
 
-    const { insertId } = await Maria.query("INSERT INTO `Invites` SET `Inviter ID` = ?, `Invitee ID` = ?, `Created Timestamp` = ?, `Expires Timestamp` = ?, `Expired` = ?, `Code` = ?;", [
-      interaction.user.id,
-      invitee.id,
-      invite.createdTimestamp,
-      invite.expiresTimestamp,
-      false,
-      invite.code
-    ]);
+    const { insertId } = await Maria.query(
+      "INSERT INTO `Invites` SET `Inviter ID` = ?, `Invitee ID` = ?, `Created Timestamp` = ?, `Expires Timestamp` = ?, `Expired` = ?, `Code` = ?;",
+      [interaction.user.id, invitee.id, invite.createdTimestamp, invite.expiresTimestamp, false, invite.code]
+    );
 
     const newInvite = new Invite({
       No: insertId,
       "Inviter ID": interaction.user.id,
       "Invitee ID": invitee.id,
       // The next two properties cannot be null right after creating an invite.
-      "Created Timestamp": invite.createdTimestamp!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
-      "Expires Timestamp": invite.expiresTimestamp!, // eslint-disable-line @typescript-eslint/no-non-null-assertion
+      "Created Timestamp": invite.createdTimestamp!,
+      "Expires Timestamp": invite.expiresTimestamp!,
       Expired: false,
       Code: invite.code
     });
 
     Invite.cache.set(newInvite.No, newInvite);
-    await DTT.inviteLog(`${interaction.user} (${interaction.user.tag}) generated a one-time invite code (\`${newInvite.code}\`) with the intent to invite ${invitee} (${invitee.tag}).`);
+    await DTT.inviteLog(
+      `${interaction.user} (${interaction.user.tag}) generated a one-time invite code (\`${newInvite.code}\`) with the intent to invite ${invitee} (${invitee.tag}).`
+    );
 
     await interaction.reply({
       content: `Your invite code with the intent to invite ${invitee}: \`${newInvite.code}\``,
@@ -78,10 +77,7 @@ export default class Invite {
   }
 
   async remove(): Promise<void> {
-    await Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [
-      true,
-      this.No
-    ]);
+    await Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [true, this.No]);
 
     this.expired = true;
 
@@ -92,7 +88,9 @@ export default class Invite {
 
     const inviter = await DTT.users.fetch(this.inviterId);
     const invitee = await DTT.users.fetch(this.inviteeId);
-    await DTT.inviteLog(`Invite code \`${this.code}\` has just expired. ${inviter} (${inviter.tag}) generated this invite code with the intent to invite ${invitee} (${invitee.tag}).`);
+    await DTT.inviteLog(
+      `Invite code \`${this.code}\` has just expired. ${inviter} (${inviter.tag}) generated this invite code with the intent to invite ${invitee} (${invitee.tag}).`
+    );
   }
 
   isExpired(): this is this & { expired: true } {

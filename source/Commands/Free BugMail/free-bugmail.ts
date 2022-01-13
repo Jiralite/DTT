@@ -1,4 +1,5 @@
 import { CommandInteraction, Constants } from "discord.js";
+
 import DTT from "../../Client/Client.js";
 import FreeBugMail from "../../Client/FreeBugMail.js";
 import { Command, CommandStructure } from "../index.js";
@@ -19,7 +20,9 @@ export default class implements Command {
   }
 
   async submit(interaction: CommandInteraction<"cached">): Promise<void> {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
+    const logText = `${
+      interaction.user
+    } interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (interaction.channelId !== bugmailQueue.id) {
@@ -47,7 +50,9 @@ export default class implements Command {
   }
 
   async edit(interaction: CommandInteraction<"cached">): Promise<void> {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
+    const logText = `${
+      interaction.user
+    } interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (interaction.channelId !== bugmailQueue.id) {
@@ -103,7 +108,9 @@ export default class implements Command {
   }
 
   async complete(interaction: CommandInteraction<"cached">): Promise<void> {
-    const logText = `${interaction.user} interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
+    const logText = `${
+      interaction.user
+    } interacted with the \`/free-bugmail ${interaction.options.getSubcommand()}\` slash command.`;
     const bugmailQueue = DTT.channel("bugmail-queue");
 
     if (interaction.channelId !== bugmailQueue.id) {
@@ -128,7 +135,9 @@ export default class implements Command {
     }
 
     if (freeBugMail.isDisabled()) {
-      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${freeBugMail.No} which has been disabled.`);
+      DTT.freeBugMailLog(
+        `${logText} Attempted to complete Free BugMail request #${freeBugMail.No} which has been disabled.`
+      );
 
       return await interaction.reply({
         content: "This Free BugMail request is disabled.",
@@ -136,8 +145,13 @@ export default class implements Command {
       });
     }
 
-    if ((freeBugMail.userId !== interaction.user.id && freeBugMail.claimedById !== interaction.user.id) || !freeBugMail.isPending()) {
-      DTT.freeBugMailLog(`${logText} Attempted to complete Free BugMail request #${freeBugMail.No} which the account is not the author nor claimer of.`);
+    if (
+      (freeBugMail.userId !== interaction.user.id && freeBugMail.claimedById !== interaction.user.id) ||
+      !freeBugMail.isPending()
+    ) {
+      DTT.freeBugMailLog(
+        `${logText} Attempted to complete Free BugMail request #${freeBugMail.No} which the account is not the author nor claimer of.`
+      );
 
       return await interaction.reply({
         content: "This Free BugMail request cannot be completed.",

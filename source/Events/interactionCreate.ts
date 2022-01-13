@@ -1,10 +1,15 @@
 import { Constants, Formatters, Permissions, Role, Snowflake } from "discord.js";
+
 import DTT from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Verification, { VerificationType } from "../Client/Verification.js";
 import { RoleCategories, SubRoleCategories } from "../Commands/General/roles.js";
 import commands, { isCommandName } from "../Commands/index.js";
 import { Event } from "./index.js";
+
+function areAllRolesValid(roles: (Role | null)[]): roles is Role[] {
+  return roles.every(role => role !== null);
+}
 
 const name = Constants.Events.INTERACTION_CREATE;
 
@@ -26,7 +31,11 @@ export const event: Event<typeof name> = {
 
       const command = commands[commandName];
 
-      if (interaction.channelId === DTT.channel("bugmail-queue").id && command.name !== "free-bugmail" && !interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
+      if (
+        interaction.channelId === DTT.channel("bugmail-queue").id &&
+        command.name !== "free-bugmail" &&
+        !interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)
+      ) {
         return interaction.reply({
           content: "Disallowed slash command for this channel.",
           ephemeral: true
@@ -66,7 +75,13 @@ export const event: Event<typeof name> = {
 
     if (interaction.isButton()) {
       const joiner = /(TESTER|EMPLOYEE|ALT|DENY)-(\d+)-(\d+)/.exec(interaction.customId);
-      if (joiner) return Verification.authorise(interaction, (joiner[1] as VerificationType), (joiner[2] as Snowflake), joiner[3] as Snowflake);
+      if (joiner)
+        return Verification.authorise(
+          interaction,
+          joiner[1] as VerificationType,
+          joiner[2] as Snowflake,
+          joiner[3] as Snowflake
+        );
       if (interaction.customId === "SELFROLE_BACK") return commands.roles.execute(interaction);
       const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 
@@ -74,29 +89,39 @@ export const event: Event<typeof name> = {
         const role = DTT.guild.roles.resolve(roleAssignment[1]) as Role;
 
         if (interaction.member.roles.cache.has(role.id)) {
-          interaction.member.roles.remove(role).then(() => interaction.reply({
-            content: `The ${role} role has been removed from you!`,
-            ephemeral: true
-          })).catch(error => {
-            DTT.log("Error in self-role removal.", error);
+          interaction.member.roles
+            .remove(role)
+            .then(() =>
+              interaction.reply({
+                content: `The ${role} role has been removed from you!`,
+                ephemeral: true
+              })
+            )
+            .catch(error => {
+              DTT.log("Error in self-role removal.", error);
 
-            interaction.reply({
-              content: "There was an error during self-role removal.",
-              ephemeral: true
+              interaction.reply({
+                content: "There was an error during self-role removal.",
+                ephemeral: true
+              });
             });
-          });
         } else {
-          interaction.member.roles.add(role).then(() => interaction.reply({
-            content: `The ${role} role has been added to you!`,
-            ephemeral: true
-          })).catch(error => {
-            DTT.log("Error in self-role addition.", error);
+          interaction.member.roles
+            .add(role)
+            .then(() =>
+              interaction.reply({
+                content: `The ${role} role has been added to you!`,
+                ephemeral: true
+              })
+            )
+            .catch(error => {
+              DTT.log("Error in self-role addition.", error);
 
-            interaction.reply({
-              content: "There was an error during self-role addition.",
-              ephemeral: true
+              interaction.reply({
+                content: "There was an error during self-role addition.",
+                ephemeral: true
+              });
             });
-          });
         }
       }
 
@@ -104,16 +129,24 @@ export const event: Event<typeof name> = {
       if (interaction.customId === "No Free BugMail") return FreeBugMail.removeRole(interaction);
       const freeBugMailRegExp = /(\d+)-(PENDING|PRECLAIM|RESOLVED|RESTORE)/.exec(interaction.customId);
 
-      if (freeBugMailRegExp && (interaction.channelId === DTT.channel("bugmail-queue").id || interaction.channelId === DTT.channel("bugmail-discussion").id)) {
-        if (freeBugMailRegExp[2] === "PRECLAIM") return FreeBugMail.cache.get(Number(freeBugMailRegExp[1]))?.preClaim(interaction);
-        if (freeBugMailRegExp[2] === "RESTORE") return FreeBugMail.cache.get(Number(freeBugMailRegExp[1]))?.restore(interaction);
+      if (
+        freeBugMailRegExp &&
+        (interaction.channelId === DTT.channel("bugmail-queue").id ||
+          interaction.channelId === DTT.channel("bugmail-discussion").id)
+      ) {
+        if (freeBugMailRegExp[2] === "PRECLAIM")
+          return FreeBugMail.cache.get(Number(freeBugMailRegExp[1]))?.preClaim(interaction);
+        if (freeBugMailRegExp[2] === "RESTORE")
+          return FreeBugMail.cache.get(Number(freeBugMailRegExp[1]))?.restore(interaction);
 
         const freeBugMail = FreeBugMail.cache.get(Number(freeBugMailRegExp[1]));
         if (!freeBugMail || !freeBugMail.isPending()) return;
 
         if (interaction.user.id !== freeBugMail.claimedById) {
           return interaction.reply({
-            content: `We're currently awaiting the response of ${Formatters.userMention(freeBugMail.claimedById)} right now, not you!`,
+            content: `We're currently awaiting the response of ${Formatters.userMention(
+              freeBugMail.claimedById
+            )} right now, not you!`,
             ephemeral: true
           });
         }
@@ -124,11 +157,12 @@ export const event: Event<typeof name> = {
     }
 
     if (interaction.isSelectMenu()) {
-      if (interaction.customId === "SELFROLE_CATEGORY") return commands.roles.categoryInteraction(interaction, interaction.values[0] as RoleCategories);
+      if (interaction.customId === "SELFROLE_CATEGORY")
+        return commands.roles.categoryInteraction(interaction, interaction.values[0] as RoleCategories);
       if (!interaction.customId.startsWith("SELFROLE")) return;
-      const roles: Role[] = interaction.values.map(id => DTT.guild.roles.resolve(id) as Role);
+      const roles = interaction.values.map(id => DTT.guild.roles.resolve(id));
 
-      if (roles.some(role => role === null)) {
+      if (!areAllRolesValid(roles)) {
         DTT.log("Error during self-role. Detected role ids that couldn't be found.");
 
         return interaction.reply({
@@ -148,26 +182,33 @@ export const event: Event<typeof name> = {
         }
       }
 
-      for (const { role } of commands.roles.resolveSelectMenuCategoryRoles(interaction.customId.slice(9) as SubRoleCategories).filter(({ role }) => !roles.some(({ id }) => id === role.id))) {
+      for (const { role } of commands.roles
+        .resolveSelectMenuCategoryRoles(interaction.customId.slice(9) as SubRoleCategories)
+        .filter(({ role }) => !roles.some(({ id }) => id === role.id))) {
         if (rolesToSet.has(role.id)) {
           rolesToSet.delete(role.id);
           rolesRemoved.push(role);
         }
       }
 
-      interaction.member.roles.set(rolesToSet).then(() => {
-        interaction.reply({
-          content: `Roles added: ${rolesAdded.join(" & ") || "None."}\nRoles removed: ${rolesRemoved.join(" & ") || "None."}`,
-          ephemeral: true
-        });
-      }).catch(error => {
-        DTT.log("Error during applying self-roles.", error);
+      interaction.member.roles
+        .set(rolesToSet)
+        .then(() => {
+          interaction.reply({
+            content: `Roles added: ${rolesAdded.join(" & ") || "None."}\nRoles removed: ${
+              rolesRemoved.join(" & ") || "None."
+            }`,
+            ephemeral: true
+          });
+        })
+        .catch(error => {
+          DTT.log("Error during applying self-roles.", error);
 
-        interaction.reply({
-          content: "There was an error applying self-roles.",
-          ephemeral: true
+          interaction.reply({
+            content: "There was an error applying self-roles.",
+            ephemeral: true
+          });
         });
-      });
     }
   }
 };
