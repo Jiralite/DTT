@@ -7,12 +7,28 @@ import type { Event } from "./index.js";
 import DTT, { Maria } from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Invite from "../Client/Invite.js";
+import { repository } from "../Utility/Constants.js";
+
+interface Commit {
+  message: string;
+}
+
+interface GitHubAuthor {
+  login: string;
+  html_url: string;
+}
+
+interface GitHubCommit {
+  sha: string;
+  commit: Commit;
+  html_url: string;
+  author: GitHubAuthor;
+}
 
 const name = Constants.Events.CLIENT_READY;
-const commitInformation = process.env["COMMIT_INFORMATION"]!;
-const defaultReturnText = "Selflessly slaving away.";
-const baseURL = "https://github.com/";
-const repositoryURL = `${baseURL}discord-testers-testers/DTT/`;
+const branch = process.env["BRANCH"];
+const commitHash = process.env["COMMIT_HASH"];
+const githubToken = process.env["GITHUB_TOKEN"];
 
 const allowedKeywords = [
   "alpha",
@@ -81,36 +97,30 @@ export const event: Event<typeof name> = {
   once: true,
   async fire(): Promise<void> {
     await collectFromDatabase();
-    if (!commitInformation) return DTT.log(defaultReturnText);
-    const commitInformationSplit = commitInformation.split("\n");
-    const commitSplit = /commit ([\da-z]+) \([a-z]+ -> (.+?),/i.exec(commitInformationSplit[0]!);
-    if (!commitSplit) return DTT.log(defaultReturnText);
-    const hash = commitSplit[1]!;
-    const branch = commitSplit[2]!;
-    const smallHash = hash.slice(0, 7);
-    const authorLine = commitInformationSplit.find(information => information.startsWith("Author:"));
-    const author = authorLine?.slice(8, authorLine.indexOf("<") - 1) ?? null;
-    const message =
-      commitInformationSplit[
-        commitInformationSplit.findIndex(information => information.startsWith("Date:")) + 2
-      ]!.trim();
-    const authorURL = baseURL + author;
-    const branchURL = `${repositoryURL}tree/${encodeURIComponent(branch)}`;
-    const commitURL = `${repositoryURL}commit/${hash}`;
+    if (!branch || !commitHash || !githubToken) return DTT.log("Selflessly slaving away.");
+
+    const json = (await fetch(`https://api.github.com/repos/${repository}/commits/${commitHash}`, {
+      headers: {
+        Accept: "application/vnd.github.v3+json",
+        Authorization: `token ${githubToken}`
+      }
+    }).then(response => response.json())) as GitHubCommit;
+
     const embed = new MessageEmbed();
     const member = await DTT.guild.members.fetch(DTT.user.id);
     embed.setColor(member.displayColor);
+
     embed.setDescription(
-      `Running [\`${smallHash}\`](${commitURL}) on [\`${branch}\`](${branchURL}) at ${Formatters.time(
-        Math.floor(Date.now() / 1000)
-      )}.\n${message}${author ? ` - [${author}](${authorURL})` : ""}`
+      `Running [\`${commitHash.slice(0, 7)}\`](${
+        json.html_url
+      }) on [\`${branch}\`](https://github.com/discord-testers-testers/DTT/tree/${branch}) at ${Formatters.time(
+        Math.floor(Date.now() / 1000),
+        Formatters.TimestampStyles.ShortDateTime
+      )}.\n${json.commit.message} - [${json.author.login}](${json.author.html_url})`
     );
+
     embed.setTimestamp();
-
-    await DTT.logChannel.send({
-      embeds: [embed]
-    });
-
+    await DTT.logChannel.send({ embeds: [embed] });
     fetchRedditPosts();
   }
 };

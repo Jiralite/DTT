@@ -1,3 +1,4 @@
+export const repository = "discord-testers-testers/DTT" as const;
 export const guildId = "765611756441436160" as const;
 
 export const channels = {

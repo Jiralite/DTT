@@ -4,7 +4,7 @@
   "scripts": {
     "format": "prettier --write .",
     "prestart": "npm install && tsc",
-    "start": "COMMIT_INFORMATION=$(git log -1 --decorate) node --require dotenv/config sourceJS/DTT.js",
+    "start": "BRANCH=$(git rev-parse --abbrev-ref HEAD) COMMIT_HASH=$(git rev-parse HEAD) node --require dotenv/config sourceJS/DTT.js",
     "test": "eslint . && tsc"
   },
   "dependencies": {
