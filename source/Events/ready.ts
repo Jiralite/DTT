@@ -3,7 +3,7 @@ import { setTimeout } from "node:timers";
 import { Constants, Formatters, MessageEmbed, TextChannel } from "discord.js";
 import { decodeHTML } from "entities";
 import fetch from "node-fetch";
-import { Event } from "./index.js";
+import type { Event } from "./index.js";
 import DTT, { Maria } from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Invite from "../Client/Invite.js";

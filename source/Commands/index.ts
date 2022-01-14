@@ -1,4 +1,4 @@
-import { ApplicationCommandData, ApplicationCommandPermissionData, CommandInteraction } from "discord.js";
+import type { ApplicationCommandData, ApplicationCommandPermissionData, CommandInteraction } from "discord.js";
 
 // Free BugMail
 import free_bugmail from "./Free BugMail/free-bugmail.js";

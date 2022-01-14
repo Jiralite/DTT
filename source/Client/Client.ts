@@ -18,11 +18,19 @@ import { createPool } from "mariadb";
 import commands, { CommandName } from "../Commands/index.js";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
+const mariaUser = process.env["MARIA_USER"] || null;
+const mariaPassword = process.env["MARIA_PASSWORD"] || null;
+const mariaHost = process.env["MARIA_HOST"] || null;
+const mariaDatabase = process.env["MARIA_DATABASE"] || null;
+
+if (mariaUser === null || mariaPassword === null || mariaHost === null || mariaDatabase === null)
+  throw new ReferenceError("Missing required database credentials.");
+
 export const Maria = createPool({
-  user: process.env["MARIA_USER"],
-  password: process.env["MARIA_PASSWORD"],
-  host: process.env["MARIA_HOST"],
-  database: process.env["MARIA_DATABASE"]
+  user: mariaUser,
+  password: mariaPassword,
+  host: mariaHost,
+  database: mariaDatabase
 });
 
 class DTT<T extends boolean> extends Client<T> {

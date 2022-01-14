@@ -1,5 +1,5 @@
 import { Constants } from "discord.js";
-import { Event } from "./index.js";
+import type { Event } from "./index.js";
 import DTT from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 

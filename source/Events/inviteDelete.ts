@@ -1,5 +1,5 @@
 import { Constants } from "discord.js";
-import { Event } from "./index.js";
+import type { Event } from "./index.js";
 import Invite from "../Client/Invite.js";
 
 const name = Constants.Events.INVITE_DELETE;

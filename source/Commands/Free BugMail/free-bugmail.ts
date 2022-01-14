@@ -2,7 +2,7 @@ import { CommandInteraction, Constants } from "discord.js";
 
 import DTT from "../../Client/Client.js";
 import FreeBugMail from "../../Client/FreeBugMail.js";
-import { Command, CommandStructure } from "../index.js";
+import type { Command, CommandStructure } from "../index.js";
 
 export default class implements Command {
   readonly name = "free-bugmail";

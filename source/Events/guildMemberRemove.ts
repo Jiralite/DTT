@@ -1,5 +1,5 @@
 import { Constants } from "discord.js";
-import { Event } from "./index.js";
+import type { Event } from "./index.js";
 import DTT from "../Client/Client.js";
 
 const name = Constants.Events.GUILD_MEMBER_REMOVE;

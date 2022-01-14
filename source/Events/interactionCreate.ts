@@ -1,9 +1,9 @@
 import { Constants, Formatters, Permissions, Role, Snowflake } from "discord.js";
-import { Event } from "./index.js";
+import type { Event } from "./index.js";
 import DTT from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Verification, { VerificationType } from "../Client/Verification.js";
-import { RoleCategories, SubRoleCategories } from "../Commands/General/roles.js";
+import type { RoleCategories, SubRoleCategories } from "../Commands/General/roles.js";
 import commands, { isCommandName } from "../Commands/index.js";
 
 function areAllRolesValid(roles: (Role | null)[]): roles is Role[] {

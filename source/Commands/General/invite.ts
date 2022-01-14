@@ -2,7 +2,7 @@ import { CommandInteraction, Constants, GuildMember, Permissions } from "discord
 
 import DTT from "../../Client/Client.js";
 import Invite from "../../Client/Invite.js";
-import { Command, CommandStructure } from "../index.js";
+import type { Command, CommandStructure } from "../index.js";
 
 export default class implements Command {
   readonly name = "invite";
