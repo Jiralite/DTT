@@ -1,12 +1,12 @@
+import process from "node:process";
+import { setTimeout } from "node:timers";
 import { Constants, Formatters, MessageEmbed, TextChannel } from "discord.js";
 import { decodeHTML } from "entities";
-import process from "node:process";
 import fetch from "node-fetch";
-
+import { Event } from "./index.js";
 import DTT, { Maria } from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Invite from "../Client/Invite.js";
-import { Event } from "./index.js";
 
 const name = Constants.Events.CLIENT_READY;
 const commitInformation = process.env["COMMIT_INFORMATION"]!;

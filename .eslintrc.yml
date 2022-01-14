@@ -11,10 +11,19 @@ extends:
 plugins:
   - "@typescript-eslint"
   - import
-  - simple-import-sort
 
 reportUnusedDisableDirectives: true
 rules:
+  no-restricted-globals:
+    - 2
+    - Buffer
+    - process
+    - setImmediate
+    - setInterval
+    - setTimeout
+    - clearImmediate
+    - clearInterval
+    - clearTimeout
   "@typescript-eslint/explicit-function-return-type":
     - error
     - allowExpressions: true
@@ -27,8 +36,17 @@ rules:
   import/first: error
   import/newline-after-import: error
   import/no-duplicates: error
-  simple-import-sort/exports: error
-  simple-import-sort/imports: error
+  import/order:
+    - 2
+    - groups:
+        - builtin
+        - external
+        - internal
+        - index
+        - sibling
+        - parent
+      alphabetize:
+        order: asc
   unicorn/filename-case: "off"
   unicorn/no-null: "off"
   unicorn/prefer-math-trunc: "off"

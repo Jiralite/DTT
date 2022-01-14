@@ -1,8 +1,7 @@
 import { Constants } from "discord.js";
-
+import { Event } from "./index.js";
 import DTT from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
-import { Event } from "./index.js";
 
 const name = Constants.Events.MESSAGE_DELETE;
 

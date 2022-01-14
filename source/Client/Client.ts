@@ -1,3 +1,4 @@
+import process from "node:process";
 import {
   Client,
   ClientOptions,
@@ -13,7 +14,6 @@ import {
   ThreadChannel
 } from "discord.js";
 import { createPool } from "mariadb";
-import process from "node:process";
 
 import commands, { CommandName } from "../Commands/index.js";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";

@@ -1,5 +1,5 @@
+import { setTimeout, clearTimeout } from "node:timers";
 import { Collection, CommandInteraction, Snowflake, TextChannel, User } from "discord.js";
-
 import DTT, { Maria } from "./Client.js";
 
 interface InviteData {

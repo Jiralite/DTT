@@ -1,7 +1,6 @@
 import { Constants, Permissions } from "discord.js";
-
-import DTT from "../Client/Client.js";
 import { Event } from "./index.js";
+import DTT from "../Client/Client.js";
 
 const name = Constants.Events.MESSAGE_CREATE;
 
