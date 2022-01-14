@@ -9,7 +9,6 @@ import {
   Snowflake,
   TextChannel
 } from "discord.js";
-
 import DTT from "./Client.js";
 
 export type VerificationType = "TESTER" | "EMPLOYEE" | "ALT" | "DENY";

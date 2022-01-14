@@ -1,5 +1,4 @@
 import { CommandInteraction, Constants, GuildMember, Permissions } from "discord.js";
-
 import DTT from "../../Client/Client.js";
 import Invite from "../../Client/Invite.js";
 import type { Command, CommandStructure } from "../index.js";

@@ -14,7 +14,6 @@ import {
   Snowflake,
   TextChannel
 } from "discord.js";
-
 import DTT, { Maria } from "./Client.js";
 
 interface FreeBugMailData {

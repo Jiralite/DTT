@@ -1,6 +1,5 @@
 import { readdirSync } from "node:fs";
 import { URL } from "node:url";
-
 import DTT from "./Client/Client.js";
 
 const eventsPath = new URL("Events/", import.meta.url);

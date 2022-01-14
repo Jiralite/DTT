@@ -1,5 +1,4 @@
 import { CommandInteraction, Constants } from "discord.js";
-
 import DTT from "../../Client/Client.js";
 import FreeBugMail from "../../Client/FreeBugMail.js";
 import type { Command, CommandStructure } from "../index.js";

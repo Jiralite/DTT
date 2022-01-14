@@ -14,7 +14,6 @@ import {
   ThreadChannel
 } from "discord.js";
 import { createPool } from "mariadb";
-
 import commands, { CommandName } from "../Commands/index.js";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 

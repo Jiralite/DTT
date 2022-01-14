@@ -11,7 +11,6 @@ import {
   Role,
   SelectMenuInteraction
 } from "discord.js";
-
 import DTT from "../../Client/Client.js";
 import type { Command, CommandStructure } from "../index.js";
 
