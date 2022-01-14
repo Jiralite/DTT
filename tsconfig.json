@@ -4,7 +4,8 @@
     "module": "esnext",
     "outDir": "sourceJS",
     "skipLibCheck": false,
-    "target": "esnext"
+    "target": "esnext",
+    "declaration": false
   },
   "extends": "@sindresorhus/tsconfig",
   "include": ["source"]
