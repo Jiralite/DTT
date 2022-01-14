@@ -19,10 +19,10 @@ import commands, { CommandName } from "../Commands/index.js";
 import { channels, emojis, guildId, roles } from "../Utility/Constants.js";
 
 export const Maria = createPool({
-  user: process.env.MARIA_USER,
-  password: process.env.MARIA_PASSWORD,
-  host: process.env.MARIA_HOST,
-  database: process.env.MARIA_DATABASE
+  user: process.env["MARIA_USER"],
+  password: process.env["MARIA_PASSWORD"],
+  host: process.env["MARIA_HOST"],
+  database: process.env["MARIA_DATABASE"]
 });
 
 class DTT<T extends boolean> extends Client<T> {

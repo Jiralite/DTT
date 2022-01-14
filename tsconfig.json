@@ -1,23 +1,11 @@
 {
   "compilerOptions": {
-    "allowUnreachableCode": false,
-    "alwaysStrict": true,
-    "noImplicitAny": true,
-    "noImplicitOverride": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strict": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "strictPropertyInitialization": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "outDir": "./sourceJS",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "target": "ESNext"
-  }
+    "lib": ["esnext"],
+    "module": "esnext",
+    "outDir": "sourceJS",
+    "skipLibCheck": false,
+    "target": "esnext"
+  },
+  "extends": "@sindresorhus/tsconfig",
+  "include": ["source"]
 }

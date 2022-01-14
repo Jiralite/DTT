@@ -1,4 +1,5 @@
 import { readdirSync } from "node:fs";
+import { URL } from "node:url";
 
 import DTT from "./Client/Client.js";
 

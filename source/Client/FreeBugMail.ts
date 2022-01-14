@@ -270,7 +270,7 @@ export default class FreeBugMail {
     this.state = "PENDING";
     const message = await this.fetchMessage();
 
-    message.embeds[0].spliceFields(0, 1, {
+    message.embeds[0]!.spliceFields(0, 1, {
       name: "Notes",
       value: `Claimed by ${interaction.user} ${Formatters.time(
         ~~(Date.now() / 1000),
@@ -281,7 +281,7 @@ export default class FreeBugMail {
 
     await message.edit({
       components: [],
-      embeds: [message.embeds[0]]
+      embeds: [message.embeds[0]!]
     });
 
     await message.react(DTT.emoji("typing"));
@@ -313,7 +313,7 @@ export default class FreeBugMail {
 
   async edit(interaction: CommandInteraction<"cached">, text: string): Promise<void> {
     const message = await this.fetchMessage();
-    message.embeds[0].setDescription(text);
+    message.embeds[0]!.setDescription(text);
     await message.edit({ embeds: message.embeds });
     DTT.freeBugMailLog(`${interaction.user} edited Free BugMail request #${this.No}.\n\n${text}`);
 
@@ -391,9 +391,9 @@ export default class FreeBugMail {
 
   async alreadyBugMailed(interaction: ButtonInteraction<"cached">): Promise<void> {
     const message = await this.fetchMessage();
-    message.components[0].components[0].setDisabled();
+    message.components[0]!.components[0]!.setDisabled();
 
-    message.embeds[0].spliceFields(0, 1, {
+    message.embeds[0]!.spliceFields(0, 1, {
       name: "Notes",
       value: `Disabled by ${interaction.user} ${Formatters.time(
         ~~(Date.now() / 1000),
@@ -459,8 +459,8 @@ export default class FreeBugMail {
       Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["OPEN", this.No]);
 
       this.state = "OPEN";
-      message.components[0].components[0].setDisabled(false);
-      message.embeds[0].fields = [];
+      message.components[0]!.components[0]!.setDisabled(false);
+      message.embeds[0]!.fields = [];
       await message.edit({ components: message.components, embeds: message.embeds });
       await interaction.message.edit({ components: [] });
       DTT.freeBugMailLog(`${interaction.user} restored Free BugMail request #${this.No}!`);
@@ -522,7 +522,7 @@ export default class FreeBugMail {
     return DTT.role("Free BugMail");
   }
 
-  get messageLink(): `https://discord.com/channels/${typeof DTT.guild.id}/${typeof this.bugmailQueue.id}/${typeof this.messageId}` {
+  get messageLink(): string {
     return `https://discord.com/channels/${DTT.guild.id}/${this.bugmailQueue.id}/${this.messageId}`;
   }
 

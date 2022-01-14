@@ -9,7 +9,7 @@ import Invite from "../Client/Invite.js";
 import { Event } from "./index.js";
 
 const name = Constants.Events.CLIENT_READY;
-const commitInformation = process.env.COMMIT_INFORMATION;
+const commitInformation = process.env["COMMIT_INFORMATION"]!;
 const defaultReturnText = "Selflessly slaving away.";
 const baseURL = "https://github.com/";
 const repositoryURL = `${baseURL}discord-testers-testers/DTT/`;
@@ -83,17 +83,17 @@ export const event: Event<typeof name> = {
     await collectFromDatabase();
     if (!commitInformation) return DTT.log(defaultReturnText);
     const commitInformationSplit = commitInformation.split("\n");
-    const commitSplit = /commit ([\da-z]+) \([a-z]+ -> (.+?),/i.exec(commitInformationSplit[0]);
+    const commitSplit = /commit ([\da-z]+) \([a-z]+ -> (.+?),/i.exec(commitInformationSplit[0]!);
     if (!commitSplit) return DTT.log(defaultReturnText);
-    const hash = commitSplit[1];
-    const branch = commitSplit[2];
+    const hash = commitSplit[1]!;
+    const branch = commitSplit[2]!;
     const smallHash = hash.slice(0, 7);
     const authorLine = commitInformationSplit.find(information => information.startsWith("Author:"));
     const author = authorLine?.slice(8, authorLine.indexOf("<") - 1) ?? null;
     const message =
       commitInformationSplit[
         commitInformationSplit.findIndex(information => information.startsWith("Date:")) + 2
-      ].trim();
+      ]!.trim();
     const authorURL = baseURL + author;
     const branchURL = `${repositoryURL}tree/${encodeURIComponent(branch)}`;
     const commitURL = `${repositoryURL}commit/${hash}`;
@@ -176,7 +176,7 @@ async function fetchRedditPosts(timestamp = Math.floor(Date.now() / 1000)): Prom
         });
       }
 
-      timestamp = posts[0].data.created_utc;
+      timestamp = posts[0]!.data.created_utc;
     }
   } catch (error) {
     DTT.log("Error during fetchRedditPosts()", error);

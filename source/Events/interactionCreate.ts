@@ -86,7 +86,7 @@ export const event: Event<typeof name> = {
       const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
 
       if (roleAssignment) {
-        const role = DTT.guild.roles.resolve(roleAssignment[1]) as Role;
+        const role = DTT.guild.roles.resolve(roleAssignment[1]!) as Role;
 
         if (interaction.member.roles.cache.has(role.id)) {
           interaction.member.roles
