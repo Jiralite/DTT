@@ -328,7 +328,6 @@ export default class FreeBugMail {
     fromWeeklyTimeout: boolean
   ): Promise<void> {
     await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["RESOLVED", this.No]);
-
     this.state = "RESOLVED";
 
     if (this.reminderTimeout !== null) {
@@ -375,9 +374,7 @@ export default class FreeBugMail {
     }
 
     DTT.freeBugMailLog(`Free BugMail request #${this.No} has been manually deleted and ergo automatically resolved.`);
-
     await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["RESOLVED", this.No]);
-
     this.state = "RESOLVED";
 
     if (this.disabledMessageId) {
@@ -403,9 +400,7 @@ export default class FreeBugMail {
     });
 
     await message.edit({ components: message.components, embeds: message.embeds });
-
     await Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["DISABLED", this.No]);
-
     this.state = "DISABLED";
     DTT.freeBugMailLog(`${interaction.user} has specified Free BugMail request #${this.No} as already claimed.`);
     const actionRow = new MessageActionRow();
@@ -455,9 +450,7 @@ export default class FreeBugMail {
 
     try {
       const message = await this.fetchMessage();
-
       Maria.query("UPDATE `Free BugMails` SET `State` = ? WHERE `No` = ?;", ["OPEN", this.No]);
-
       this.state = "OPEN";
       message.components[0]!.components[0]!.setDisabled(false);
       message.embeds[0]!.fields = [];

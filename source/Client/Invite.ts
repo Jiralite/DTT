@@ -78,7 +78,6 @@ export default class Invite {
 
   async remove(): Promise<void> {
     await Maria.query("UPDATE `Invites` SET `Expired` = ? WHERE `No` = ?;", [true, this.No]);
-
     this.expired = true;
 
     if (this.timeout !== null) {
