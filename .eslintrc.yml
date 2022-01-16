@@ -24,7 +24,6 @@ rules:
     - clearImmediate
     - clearInterval
     - clearTimeout
-    - URL
   "@typescript-eslint/explicit-function-return-type":
     - error
     - allowExpressions: true
