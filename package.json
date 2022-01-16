@@ -2,9 +2,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "format": "prettier --write .",
     "prestart": "npm install && tsc",
     "start": "BRANCH=$(git rev-parse --abbrev-ref HEAD) COMMIT_HASH=$(git rev-parse HEAD) node --require dotenv/config sourceJS/DTT.js",
+    "format": "prettier --write .",
     "test": "eslint . && tsc"
   },
   "dependencies": {
