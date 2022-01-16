@@ -1,3 +1,4 @@
+import { URL } from "node:url";
 import { CommandInteraction, Constants } from "discord.js";
 import DTT from "../../Client/Client.js";
 import type { Command, CommandStructure } from "../index.js";
