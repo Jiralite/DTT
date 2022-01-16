@@ -113,7 +113,7 @@ export const event: Event<typeof name> = {
     embed.setDescription(
       `Running [\`${commitHash.slice(0, 7)}\`](${
         json.html_url
-      }) on [\`${branch}\`](https://github.com/discord-testers-testers/DTT/tree/${branch}) at ${Formatters.time(
+      }) on [\`${branch}\`](https://github.com/${repository}/tree/${branch}) at ${Formatters.time(
         Math.floor(Date.now() / 1000),
         Formatters.TimestampStyles.ShortDateTime
       )}.\n${json.commit.message} - [${json.author.login}](${json.author.html_url})`
