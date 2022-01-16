@@ -2,6 +2,7 @@ import type { ApplicationCommandData, ApplicationCommandPermissionData, CommandI
 
 // Free BugMail
 import free_bugmail from "./Free BugMail/free-bugmail.js";
+
 // General
 import invite from "./General/invite.js";
 import remember from "./General/remember.js";
