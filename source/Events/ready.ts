@@ -7,7 +7,7 @@ import type { Event } from "./index.js";
 import DTT, { Maria } from "../Client/Client.js";
 import FreeBugMail from "../Client/FreeBugMail.js";
 import Invite from "../Client/Invite.js";
-import { repository } from "../Utility/Constants.js";
+import { repository, startupMessage } from "../Utility/Constants.js";
 
 interface Commit {
   message: string;
@@ -23,6 +23,11 @@ interface GitHubCommit {
   commit: Commit;
   html_url: string;
   author: GitHubAuthor;
+}
+
+interface GitHubError {
+  message: string;
+  documentation_url: string;
 }
 
 const name = Constants.Events.CLIENT_READY;
@@ -97,15 +102,16 @@ export const event: Event<typeof name> = {
   once: true,
   async fire(): Promise<void> {
     await collectFromDatabase();
-    if (!branch || !commitHash || !githubToken) return DTT.log("Selflessly slaving away.");
+    if (!branch || !commitHash || !githubToken) return DTT.log(startupMessage);
 
     const json = (await fetch(`https://api.github.com/repos/${repository}/commits/${commitHash}`, {
       headers: {
         Accept: "application/vnd.github.v3+json",
         Authorization: `token ${githubToken}`
       }
-    }).then(response => response.json())) as GitHubCommit;
+    }).then(response => response.json())) as GitHubCommit | GitHubError;
 
+    if ("message" in json) return DTT.log(startupMessage);
     const embed = new MessageEmbed();
     const member = await DTT.guild.members.fetch(DTT.user.id);
     embed.setColor(member.displayColor);
