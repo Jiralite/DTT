@@ -82,47 +82,6 @@ export const event: Event<typeof name> = {
           joiner[3] as Snowflake
         );
       if (interaction.customId === "SELFROLE_BACK") return commands.roles.execute(interaction);
-      const roleAssignment = /SELFROLE-(\d+)/.exec(interaction.customId);
-
-      if (roleAssignment) {
-        const role = DTT.guild.roles.resolve(roleAssignment[1]!) as Role;
-
-        if (interaction.member.roles.cache.has(role.id)) {
-          interaction.member.roles
-            .remove(role)
-            .then(() =>
-              interaction.reply({
-                content: `The ${role} role has been removed from you!`,
-                ephemeral: true
-              })
-            )
-            .catch(error => {
-              DTT.log("Error in self-role removal.", error);
-
-              interaction.reply({
-                content: "There was an error during self-role removal.",
-                ephemeral: true
-              });
-            });
-        } else {
-          interaction.member.roles
-            .add(role)
-            .then(() =>
-              interaction.reply({
-                content: `The ${role} role has been added to you!`,
-                ephemeral: true
-              })
-            )
-            .catch(error => {
-              DTT.log("Error in self-role addition.", error);
-
-              interaction.reply({
-                content: "There was an error during self-role addition.",
-                ephemeral: true
-              });
-            });
-        }
-      }
 
       if (interaction.customId === "Free BugMail") return FreeBugMail.addRole(interaction);
       if (interaction.customId === "No Free BugMail") return FreeBugMail.removeRole(interaction);

@@ -27,12 +27,14 @@ export type RoleCategories =
   | "Phabricator Updates";
 export type SubRoleCategories =
   | "macOSVersionRoles"
+  | "linuxRoles"
   | "windowsVersionRoles"
   | "androidDeviceRoles"
   | "androidVersionRoles"
   | "iOSDeviceRoles"
   | "iOSVersionRoles"
   | "iOSMiscellaneousRoles"
+  | "chromebookRoles"
   | "miscellaneousRoles"
   | "experimentRoles"
   | "discordUpdatesRoles"
@@ -135,13 +137,13 @@ export default class implements Command {
 
     if (category === "Linux") {
       const actionRow = new MessageActionRow();
-      const button = new MessageButton();
-      button.setCustomId(`SELFROLE-${this.linux.role.id}`);
-      button.setEmoji(this.linux.emoji);
-      button.setLabel(this.linux.role.name);
-      button.setStyle(Constants.MessageButtonStyles.PRIMARY);
-      actionRow.addComponents(button);
-
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.linuxRoles));
+      selectMenu.setCustomId("SELFROLE-linuxRoles");
+      selectMenu.setMaxValues(this.linuxRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign Linux roles!");
+      actionRow.addComponents(selectMenu);
       return [actionRow];
     }
 
@@ -213,13 +215,13 @@ export default class implements Command {
 
     if (category === "Chrome OS") {
       const actionRow = new MessageActionRow();
-      const button = new MessageButton();
-      button.setCustomId(`SELFROLE-${this.chromebook.role.id}`);
-      button.setEmoji(this.chromebook.emoji);
-      button.setLabel(this.chromebook.role.name);
-      button.setStyle(Constants.MessageButtonStyles.PRIMARY);
-      actionRow.addComponents(button);
-
+      const selectMenu = new MessageSelectMenu();
+      selectMenu.addOptions(options(this.chromebookRoles));
+      selectMenu.setCustomId("SELFROLE-chromebookRoles");
+      selectMenu.setMaxValues(this.chromebookRoles.length);
+      selectMenu.setMinValues(0);
+      selectMenu.setPlaceholder("Assign Chromebook roles!");
+      actionRow.addComponents(selectMenu);
       return [actionRow];
     }
 
@@ -282,6 +284,8 @@ export default class implements Command {
     switch (categoryRoleName) {
       case "macOSVersionRoles":
         return this.macOSVersionRoles;
+      case "linuxRoles":
+        return this.linuxRoles;
       case "windowsVersionRoles":
         return this.windowsVersionRoles;
       case "androidDeviceRoles":
@@ -294,6 +298,8 @@ export default class implements Command {
         return this.iOSVersionRoles;
       case "iOSMiscellaneousRoles":
         return this.iOSMiscellaneousRoles;
+      case "chromebookRoles":
+        return this.chromebookRoles;
       case "miscellaneousRoles":
         return this.miscellaneousRoles;
       case "experimentRoles":
@@ -340,11 +346,13 @@ export default class implements Command {
     ];
   }
 
-  get linux(): RoleStructure {
-    return {
-      role: DTT.role("Linux"),
-      emoji: DTT.emoji("linux")
-    };
+  get linuxRoles(): RoleStructure[] {
+    return [
+      {
+        role: DTT.role("Linux"),
+        emoji: DTT.emoji("linux")
+      }
+    ];
   }
 
   get windowsVersionRoles(): RoleStructure[] {
@@ -485,11 +493,13 @@ export default class implements Command {
     ];
   }
 
-  get chromebook(): RoleStructure {
-    return {
-      role: DTT.role("Chromebook"),
-      emoji: DTT.emoji("googleChrome")
-    };
+  get chromebookRoles(): RoleStructure[] {
+    return [
+      {
+        role: DTT.role("Chromebook"),
+        emoji: DTT.emoji("googleChrome")
+      }
+    ];
   }
 
   get miscellaneousRoles(): RoleStructure[] {
