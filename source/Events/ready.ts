@@ -102,6 +102,7 @@ export const event: Event<typeof name> = {
   once: true,
   async fire(): Promise<void> {
     await collectFromDatabase();
+    fetchRedditPosts();
     if (!branch || !commitHash || !githubToken) return DTT.log(startupMessage);
 
     const json = (await fetch(`https://api.github.com/repos/${repository}/commits/${commitHash}`, {
@@ -127,7 +128,6 @@ export const event: Event<typeof name> = {
 
     embed.setTimestamp();
     await DTT.logChannel.send({ embeds: [embed] });
-    fetchRedditPosts();
   }
 };
 
