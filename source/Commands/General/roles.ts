@@ -464,6 +464,10 @@ export default class implements Command {
       {
         role: DTT.role("iOS 15"),
         emoji: DTT.emoji("iOS15")
+      },
+      {
+        role: DTT.role("iOS 16"),
+        emoji: DTT.emoji("iOS16")
       }
     ];
   }
