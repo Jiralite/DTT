@@ -18,6 +18,10 @@ export default class implements Command {
       return await interaction.reply({
         files: [new URL("../../../Resources/Opinion.png", import.meta.url).pathname]
       });
+    } else if (moment === "Metaballs") {
+      return await interaction.reply({
+        files: [new URL("../../../Resources/Metaballs.png", import.meta.url).pathname]
+      });
     } else throw new ReferenceError("Unknown choice");
   }
 
@@ -37,6 +41,10 @@ export default class implements Command {
               {
                 name: "not a bug its ur opinion",
                 value: "Opinion"
+              },
+              {
+                name: "I wouldn't wait in line for metaballs",
+                value: "Metaballs"
               }
             ]
           }
