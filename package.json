@@ -1,29 +1,24 @@
 {
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "npm install && npm run-script clean && tsc",
-    "clean": "rimraf sourceJS/",
-    "format": "prettier --write .",
-    "start": "npm run-script build && BRANCH=$(git rev-parse --abbrev-ref HEAD) COMMIT_HASH=$(git rev-parse HEAD) node --require dotenv/config sourceJS/DTT.js",
-    "test": "eslint . && tsc"
-  },
-  "dependencies": {
-    "discord.js": "^13.6.0",
-    "dotenv": "^14.3.2",
-    "entities": "^3.0.1",
-    "mariadb": "^2.5.5",
-    "node-fetch": "^3.2.0"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.10.0",
-    "@typescript-eslint/parser": "^5.10.0",
-    "eslint": "^8.7.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-unicorn": "^40.1.0",
-    "prettier": "^2.5.1",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.5.5"
-  }
+	"name": "@jiralite/dtt",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"lint": "biome check",
+		"format": "biome check --write",
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy",
+		"update": "pnpm update --interactive --latest",
+		"deploy-commands": "node --env-file=.dev.vars source/utility/deploy-commands.ts"
+	},
+	"dependencies": {
+		"@discordjs/core": "^2.3.0",
+		"@discordjs/rest": "^2.6.0",
+		"discord-api-types": "^0.38.29"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.5",
+		"@cloudflare/workers-types": "^4.20251008.0",
+		"typescript": "^5.9.3",
+		"wrangler": "^4.42.2"
+	}
 }

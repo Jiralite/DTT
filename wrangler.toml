@@ -1,0 +1,13 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "dtt"
+main = "source/index.ts"
+compatibility_date = "2025-10-10"
+workers_dev = false
+routes = [{ pattern = "dtt.jiralite.dev", custom_domain = true }]
+
+[observability]
+enabled = true
+
+[[r2_buckets]]
+binding = "DISCORD_TESTERS_TESTERS"
+bucket_name = "discord-testers-testers"

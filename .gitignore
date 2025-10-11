@@ -1,6 +1,4 @@
+.dev.vars
 .DS_Store
-.env
-test.js
-test.ts
-node_modules/
-sourceJS/
+.wrangler
+node_modules
