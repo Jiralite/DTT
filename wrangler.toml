@@ -1,9 +1,12 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "dtt"
+name = "discord-testers-testers"
 main = "source/index.ts"
-compatibility_date = "2025-10-10"
+compatibility_date = "2026-08-22"
 workers_dev = false
 routes = [{ pattern = "dtt.jiralite.dev", custom_domain = true }]
+
+[secrets]
+required = ["CDN_URL", "DISCORD_TESTERS_GUILD_ID", "PUBLIC_KEY"]
 
 [observability]
 enabled = true

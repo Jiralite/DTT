@@ -1,0 +1,38 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validation:
+    name: Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1.
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10.
+
+      - name: Install Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0.
+        with:
+          cache: pnpm
+          node-version-file: package.json
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check code quality
+        run: pnpm run lint:ci
+
+      - name: Validate TypeScript
+        run: pnpm run typecheck
+
+      - name: Build the worker
+        run: pnpm run build
+
+      - name: Run Knip
+        run: pnpm run knip

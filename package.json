@@ -1,24 +1,44 @@
 {
 	"name": "@jiralite/dtt",
-	"type": "module",
 	"private": true,
+	"type": "module",
 	"scripts": {
-		"lint": "biome check",
-		"format": "biome check --write",
-		"dev": "wrangler dev",
+		"build": "wrangler deploy --dry-run --outdir distribution",
 		"deploy": "wrangler deploy",
-		"update": "pnpm update --interactive --latest",
-		"deploy-commands": "node --env-file=.dev.vars source/utility/deploy-commands.ts"
+		"deploy-commands": "node --env-file=.dev.vars source/utility/deploy-commands.ts",
+		"dev": "wrangler dev",
+		"format": "oxlint --fix . && oxfmt .",
+		"knip": "knip && knip --strict --include unlisted",
+		"lint": "oxfmt --check . && oxlint .",
+		"lint:ci": "oxfmt --check . && oxlint --format=github .",
+		"typecheck": "wrangler types --check && tsc --noEmit",
+		"types": "wrangler types",
+		"update": "pnpm update --interactive --latest"
 	},
 	"dependencies": {
-		"@discordjs/core": "^2.3.0",
-		"@discordjs/rest": "^2.6.0",
-		"discord-api-types": "^0.38.29"
+		"@discordjs/core": "^2.6.0",
+		"@discordjs/rest": "^2.6.3",
+		"discord-api-types": "^0.38.54"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.2.5",
-		"@cloudflare/workers-types": "^4.20251008.0",
-		"typescript": "^5.9.3",
-		"wrangler": "^4.42.2"
+		"@types/node": "^26.4.0",
+		"knip": "^6.32.3",
+		"oxfmt": "^0.65.0",
+		"oxlint": "^1.80.0",
+		"oxlint-tsgolint": "^7.0.2001",
+		"typescript": "^7.0.2",
+		"wrangler": "^4.126.0"
+	},
+	"devEngines": {
+		"packageManager": {
+			"name": "pnpm",
+			"version": "11.22.0",
+			"onFail": "error"
+		},
+		"runtime": {
+			"name": "node",
+			"version": ">=26",
+			"onFail": "error"
+		}
 	}
 }

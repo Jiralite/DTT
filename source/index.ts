@@ -13,13 +13,6 @@ import { upload } from "./features/upload.js";
 import { ALLOWED_MEDIA_TYPES } from "./utility/constants.js";
 import { hexToUint8Array, isGuildChatInputCommand } from "./utility/functions.js";
 
-interface Env {
-	PUBLIC_KEY: string;
-	DISCORD_TESTERS_TESTERS: R2Bucket;
-	DISCORD_TESTERS_GUILD_ID: string;
-	CDN_URL: string;
-}
-
 export default {
 	async fetch(request, env, ctx) {
 		if (request.method !== "POST") {
