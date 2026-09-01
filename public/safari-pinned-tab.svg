@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Discord Testers' Testers</title>
+
+  <g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M184 328 50 462" stroke-width="42" />
+    <circle cx="288" cy="224" r="148" stroke-width="38" />
+  </g>
+
+  <g fill="#000">
+    <path d="M270 169c-7-13-17-23-30-30a7 7 0 0 1 7-12c16 9 28 21 36 37Z" />
+    <path d="M306 169c7-13 17-23 30-30a7 7 0 0 0-7-12c-16 9-28 21-36 37Z" />
+
+    <rect x="256" y="160" width="64" height="50" rx="17" />
+
+    <path d="M276 198c-35 3-58 28-58 64 0 37 22 63 58 70l8-2V207Z" />
+    <path d="M300 198c35 3 58 28 58 64 0 37-22 63-58 70l-8-2V207Z" />
+
+    <path d="M235 218 194 203a8 8 0 0 0-6 15l41 15Z" />
+    <rect x="184" y="252" width="48" height="16" rx="8" />
+    <path d="m232 285-38 18a8 8 0 0 0 7 15l38-18Z" />
+
+    <path d="m341 218 41-15a8 8 0 0 1 6 15l-41 15Z" />
+    <rect x="344" y="252" width="48" height="16" rx="8" />
+    <path d="m344 285 38 18a8 8 0 0 1-7 15l-38-18Z" />
+  </g>
+</svg>

@@ -2,6 +2,7 @@ import type {
 	APIAttachment,
 	APIChatInputApplicationCommandGuildInteraction,
 } from "discord-api-types/v10";
+import { REQUEST_TIMEOUT } from "../utility/constants.js";
 import { md5Hash } from "../utility/functions.js";
 
 interface UploadOptions {
@@ -12,7 +13,7 @@ interface UploadOptions {
 }
 
 export async function upload({ interaction, attachment, r2, cdnURL }: UploadOptions) {
-	const response = await fetch(attachment.url);
+	const response = await fetch(attachment.url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT) });
 
 	if (!response.ok) {
 		throw new Error(`Failed to fetch attachment: ${response.status} ${response.statusText}`);
@@ -24,7 +25,11 @@ export async function upload({ interaction, attachment, r2, cdnURL }: UploadOpti
 	const userId = interaction.member.user.id;
 
 	const r2Object = await r2.put(`${userId}/${hash}.${extension}`, arrayBuffer, {
-		customMetadata: { userId },
+		httpMetadata: {
+			...(attachment.content_type && { contentType: attachment.content_type }),
+			contentDisposition: `inline; filename*=UTF-8''${encodeURIComponent(attachment.filename)}`,
+		},
+		customMetadata: { userId, filename: attachment.filename },
 	});
 
 	return `<${cdnURL}/${r2Object.key}>`;

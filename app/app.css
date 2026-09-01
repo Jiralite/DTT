@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+	--font-sans:
+		"gg sans", "Noto Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+		"Helvetica Neue", sans-serif;
+
+	--color-sunken: #060607;
+	--color-base: #0d0d0f;
+	--color-raised: #17171a;
+	--color-hover: #202024;
+	--color-line: #26262b;
+	--color-floating: #000000;
+
+	--color-heading: #f2f3f5;
+	--color-body: #d5d6d8;
+	--color-muted: #8a8b91;
+
+	--color-brand: #5865f2;
+	--color-link: #00a8fc;
+
+	--shadow-header: 0 1px 0 rgb(4 4 5 / 0.2), 0 1.5px 0 rgb(6 6 7 / 0.05), 0 2px 0 rgb(4 4 5 / 0.05);
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--color-sunken: #ebedef;
+		--color-base: #ffffff;
+		--color-raised: #f2f3f5;
+		--color-hover: #e3e5e8;
+		--color-line: #d7d9dd;
+
+		--color-heading: #060607;
+		--color-body: #2e3338;
+		--color-muted: #5c5e66;
+
+		--color-link: #006ce7;
+
+		--shadow-header: 0 1px 0 rgb(6 6 7 / 0.08), 0 1.5px 0 rgb(6 6 7 / 0.04);
+	}
+}
+
+html {
+	color-scheme: light dark;
+}
+
+body {
+	@apply bg-base font-sans text-body antialiased;
+}
+
+:focus-visible {
+	@apply outline-2 outline-offset-2 outline-brand;
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+	cursor: pointer;
+}
+
+* {
+	scrollbar-color: var(--color-line) transparent;
+	scrollbar-width: thin;
+}

@@ -1,5 +1,10 @@
 .dev.vars
 .DS_Store
 .wrangler
-distribution
 node_modules
+
+.react-router
+build
+
+# TypeScript.
+*.tsbuildinfo

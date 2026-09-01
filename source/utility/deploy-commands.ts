@@ -6,6 +6,9 @@ import {
 	type RESTPutAPIApplicationCommandsJSONBody,
 } from "@discordjs/core";
 import { REST } from "@discordjs/rest";
+import { ALLOWED_FILE_TYPES } from "./constants.ts";
+
+const ATTACHMENT_LIMIT = 10 as const;
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -17,72 +20,17 @@ const COMMANDS: RESTPutAPIApplicationCommandsJSONBody = [
 	{
 		name: "upload",
 		description: "Upload files! Links will be returned.",
-		options: [
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-1",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-2",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-3",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-4",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-5",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-6",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-7",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-8",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-9",
-				description: "A file to upload.",
-				required: false,
-			},
-			{
-				type: ApplicationCommandOptionType.Attachment,
-				name: "attachment-10",
-				description: "A file to upload.",
-				required: false,
-			},
-		],
+		options: Array.from({ length: ATTACHMENT_LIMIT }, (_, index) => ({
+			type: ApplicationCommandOptionType.Attachment,
+			name: `attachment-${index + 1}`,
+			description: "A file to upload.",
+			required: false,
+			file_types: [...ALLOWED_FILE_TYPES],
+		})),
 		integration_types: [ApplicationIntegrationType.UserInstall],
 		contexts: [InteractionContextType.Guild],
 	},
-] as const;
+];
 
 const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
 const api = new API(rest);

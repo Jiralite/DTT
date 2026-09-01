@@ -1,26 +1,26 @@
 {
+	"files": [],
+	"references": [
+		{
+			"path": "./tsconfig.node.json"
+		},
+		{
+			"path": "./tsconfig.cloudflare.json"
+		}
+	],
 	"compilerOptions": {
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
 		"exactOptionalPropertyTypes": true,
+		"isolatedModules": true,
+		"noEmit": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
 		"noUncheckedIndexedAccess": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"strict": true,
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"resolveJsonModule": true,
-		"verbatimModuleSyntax": true,
-		"newLine": "lf",
-		"noEmit": true,
 		"skipLibCheck": true,
-		"types": ["./worker-configuration.d.ts", "node"],
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"lib": ["ESNext"],
-		"target": "ESNext"
+		"verbatimModuleSyntax": true
 	}
 }

@@ -1,0 +1,30 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "discord-testers-testers",
+	"main": "workers/app.ts",
+	"compatibility_date": "2026-08-22",
+	"workers_dev": false,
+	"routes": [{ "pattern": "dtt.jiralite.dev", "custom_domain": true }],
+	"assets": { "directory": "build/client" },
+	"observability": { "enabled": true },
+	"r2_buckets": [
+		{
+			"binding": "DISCORD_TESTERS_TESTERS",
+			"bucket_name": "discord-testers-testers",
+			"remote": true
+		}
+	],
+	"secrets": {
+		"required": [
+			"CDN_URL",
+			"DISCORD_CLIENT_SECRET",
+			"DISCORD_TESTERS_GUILD_ID",
+			"DISCORD_TOKEN",
+			"PUBLIC_KEY",
+			"SESSION_SECRET"
+		]
+	},
+	"vars": {
+		"DISCORD_APPLICATION_ID": "765683883554504735"
+	}
+}
